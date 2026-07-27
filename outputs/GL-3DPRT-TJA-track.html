@@ -1,0 +1,3925 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="camada">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="data:," />
+  <title>TJA(track)运动范围判定 V1.1 · 2026-07-27 · ©Ming Xia</title>
+  <script>document.documentElement.dataset.theme = "camada";</script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #2b2622;
+      --panel: #383330;
+      --panel-2: #312c28;
+      --ink: #f7f5f0;
+      --muted: #aea69c;
+      --body: #c9c0ad;
+      --line: #3f3a36;
+      --accent: #f7f5f0;
+      --accent-2: #b84d3a;
+      --blue: #7aa4d8;
+      --warn: #d59a45;
+      --bad: #d76961;
+      --shadow: 0 18px 46px rgba(0, 0, 0, 0.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    [hidden] { display: none !important; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: minmax(360px, 430px) minmax(0, 1fr);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    aside {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 8px 14px;
+      border-right: 1px solid var(--line);
+      background: #2b2622;
+      min-height: 0;
+      overflow-x: hidden;
+      overflow-y: hidden;
+    }
+
+    main {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(247,245,240,0.035) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(247,245,240,0.035) 1px, transparent 1px),
+        #312c28;
+      background-size: 38px 38px;
+    }
+
+    @media (min-width: 861px) {
+      main {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+      }
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.18;
+      font-weight: 760;
+    }
+
+    .subtitle {
+      margin: 1px 0 0;
+      color: var(--body);
+      font-size: 11px;
+      line-height: 1.28;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 7px 10px;
+      background: var(--panel);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 4px;
+      font-size: 13px;
+      font-weight: 760;
+      color: var(--ink);
+    }
+
+    .field {
+      display: grid;
+      grid-template-columns: 1fr 82px;
+      align-items: center;
+      gap: 7px;
+      margin: 3px 0;
+    }
+
+    label {
+      display: grid;
+      gap: 2px;
+      color: var(--ink);
+      font-size: 11.5px;
+      font-weight: 650;
+    }
+
+    label span {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 520;
+    }
+
+    input[type="number"] {
+      width: 82px;
+      height: 25px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 0 8px;
+      color: var(--ink);
+      background: var(--panel-2);
+      font: inherit;
+      text-align: right;
+    }
+
+    select {
+      width: 100%;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 0 8px;
+      color: var(--ink);
+      background: var(--panel-2);
+      font: inherit;
+    }
+
+    .value-pill {
+      width: 100%;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 0 8px;
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    input[type="range"] {
+      grid-column: 1 / -1;
+      width: 100%;
+      height: 10px;
+      accent-color: var(--accent);
+    }
+
+    .field.fit-field {
+      grid-template-columns: 1fr 112px;
+      row-gap: 13px;
+      margin: 15px 0 17px;
+    }
+
+    .field.fit-field input[type="number"] {
+      width: 112px;
+    }
+
+    .field.fit-field input[type="range"] {
+      grid-column: 1 / 2;
+    }
+
+    .inline-fit {
+      grid-column: 2 / 3;
+      width: 100%;
+      min-height: 36px;
+      border-radius: 3px;
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 11.5px;
+      font-weight: 900;
+      line-height: 1.15;
+      padding: 0 6px;
+    }
+
+    .inline-fit.active {
+      border-color: rgba(247,245,240,0.34);
+      background: rgba(247,245,240,0.1);
+      color: var(--ink);
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    button {
+      min-height: 28px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      color: var(--ink);
+      background: var(--panel-2);
+      font: inherit;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.primary {
+      border-color: rgba(26, 127, 112, 0.32);
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    button:hover { filter: brightness(1.08); }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .file-button {
+      min-height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 0 10px;
+      color: var(--ink);
+      background: var(--panel-2);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .stl-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .stl-actions .file-button {
+      grid-column: 1 / -1;
+    }
+
+    .stl-actions #toggleStlIntersection {
+      grid-column: 1 / -1;
+    }
+
+    .stl-name {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .stl-controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px 8px;
+      margin-top: 9px;
+    }
+
+    .stl-control {
+      display: grid;
+      gap: 4px;
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .stl-control input[type="number"] {
+      width: 100%;
+      height: 28px;
+      font-size: 13px;
+    }
+
+    .stl-control input[type="range"] {
+      width: 100%;
+      height: 12px;
+      margin: 0;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 6px 9px;
+      background: var(--panel-2);
+      color: var(--body);
+      font-size: 11.5px;
+      line-height: 1.25;
+    }
+
+    .dot {
+      flex: 0 0 auto;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .status.invalid .dot { background: var(--bad); }
+    .status.warning .dot { background: var(--warn); }
+
+    .stl-range-warning {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-width: 440px;
+      border: 2px solid #ff3b30;
+      border-radius: 3px;
+      padding: 11px 13px;
+      background: rgba(255,255,255,0.96);
+      box-shadow: 0 2px 8px rgba(255,59,48,0.16);
+      color: #c6281f;
+      font-size: 12px;
+      line-height: 1.35;
+      pointer-events: none;
+    }
+
+    .stl-range-warning strong {
+      color: #ff3b30;
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .metric {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 6px 8px;
+      background: var(--panel-2);
+    }
+
+    .metric b {
+      display: block;
+      font-size: 17px;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    #scene {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hud {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    .chip {
+      border: 1px solid rgba(23,33,31,0.12);
+      border-radius: 4px;
+      padding: 10px 12px;
+      background: rgba(56,51,48,0.88);
+      box-shadow: var(--shadow);
+      color: var(--body);
+      font-size: 12px;
+      line-height: 1.4;
+      backdrop-filter: blur(10px);
+    }
+
+    .view-controls {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      display: grid;
+      grid-template-columns: auto auto;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(23,33,31,0.1);
+      border-color: var(--line);
+      border-radius: 4px;
+      padding: 6px;
+      background: rgba(56,51,48,0.82);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .view-title {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1;
+      padding: 0 2px 0 4px;
+    }
+
+    .view-buttons {
+      display: flex;
+      gap: 0;
+      overflow: hidden;
+      border: 1px solid rgba(23,33,31,0.1);
+      border-color: var(--line);
+      border-radius: 3px;
+      background: rgba(43,38,34,0.72);
+    }
+
+    .view-controls button {
+      min-height: 32px;
+      min-width: 46px;
+      border: 0;
+      border-radius: 0;
+      padding: 0 11px;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--ink);
+      box-shadow: none;
+    }
+
+    .view-controls button + button {
+      border-left: 1px solid rgba(23,33,31,0.1);
+      border-left-color: var(--line);
+    }
+
+    .view-controls button:hover {
+      background: rgba(247,245,240,0.08);
+    }
+
+    .fit-modes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .fit-modes button {
+      min-height: 28px;
+      border-radius: 3px;
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1.15;
+      padding: 0 6px;
+    }
+
+    .fit-modes button.active {
+      border-color: rgba(247,245,240,0.34);
+      background: rgba(247,245,240,0.1);
+      color: var(--ink);
+    }
+
+    .fit-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .fit-actions button,
+    .fit-modes button,
+    .inline-fit {
+      width: 100%;
+      min-height: 28px;
+    }
+
+    .chip strong {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    @media (max-width: 860px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(560px, 1fr);
+      }
+
+      aside {
+        max-height: 52vh;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        overflow-y: auto;
+      }
+
+      main { min-height: 560px; }
+      .hud { flex-direction: column; }
+    }
+
+    @media (min-width: 861px) and (min-height: 840px) {
+      aside {
+        gap: 8px;
+        padding: 12px 18px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .subtitle {
+        margin-top: 3px;
+        font-size: 12px;
+        line-height: 1.36;
+      }
+
+      .section {
+        padding: 10px 13px;
+      }
+
+      .section-title {
+        margin-bottom: 7px;
+        font-size: 14px;
+      }
+
+      .field {
+        gap: 10px;
+        margin: 6px 0;
+      }
+
+      .field.fit-field {
+        row-gap: 14px;
+        margin: 17px 0 19px;
+      }
+
+      label {
+        gap: 3px;
+        font-size: 12.5px;
+      }
+
+      label span {
+        font-size: 11px;
+      }
+
+      input[type="number"] {
+        height: 31px;
+      }
+
+      input[type="range"] {
+        height: 17px;
+      }
+
+      button,
+      .fit-actions button,
+      .fit-modes button {
+        min-height: 34px;
+      }
+
+      .fit-modes,
+      .fit-actions {
+        gap: 7px;
+      }
+
+      .fit-actions {
+        margin-top: 10px;
+      }
+
+      .fit-modes {
+        margin-bottom: 6px;
+      }
+
+      .metric {
+        padding: 8px 10px;
+      }
+
+      .metric b {
+        font-size: 22px;
+      }
+
+      .status {
+        min-height: 38px;
+        padding: 7px 11px;
+        font-size: 12.5px;
+      }
+    }
+    /* SpaceX-inspired final preview layer from the latest DESIGN.md */
+    :root {
+      --bg: #000000;
+      --panel: #0a0a0a;
+      --panel-2: #000000;
+      --panel-3: #000000;
+      --ink: #ffffff;
+      --muted: #f0f0fa;
+      --body: #f0f0fa;
+      --body-strong: #ffffff;
+      --line: #3a3a3f;
+      --accent: #ffffff;
+      --accent-2: #ffffff;
+      --blue: #ffffff;
+      --warn: #ffffff;
+      --bad: #ffffff;
+      --shadow: none;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: "D-DIN", "Arial Narrow", Arial, Verdana, sans-serif;
+      letter-spacing: 0.32px;
+    }
+
+    .app {
+      grid-template-columns: minmax(390px, 448px) minmax(0, 1fr);
+      background: #000;
+    }
+
+    aside {
+      gap: 8px;
+      padding: 18px 18px 14px;
+      border-right: 1px solid var(--line);
+      background: #000;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 8px 14px;
+      padding: 2px 0 4px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    header h1,
+    header .subtitle {
+      grid-column: 1;
+    }
+
+    h1 {
+      max-width: none;
+      color: #fff;
+      font-family: "D-DIN-Bold", "Arial Narrow", Arial, Verdana, sans-serif;
+      font-size: 23px;
+      font-weight: 700;
+      line-height: 0.98;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.5;
+      letter-spacing: 0.32px;
+    }
+
+    .subtitle + .subtitle {
+      margin-top: 4px;
+      color: #fff;
+      font-size: 12px;
+      letter-spacing: 0.96px;
+      text-transform: uppercase;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 12px 14px;
+      background: #0a0a0a;
+      box-shadow: none;
+    }
+
+    .section-title {
+      margin-bottom: 10px;
+      color: #fff;
+      font-family: "D-DIN-Bold", "Arial Narrow", Arial, Verdana, sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .field {
+      grid-template-columns: minmax(0, 1fr) 96px;
+      gap: 7px 12px;
+      margin: 6px 0 8px;
+    }
+
+    .field.fit-field {
+      grid-template-columns: minmax(0, 1fr) 132px;
+      row-gap: 8px;
+      margin: 15px 0 16px;
+    }
+
+    label {
+      gap: 3px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.12;
+      letter-spacing: 0.88px;
+      text-transform: uppercase;
+    }
+
+    label span {
+      color: var(--muted);
+      font-size: 11.5px;
+      font-weight: 400;
+      line-height: 1.35;
+      letter-spacing: 0.32px;
+      text-transform: none;
+    }
+
+    input[type="number"],
+    select,
+    .value-pill {
+      width: 96px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #000;
+      color: #fff;
+      font-family: "D-DIN", "Arial Narrow", Arial, Verdana, sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      box-shadow: none;
+    }
+
+    .field.fit-field input[type="number"] {
+      width: 132px;
+      font-size: 17px;
+    }
+
+    input[type="number"]:disabled,
+    input[type="range"]:disabled {
+      opacity: 0.58;
+    }
+
+    input[type="range"] {
+      height: 14px;
+      accent-color: #fff;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 2px;
+      border-radius: 0;
+      background: #3a3a3f;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 17px;
+      height: 17px;
+      margin-top: -7.5px;
+      border: 1px solid #fff;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: none;
+    }
+
+    button {
+      min-height: 36px;
+      border: 1px solid #fff;
+      border-radius: 32px;
+      background: #000;
+      color: #fff;
+      font-family: "D-DIN", "Arial Narrow", Arial, Verdana, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 0.94;
+      letter-spacing: 1.17px;
+      text-transform: uppercase;
+      transition: background 0.16s ease, color 0.16s ease;
+    }
+
+    button:hover {
+      filter: none;
+      background: #fff;
+      color: #000;
+      transform: none;
+    }
+
+    .inline-fit {
+      min-height: 38px;
+      border-radius: 32px;
+      padding: 0 12px;
+      background: #000;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .inline-fit.active {
+      border-color: #fff;
+      background: #fff;
+      color: #000;
+    }
+
+    .fit-actions {
+      gap: 7px;
+      margin-top: 8px;
+    }
+
+    .fit-actions button {
+      min-height: 38px;
+    }
+
+    .fit-actions #toggleModel,
+    .fit-actions #toggleBox {
+      background: #fff;
+      color: #000;
+    }
+
+    .fit-actions #toggleModel:hover,
+    .fit-actions #toggleBox:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    .file-button {
+      min-height: 36px;
+      border-color: #fff;
+      border-radius: 32px;
+      background: #000;
+      color: #fff;
+      font-family: "D-DIN", "Arial Narrow", Arial, Verdana, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.17px;
+      text-transform: uppercase;
+    }
+
+    .file-button:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .stl-name {
+      color: var(--muted);
+      font-size: 11.5px;
+      letter-spacing: 0.32px;
+    }
+
+    .stl-control {
+      color: #fff;
+      font-size: 11.5px;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+    }
+
+    .stl-control input[type="number"] {
+      width: 100%;
+      height: 30px;
+      font-size: 13px;
+    }
+
+    .metrics {
+      gap: 8px;
+    }
+
+    .metric {
+      border-radius: 4px;
+      padding: 9px 10px;
+      background: #000;
+    }
+
+    .metric b {
+      color: #fff;
+      font-family: "D-DIN-Bold", "Arial Narrow", Arial, Verdana, sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: 1px;
+    }
+
+    .metric span {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.32px;
+      text-transform: uppercase;
+    }
+
+    .status {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 10px 12px;
+      background: #0a0a0a;
+      color: #fff;
+      font-size: 13px;
+      line-height: 1.4;
+      letter-spacing: 0.32px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: #fff;
+    }
+
+    main {
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,255,255,0.045) 1px, transparent 1px),
+        #000;
+      background-size: 42px 42px;
+    }
+
+    .view-controls {
+      top: 20px;
+      right: 20px;
+      gap: 14px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 8px;
+      background: rgba(0,0,0,0.82);
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .view-title {
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.96px;
+      text-transform: uppercase;
+    }
+
+    .view-buttons {
+      border-color: var(--line);
+      border-radius: 32px;
+      background: #000;
+    }
+
+    .view-controls button {
+      min-height: 36px;
+      min-width: 54px;
+      border-radius: 0;
+      padding: 0 15px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .view-controls button:first-child {
+      border-radius: 32px 0 0 32px;
+    }
+
+    .view-controls button:last-child {
+      border-radius: 0 32px 32px 0;
+    }
+
+    .hud {
+      left: 22px;
+      right: 22px;
+      bottom: 22px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 12px 14px;
+      background: rgba(0,0,0,0.84);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .chip strong {
+      margin-bottom: 3px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+    }
+
+    .scene-copyright {
+      position: absolute;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      z-index: 3;
+      color: rgba(240,240,250,0.72);
+      font-size: 12px;
+      line-height: 1.5;
+      letter-spacing: 0.6px;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+
+
+    .theme-toggle {
+      grid-column: 2;
+      grid-row: 1 / span 3;
+      justify-self: end;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      margin-top: 0;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-2);
+    }
+
+    .theme-toggle button {
+      min-width: 54px;
+      min-height: 30px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .theme-toggle button.is-active {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    html[data-theme="light"] {
+      color-scheme: light;
+      --bg: #fbfbf9;
+      --panel: #ffffff;
+      --panel-2: #f6f6f3;
+      --panel-3: #ffffff;
+      --ink: #211922;
+      --muted: #62625b;
+      --body: #33332e;
+      --body-strong: #000000;
+      --line: #dadad3;
+      --accent: #e60023;
+      --accent-2: #cc001f;
+      --blue: #435ee5;
+      --warn: #a15f00;
+      --bad: #9e0a0a;
+      --shadow: 0 18px 52px rgba(38,38,34,0.08);
+    }
+
+    html[data-theme="light"] body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    html[data-theme="light"] .app,
+    html[data-theme="light"] aside {
+      background: var(--bg);
+    }
+
+    html[data-theme="light"] aside {
+      border-right-color: var(--line);
+    }
+
+    html[data-theme="light"] header {
+      border-bottom-color: var(--line);
+    }
+
+    html[data-theme="light"] h1,
+    html[data-theme="light"] .section-title,
+    html[data-theme="light"] label,
+    html[data-theme="light"] .metric b,
+    html[data-theme="light"] .status,
+    html[data-theme="light"] .chip strong,
+    html[data-theme="light"] .view-title {
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    html[data-theme="light"] .subtitle,
+    html[data-theme="light"] .subtitle + .subtitle,
+    html[data-theme="light"] label span,
+    html[data-theme="light"] .metric span,
+    html[data-theme="light"] .stl-name,
+    html[data-theme="light"] .chip,
+    html[data-theme="light"] .stl-control {
+      color: var(--muted);
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    html[data-theme="light"] .section,
+    html[data-theme="light"] .status,
+    html[data-theme="light"] .view-controls,
+    html[data-theme="light"] .chip {
+      border-color: var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    html[data-theme="light"] input[type="number"],
+    html[data-theme="light"] select,
+    html[data-theme="light"] .value-pill,
+    html[data-theme="light"] .metric,
+    html[data-theme="light"] .inline-fit,
+    html[data-theme="light"] .view-buttons,
+    html[data-theme="light"] .theme-toggle {
+      border-color: var(--line);
+      background: var(--panel-2);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    html[data-theme="light"] button,
+    html[data-theme="light"] .file-button {
+      border-color: var(--line);
+      background: var(--panel-2);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    html[data-theme="light"] button.primary,
+    html[data-theme="light"] .inline-fit.active,
+    html[data-theme="light"] .theme-toggle button.is-active,
+    html[data-theme="light"] .fit-actions #toggleModel,
+    html[data-theme="light"] .fit-actions #toggleBox {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    html[data-theme="light"] button:hover,
+    html[data-theme="light"] .file-button:hover {
+      background: #e5e5e0;
+      color: var(--ink);
+    }
+
+    html[data-theme="light"] main {
+      background:
+        linear-gradient(90deg, rgba(38,38,34,0.08) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(38,38,34,0.08) 1px, transparent 1px),
+        #f6f6f3;
+      background-size: 42px 42px;
+    }
+
+    html[data-theme="light"] input[type="range"] {
+      accent-color: var(--accent);
+    }
+
+    html[data-theme="light"] input[type="range"]::-webkit-slider-runnable-track {
+      background: #dadad3;
+    }
+
+    html[data-theme="light"] input[type="range"]::-webkit-slider-thumb {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    html[data-theme="light"] .dot {
+      background: var(--accent);
+    }
+
+    html[data-theme="light"] .scene-copyright {
+      color: rgba(33,25,34,0.64);
+    }
+
+    html[data-theme="camada"] {
+      color-scheme: light;
+      --bg: #f4f4f4;
+      --panel: #ffffff;
+      --panel-2: #ffffff;
+      --panel-3: #f8f8f8;
+      --ink: #383838;
+      --muted: #767676;
+      --body: #4b4b4b;
+      --body-strong: #262626;
+      --line: #e5e5e5;
+      --accent: #383838;
+      --accent-2: #202020;
+      --blue: #383838;
+      --warn: #6f6f6f;
+      --bad: #8a2f2f;
+      --shadow: 0 1px 3px rgba(0,0,0,0.09), 0 1px 2px -1px rgba(0,0,0,0.09);
+    }
+
+    html[data-theme="camada"] body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    html[data-theme="camada"] .app {
+      grid-template-columns: 292px minmax(0, 1fr);
+      background: #ffffff;
+    }
+
+    html[data-theme="camada"] aside {
+      gap: 7px;
+      min-height: 0;
+      overflow-x: hidden;
+      overflow-y: hidden;
+      padding: 14px 12px;
+      border-right-color: var(--line);
+      background: #f7f7f7;
+    }
+
+    html[data-theme="camada"] header {
+      display: block;
+      padding-bottom: 12px;
+      padding-right: 48px;
+      position: relative;
+      border-bottom-color: var(--line);
+    }
+
+    html[data-theme="camada"] .language-toggle {
+      position: absolute;
+      top: 0;
+      right: 0;
+      min-width: 44px;
+      min-height: 28px;
+      padding: 0 8px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      font-size: 11px;
+    }
+
+    html[data-theme="camada"] h1 {
+      font-size: 22px;
+      line-height: 1.15;
+      white-space: normal;
+    }
+
+    html[data-theme="camada"] .subtitle {
+      margin-top: 6px;
+      font-size: 11px;
+    }
+
+    html[data-theme="camada"] .theme-toggle {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 16px;
+      padding: 0;
+    }
+
+    html[data-theme="camada"] .theme-toggle button {
+      min-width: 0;
+      min-height: 34px;
+    }
+
+    html[data-theme="camada"] h1,
+    html[data-theme="camada"] .section-title,
+    html[data-theme="camada"] label,
+    html[data-theme="camada"] .metric b,
+    html[data-theme="camada"] .status,
+    html[data-theme="camada"] .chip strong,
+    html[data-theme="camada"] .view-title {
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    html[data-theme="camada"] .subtitle,
+    html[data-theme="camada"] label span,
+    html[data-theme="camada"] .metric span,
+    html[data-theme="camada"] .stl-name,
+    html[data-theme="camada"] .chip,
+    html[data-theme="camada"] .stl-control {
+      color: var(--muted);
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    html[data-theme="camada"] .section,
+    html[data-theme="camada"] .status,
+    html[data-theme="camada"] .view-controls,
+    html[data-theme="camada"] .chip {
+      border-color: var(--line);
+      border-radius: 0;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    html[data-theme="camada"] .section {
+      padding: 10px;
+    }
+
+    html[data-theme="camada"] .box-section {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    html[data-theme="camada"] .section-title {
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    html[data-theme="camada"] .field {
+      grid-template-columns: minmax(0, 1fr) 84px;
+      gap: 5px 8px;
+      margin: 3px 0 5px;
+    }
+
+    html[data-theme="camada"] .field.fit-field {
+      grid-template-columns: minmax(0, 1fr) 92px;
+      row-gap: 5px;
+    }
+
+    html[data-theme="camada"] label {
+      font-size: 11.5px;
+      line-height: 1.2;
+    }
+
+    html[data-theme="camada"] label span {
+      font-size: 10px;
+    }
+
+    html[data-theme="camada"] label .label-main,
+    html[data-theme="camada"] .stl-control > span {
+      color: var(--ink);
+      font-size: inherit;
+      font-weight: inherit;
+      line-height: inherit;
+    }
+
+    html[data-theme="camada"] input[type="number"],
+    html[data-theme="camada"] select,
+    html[data-theme="camada"] .value-pill,
+    html[data-theme="camada"] .metric,
+    html[data-theme="camada"] .inline-fit,
+    html[data-theme="camada"] .view-buttons,
+    html[data-theme="camada"] .theme-toggle {
+      border-color: var(--line);
+      border-radius: 0;
+      background: var(--panel-2);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    html[data-theme="camada"] input[type="number"],
+    html[data-theme="camada"] select,
+    html[data-theme="camada"] .value-pill {
+      width: 84px;
+      height: 27px;
+      font-size: 13px;
+    }
+
+    html[data-theme="camada"] .field.fit-field input[type="number"] {
+      width: 92px;
+      font-size: 14px;
+    }
+
+    html[data-theme="camada"] button,
+    html[data-theme="camada"] .file-button {
+      border-color: var(--line);
+      border-radius: 0;
+      background: var(--panel-2);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+      text-transform: none;
+      min-height: 30px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+    }
+
+    html[data-theme="camada"] button.primary,
+    html[data-theme="camada"] .inline-fit.active,
+    html[data-theme="camada"] .theme-toggle button.is-active,
+    html[data-theme="camada"] .fit-actions #toggleModel,
+    html[data-theme="camada"] .fit-actions #toggleBox {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #f5f5f5;
+    }
+
+    html[data-theme="camada"] .stl-actions {
+      gap: 5px;
+    }
+
+    html[data-theme="camada"] .stl-actions .file-button,
+    html[data-theme="camada"] .stl-actions #toggleStlIntersection {
+      min-height: 32px;
+    }
+
+    html[data-theme="camada"] .stl-name {
+      margin-top: 5px;
+      font-size: 10.5px;
+      line-height: 1.2;
+    }
+
+    html[data-theme="camada"] .stl-controls {
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    html[data-theme="camada"] .stl-control {
+      gap: 3px;
+      font-size: 10px;
+    }
+
+    html[data-theme="camada"] .stl-control input[type="number"] {
+      height: 26px;
+      font-size: 12px;
+    }
+
+    html[data-theme="camada"] .inline-fit {
+      min-height: 28px;
+      padding: 0 8px;
+      font-size: 10.5px;
+    }
+
+    html[data-theme="camada"] .fit-actions {
+      gap: 5px;
+      margin-top: auto;
+      padding-top: 10px;
+    }
+
+    html[data-theme="camada"] .fit-actions button {
+      min-height: 30px;
+      font-size: 11px;
+    }
+
+    html[data-theme="camada"] button:hover,
+    html[data-theme="camada"] .file-button:hover {
+      background: #eeeeee;
+      color: var(--ink);
+    }
+
+    html[data-theme="camada"] main {
+      background: #ffffff;
+    }
+
+    html[data-theme="camada"] .view-controls {
+      top: auto;
+      right: 24px;
+      bottom: 44px;
+      left: auto;
+      transform: none;
+      width: 134px;
+      height: 112px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    html[data-theme="camada"] .view-title {
+      display: none;
+    }
+
+    html[data-theme="camada"] .view-buttons {
+      position: absolute;
+      inset: 0;
+      border: 0;
+      background: transparent;
+    }
+
+    html[data-theme="camada"] .view-controls button,
+    html[data-theme="camada"] .view-controls button:first-child,
+    html[data-theme="camada"] .view-controls button:last-child {
+      position: absolute;
+      width: 24px;
+      min-width: 24px;
+      height: 24px;
+      min-height: 24px;
+      border: 0;
+      border-radius: 50%;
+      padding: 0;
+      background: #111;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 24px;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.18);
+      z-index: 2;
+    }
+
+    html[data-theme="camada"] .view-controls button[data-view="default"] {
+      left: 18px;
+      bottom: 30px;
+      background: #606060;
+      color: transparent;
+    }
+
+    html[data-theme="camada"] .view-controls button[data-view="front"] {
+      left: 62px;
+      bottom: 30px;
+    }
+
+    html[data-theme="camada"] .view-controls button[data-view="top"] {
+      left: 62px;
+      bottom: 72px;
+    }
+
+    html[data-theme="camada"] .view-controls button[data-view="right"] {
+      left: 94px;
+      bottom: 30px;
+    }
+
+    html[data-theme="camada"] .view-buttons::before,
+    html[data-theme="camada"] .view-buttons::after {
+      position: absolute;
+      display: block;
+      background: #111;
+      content: "";
+      z-index: 1;
+    }
+
+    html[data-theme="camada"] .view-buttons::before {
+      left: 73px;
+      bottom: 42px;
+      width: 34px;
+      height: 3px;
+    }
+
+    html[data-theme="camada"] .view-buttons::after {
+      left: 73px;
+      bottom: 42px;
+      width: 3px;
+      height: 44px;
+    }
+
+    html[data-theme="camada"] .view-controls::after {
+      position: absolute;
+      left: 62px;
+      bottom: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #606060;
+      content: "";
+    }
+
+    html[data-theme="camada"] .hud {
+      top: 24px;
+      bottom: auto;
+      left: 24px;
+      right: auto;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    html[data-theme="camada"] .chip {
+      max-width: 330px;
+      background: rgba(255,255,255,0.94);
+    }
+
+    html[data-theme="camada"] .hud .status {
+      min-height: 0;
+      max-width: 330px;
+      padding: 9px 10px;
+      background: rgba(255,255,255,0.94);
+    }
+
+    html[data-theme="camada"] .hud .stl-range-warning {
+      max-width: 440px;
+      background: rgba(255,255,255,0.96);
+      color: #c6281f;
+    }
+
+    html[data-theme="camada"] .size-chip {
+      min-width: 260px;
+    }
+
+    html[data-theme="camada"] .size-chip .metrics {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    html[data-theme="camada"] .size-chip .metric {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    html[data-theme="camada"] .size-chip .metric b {
+      display: block;
+      color: #383838;
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    html[data-theme="camada"] input[type="range"] {
+      accent-color: var(--accent);
+    }
+
+    html[data-theme="camada"] input[type="range"]::-webkit-slider-runnable-track {
+      background: #e5e5e5;
+    }
+
+    html[data-theme="camada"] input[type="range"]::-webkit-slider-thumb {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    html[data-theme="camada"] .dot {
+      background: var(--accent);
+    }
+
+    html[data-theme="camada"] .scene-copyright {
+      left: auto;
+      right: 24px;
+      bottom: 18px;
+      transform: none;
+      color: rgba(56,56,56,0.58);
+    }
+
+    @media (max-width: 1060px) {
+      .app {
+        grid-template-columns: minmax(360px, 420px) minmax(0, 1fr);
+      }
+
+      aside {
+        padding: 14px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(560px, 1fr);
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+      }
+
+      aside {
+        max-height: none;
+        overflow: visible;
+      }
+
+      .theme-toggle {
+        grid-column: 1;
+        grid-row: auto;
+        justify-self: start;
+        margin-top: 8px;
+      }
+
+      html[data-theme="camada"] .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(560px, 1fr);
+      }
+
+      html[data-theme="camada"] aside {
+        padding: 18px;
+      }
+
+      html[data-theme="camada"] .theme-toggle {
+        width: 100%;
+        margin-top: 14px;
+      }
+
+      html[data-theme="camada"] .view-controls {
+        right: 12px;
+        bottom: 40px;
+      }
+
+      .field,
+      .field.fit-field {
+        grid-template-columns: 1fr 112px;
+      }
+
+      .hud {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+      }
+    }
+
+    @media (min-width: 861px) and (max-height: 900px) {
+      html[data-theme="camada"] aside {
+        gap: 4px;
+        padding: 8px 10px;
+      }
+
+      html[data-theme="camada"] header {
+        padding-bottom: 7px;
+      }
+
+      html[data-theme="camada"] h1 {
+        font-size: 19px;
+      }
+
+      html[data-theme="camada"] .section {
+        padding: 6px 9px;
+      }
+
+      html[data-theme="camada"] .section-title {
+        margin-bottom: 4px;
+      }
+
+      html[data-theme="camada"] .stl-actions {
+        gap: 4px;
+      }
+
+      html[data-theme="camada"] .stl-name {
+        margin-top: 4px;
+        font-size: 10px;
+      }
+
+      html[data-theme="camada"] .stl-controls {
+        gap: 4px 6px;
+        margin-top: 5px;
+      }
+
+      html[data-theme="camada"] .stl-control {
+        gap: 2px;
+        font-size: 10px;
+      }
+
+      html[data-theme="camada"] .stl-control input[type="number"] {
+        height: 24px;
+        font-size: 12px;
+      }
+
+      html[data-theme="camada"] .stl-control input[type="range"] {
+        height: 10px;
+      }
+
+      html[data-theme="camada"] .field {
+        gap: 6px;
+        margin: 3px 0;
+      }
+
+      html[data-theme="camada"] .field.fit-field {
+        row-gap: 8px;
+        margin: 8px 0 10px;
+      }
+
+      html[data-theme="camada"] .fit-actions {
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        margin-top: 5px;
+      }
+
+      html[data-theme="camada"] button,
+      html[data-theme="camada"] .file-button,
+      html[data-theme="camada"] .fit-actions button,
+      html[data-theme="camada"] .inline-fit {
+        min-height: 27px;
+      }
+
+      html[data-theme="camada"] .fit-actions button {
+        min-width: 0;
+        font-size: 10.5px;
+      }
+    }
+
+    @media (min-width: 861px) and (max-height: 760px) {
+      html[data-theme="camada"] .stl-controls {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      html[data-theme="camada"] .stl-control {
+        min-width: 0;
+        font-size: 9px;
+      }
+
+      html[data-theme="camada"] .stl-control input[type="number"] {
+        width: 100%;
+        padding: 0 4px;
+        font-size: 11px;
+      }
+
+      html[data-theme="camada"] .stl-control input[type="range"] {
+        height: 9px;
+      }
+
+      html[data-theme="camada"] .section {
+        padding: 4px 7px;
+      }
+
+      html[data-theme="camada"] .field.fit-field {
+        row-gap: 5px;
+        margin: 5px 0 7px;
+      }
+    }
+
+    @media (min-width: 861px) and (max-height: 950px) {
+      html[data-theme="camada"] aside {
+        zoom: 0.88;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <header>
+        <h1 data-i18n="deviceTitle">TJA(track)运动范围判定</h1>
+        <p class="subtitle" data-i18n="version">V1.1 · 2026-07-27 · ©Ming Xia</p>
+        <button id="languageToggle" class="language-toggle" type="button" aria-label="切换语言">EN</button>
+      </header>
+
+      <section class="section" hidden>
+        <div class="section-title" data-i18n="measuredRange">实测范围</div>
+        <div class="field">
+          <label>空间模型 <span>外圆内、偏置内圆外 + R-Z 垂直截面</span></label>
+          <div class="value-pill">实测截面</div>
+        </div>
+        <div class="field">
+          <label>内圆圆心 Y <span>第二个圆心偏移，单位 mm</span></label>
+          <input id="innerCircleY" type="number" value="0" disabled>
+        </div>
+        <div class="field">
+          <label>外圆半径 <span>圆心 (0,0)</span></label>
+          <input id="outerRadius" type="number" value="8130.3" disabled>
+        </div>
+        <div class="field">
+          <label>内圆半径 <span>圆心 (0, Y)</span></label>
+          <input id="innerRadius" type="number" value="0" disabled>
+        </div>
+        <div class="field">
+          <label>回转范围 <span>俯视方向可覆盖角度</span></label>
+          <input id="drawingYaw" type="number" value="360" disabled>
+        </div>
+        <div class="field">
+          <label>地面 Z0 <span>当前按地面为 0</span></label>
+          <input id="baseZ" type="number" value="-85" disabled>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title" data-i18n="stlReference">STL参考模型</div>
+        <div class="stl-actions">
+          <label class="file-button" for="stlFile" data-i18n="importStl">导入 STL 模型</label>
+          <input id="stlFile" type="file" accept=".stl,model/stl">
+          <button id="resetStl" type="button" disabled data-i18n="resetParams">重置参数</button>
+          <button id="clearStl" type="button" disabled data-i18n="clearStl">清除 STL</button>
+          <button id="toggleStlIntersection" type="button" disabled data-i18n="showIntersections">显示交线</button>
+        </div>
+        <div id="stlName" class="stl-name">未导入 STL。仅作为参考显示，不参与判定。</div>
+        <div id="stlControls" class="stl-controls" hidden>
+          <label class="stl-control"><span data-i18n="xPosition">X位置</span><input data-stl="positionX" type="number" step="10" value="0"><input data-stl-range="positionX" type="range" min="-20000" max="20000" step="10" value="0" data-i18n-aria-label="xPosition" aria-label="X位置"></label>
+          <label class="stl-control"><span data-i18n="yPosition">Y位置</span><input data-stl="positionY" type="number" step="10" value="0"><input data-stl-range="positionY" type="range" min="-20000" max="20000" step="10" value="0" data-i18n-aria-label="yPosition" aria-label="Y位置"></label>
+          <label class="stl-control"><span data-i18n="zPosition">Z位置</span><input data-stl="positionZ" type="number" step="10" value="0"><input data-stl-range="positionZ" type="range" min="-10000" max="10000" step="10" value="0" data-i18n-aria-label="zPosition" aria-label="Z位置"></label>
+          <label class="stl-control"><span data-i18n="scale">缩放</span><input data-stl="scale" type="number" min="0.001" step="0.1" value="1"></label>
+          <label class="stl-control"><span data-i18n="rotationX">旋转X</span><input data-stl="rotationX" type="number" step="1" value="0"></label>
+          <label class="stl-control"><span data-i18n="rotationY">旋转Y</span><input data-stl="rotationY" type="number" step="1" value="0"></label>
+          <label class="stl-control"><span data-i18n="rotationZ">旋转Z</span><input data-stl="rotationZ" type="number" step="1" value="0"></label>
+          <label class="stl-control"><span data-i18n="opacity">透明度</span><input data-stl="opacity" type="number" min="0.05" max="1" step="0.05" value="0.35"></label>
+        </div>
+      </section>
+
+      <section class="section box-section">
+        <div class="section-title" data-i18n="boxTitle">内接长方体</div>
+        <div class="field">
+          <label><span class="label-main" data-i18n="xLocation">X 中心位置</span> <span data-i18n="xLocationHelp">沿轨道方向移动长方体中心</span></label>
+          <input id="boxX" type="number" min="-8000" max="32000" step="10" value="12000">
+          <input data-for="boxX" type="range" min="-8000" max="32000" step="10" value="12000">
+        </div>
+        <div class="field">
+          <label><span class="label-main" data-i18n="yLocation">Y 中心位置</span> <span data-i18n="yLocationHelp">沿横向移动长方体中心</span></label>
+          <input id="boxY" type="number" min="-9000" max="9000" step="10" value="4000">
+          <input data-for="boxY" type="range" min="-9000" max="9000" step="10" value="4000">
+        </div>
+        <div class="field">
+          <label><span class="label-main" data-i18n="zLocation">底面高度 Z</span> <span data-i18n="zLocationHelp">固定为包络下限 Z=-85，向上展开</span></label>
+          <input id="boxZ" type="number" value="-85" disabled>
+        </div>
+        <div class="field fit-field">
+          <label><span class="label-main" data-i18n="length">长度 L</span> <span data-i18n="lengthHelp">X 方向尺寸</span></label>
+          <input id="boxL" type="number" min="10" max="38000" step="10" value="6000">
+          <input data-for="boxL" type="range" min="10" max="38000" step="10" value="6000">
+          <button type="button" data-fit-mode="L" class="inline-fit active" data-i18n="fitLength">固定L最大贴合</button>
+        </div>
+        <div class="field fit-field">
+          <label><span class="label-main" data-i18n="width">宽度 W</span> <span data-i18n="widthHelp">Y 方向尺寸</span></label>
+          <input id="boxW" type="number" min="10" max="16000" step="10" value="6000">
+          <input data-for="boxW" type="range" min="10" max="16000" step="10" value="6000">
+          <button type="button" data-fit-mode="W" class="inline-fit" data-i18n="fitWidth">固定W最大贴合</button>
+        </div>
+        <div class="field fit-field">
+          <label><span class="label-main" data-i18n="height">高度 H</span> <span data-i18n="heightHelp">Z 方向尺寸</span></label>
+          <input id="boxH" type="number" min="10" max="4500" step="10" value="1200">
+          <input data-for="boxH" type="range" min="10" max="4500" step="10" value="1200">
+          <button type="button" data-fit-mode="H" class="inline-fit" data-i18n="fitHeight">固定H最大贴合</button>
+        </div>
+        <div class="fit-actions">
+          <button id="resetSize" data-i18n="resetSize">重置尺寸</button>
+          <button id="reset" data-i18n="resetView">重置视图</button>
+          <button id="toggleBox">隐藏长方体</button>
+          <button id="toggleModel">显示设备模型</button>
+        </div>
+      </section>
+
+    </aside>
+
+    <main>
+      <canvas id="scene"></canvas>
+      <div class="view-controls" data-i18n-aria-label="viewControls" aria-label="视角控制">
+        <div class="view-title" data-i18n="view">视图</div>
+        <div class="view-buttons">
+          <button data-view="default" data-i18n-title="defaultView" title="默认视角">·</button>
+          <button data-view="front" data-i18n-title="frontView" title="前视图">Y</button>
+          <button data-view="top" data-i18n-title="topView" title="上视图">Z</button>
+          <button data-view="right" data-i18n-title="rightView" title="右视图">X</button>
+        </div>
+      </div>
+      <div class="hud">
+        <div class="chip"><strong data-i18n="interactionHelp">拖拽旋转，滚轮缩放</strong><span data-i18n="envelopeHelp">透明体已扣除中间无限长禁区。</span></div>
+        <div id="stlRangeWarning" class="stl-range-warning" hidden role="status" aria-live="polite">
+          <strong data-i18n="stlOutOfRangeTitle">超出打印范围</strong>
+          <span id="stlRangeWarningText">导入模型的部分区域超出打印范围，已用红色显示。</span>
+        </div>
+        <div id="status" class="status box-hud">
+          <i class="dot"></i>
+          <span>长方体完全位于可达空间内。</span>
+        </div>
+        <div class="chip size-chip box-hud">
+          <strong data-i18n="size">尺寸</strong>
+          <div class="metrics">
+            <div class="metric"><b id="mL">280</b><span data-i18n="lengthMm">长度 mm</span></div>
+            <div class="metric"><b id="mW">360</b><span data-i18n="widthMm">宽度 mm</span></div>
+            <div class="metric"><b id="mH">260</b><span data-i18n="heightMm">高度 mm</span></div>
+          </div>
+        </div>
+        <div class="chip box-hud"><strong id="volumeLabel">体积 26.2 L</strong><span id="cornerLabel">8 个角点均在范围内</span></div>
+      </div>
+      <div class="scene-copyright">©Ming Xia</div>
+    </main>
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module">
+    import * as THREE from "three";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+    import { STLLoader } from "three/addons/loaders/STLLoader.js";
+
+    const ids = ["innerCircleY", "outerRadius", "innerRadius", "drawingYaw", "baseZ", "boxX", "boxY", "boxZ", "boxL", "boxW", "boxH"];
+    const input = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
+    const canvas = document.getElementById("scene");
+    const status = document.getElementById("status");
+    const statusText = status.querySelector("span");
+    const boxHudItems = [...document.querySelectorAll(".box-hud")];
+    const metrics = { l: document.getElementById("mL"), w: document.getElementById("mW"), h: document.getElementById("mH") };
+    const volumeLabel = document.getElementById("volumeLabel");
+    const cornerLabel = document.getElementById("cornerLabel");
+    const stlFileInput = document.getElementById("stlFile");
+    const stlName = document.getElementById("stlName");
+    const stlControls = document.getElementById("stlControls");
+    const stlRangeWarning = document.getElementById("stlRangeWarning");
+    const stlRangeWarningText = document.getElementById("stlRangeWarningText");
+    const resetStlButton = document.getElementById("resetStl");
+    const clearStlButton = document.getElementById("clearStl");
+    const toggleStlIntersectionButton = document.getElementById("toggleStlIntersection");
+    const languageToggle = document.getElementById("languageToggle");
+    const toggleBoxButton = document.getElementById("toggleBox");
+    const toggleModelButton = document.getElementById("toggleModel");
+    const stlInputs = Object.fromEntries([...document.querySelectorAll("[data-stl]")].map((el) => [el.dataset.stl, el]));
+    const stlPositionRanges = Object.fromEntries([...document.querySelectorAll("[data-stl-range]")].map((el) => [el.dataset.stlRange, el]));
+
+    const translations = {
+      zh: {
+        deviceTitle: "TJA(track)运动范围判定",
+        version: "V1.1 · 2026-07-27 · ©Ming Xia",
+        documentTitle: "TJA(track)运动范围判定 V1.1 · 2026-07-27 · ©Ming Xia",
+        measuredRange: "实测范围",
+        stlReference: "STL参考模型",
+        importStl: "导入 STL 模型",
+        resetParams: "重置参数",
+        clearStl: "清除 STL",
+        showIntersections: "显示交线",
+        hideIntersections: "隐藏交线",
+        stlEmpty: "未导入 STL。仅作为参考显示，不参与判定。",
+        stlSelect: "请选择 .stl 文件。",
+        stlImported: ({ name }) => `${name} 已导入。仅作为参考显示，不参与判定。`,
+        stlFailed: "STL 模型导入失败，请检查文件格式。",
+        stlNoIntersection: "未找到 STL 与运动范围边界的近似交线。",
+        stlIntersection: ({ count }) => `已显示 ${count} 段近似交线。仅作为参考显示，不参与判定。`,
+        stlOutOfRangeTitle: "超出打印范围",
+        stlOutOfRange: ({ count }) => `检测到 ${count} 个三角面超出打印范围，已用红色显示。`,
+        xPosition: "X位置",
+        yPosition: "Y位置",
+        zPosition: "Z位置",
+        scale: "缩放",
+        rotationX: "旋转X",
+        rotationY: "旋转Y",
+        rotationZ: "旋转Z",
+        opacity: "透明度",
+        boxTitle: "内接长方体",
+        xLocation: "X 中心位置",
+        xLocationHelp: "沿轨道方向移动长方体中心",
+        yLocation: "Y 中心位置",
+        yLocationHelp: "沿横向移动长方体中心",
+        zLocation: "底面高度 Z",
+        zLocationHelp: "固定为包络下限 Z=-85，向上展开",
+        length: "长度 L",
+        lengthHelp: "X 方向尺寸",
+        width: "宽度 W",
+        widthHelp: "Y 方向尺寸",
+        height: "高度 H",
+        heightHelp: "Z 方向尺寸",
+        fitLength: "固定L最大贴合",
+        fitWidth: "固定W最大贴合",
+        fitHeight: "固定H最大贴合",
+        resetSize: "重置尺寸",
+        resetView: "重置视图",
+        hideCuboid: "隐藏长方体",
+        showCuboid: "显示长方体",
+        showDeviceModel: "显示设备模型",
+        hideDeviceModel: "隐藏设备模型",
+        modelLoading: "设备模型加载中...",
+        modelLoadFailed: "设备模型加载失败，请稍后重试。",
+        viewControls: "视角控制",
+        view: "视图",
+        defaultView: "默认视角",
+        frontView: "前视图",
+        topView: "上视图",
+        rightView: "右视图",
+        interactionHelp: "拖拽旋转，滚轮缩放",
+        envelopeHelp: "透明体为外部候选包络扣除 |Y|≤500 mm 无限长、无限高中心禁区后的可达体。",
+        size: "尺寸",
+        lengthMm: "长度 mm",
+        widthMm: "宽度 mm",
+        heightMm: "高度 mm",
+        statusInside: "长方体在范围内。",
+        statusForbidden: "长方体进入 |Y|≤500 mm 的无限长中心禁区。",
+        statusOutside: "长方体超出 TJA(track) 外部候选包络。",
+        statusCorners: ({ count }) => `有 ${count} 个角点超出可达空间。`,
+        volume: ({ value }) => `体积 ${value} L`,
+        corners: ({ valid }) => `${valid} / 8 个角点在范围内`,
+        switchLanguage: "切换语言"
+      },
+      en: {
+        deviceTitle: "TJA(track) Motion Range Checker",
+        version: "V1.1 · 2026-07-27 · ©Ming Xia",
+        documentTitle: "TJA(track) Motion Range Checker V1.1 · 2026-07-27 · ©Ming Xia",
+        measuredRange: "Measured Range",
+        stlReference: "STL Reference Model",
+        importStl: "Import STL Model",
+        resetParams: "Reset Parameters",
+        clearStl: "Clear STL",
+        showIntersections: "Show Intersections",
+        hideIntersections: "Hide Intersections",
+        stlEmpty: "No STL imported. Reference display only; not used for checking.",
+        stlSelect: "Please choose an .stl file.",
+        stlImported: ({ name }) => `${name} imported. Reference display only; not used for checking.`,
+        stlFailed: "STL import failed. Please check the file format.",
+        stlNoIntersection: "No approximate intersection was found between the STL and the motion-range boundary.",
+        stlIntersection: ({ count }) => `${count} approximate intersection segments shown. Reference display only; not used for checking.`,
+        stlOutOfRangeTitle: "Out of Print Range",
+        stlOutOfRange: ({ count }) => `${count} triangle${count === 1 ? "" : "s"} exceed the print range and are shown in red.`,
+        xPosition: "X Position",
+        yPosition: "Y Position",
+        zPosition: "Z Position",
+        scale: "Scale",
+        rotationX: "Rotate X",
+        rotationY: "Rotate Y",
+        rotationZ: "Rotate Z",
+        opacity: "Opacity",
+        boxTitle: "Inscribed Cuboid",
+        xLocation: "X Center Position",
+        xLocationHelp: "Move the cuboid center along the rail",
+        yLocation: "Y Center Position",
+        yLocationHelp: "Move the cuboid center across the rail",
+        zLocation: "Base Height Z",
+        zLocationHelp: "Fixed at the workspace lower limit Z=-85, expands upward",
+        length: "Length L",
+        lengthHelp: "X direction size",
+        width: "Width W",
+        widthHelp: "Y direction size",
+        height: "Height H",
+        heightHelp: "Z direction size",
+        fitLength: "Fit Max with L Fixed",
+        fitWidth: "Fit Max with W Fixed",
+        fitHeight: "Fit Max with H Fixed",
+        resetSize: "Reset Size",
+        resetView: "Reset View",
+        hideCuboid: "Hide Cuboid",
+        showCuboid: "Show Cuboid",
+        showDeviceModel: "Show Device Model",
+        hideDeviceModel: "Hide Device Model",
+        modelLoading: "Loading Device Model...",
+        modelLoadFailed: "Device model failed to load. Please try again.",
+        viewControls: "View controls",
+        view: "View",
+        defaultView: "Default view",
+        frontView: "Front view",
+        topView: "Top view",
+        rightView: "Right view",
+        interactionHelp: "Drag to rotate; scroll to zoom",
+        envelopeHelp: "The translucent volume is the outer candidate envelope with the infinite |Y|≤500 mm center strip removed.",
+        size: "Size",
+        lengthMm: "Length mm",
+        widthMm: "Width mm",
+        heightMm: "Height mm",
+        statusInside: "Cuboid is within range.",
+        statusForbidden: "Cuboid enters the infinite |Y|≤500 mm center exclusion strip.",
+        statusOutside: "Cuboid exceeds the outer TJA(track) candidate envelope.",
+        statusCorners: ({ count }) => `${count} corner${count === 1 ? "" : "s"} exceed the reachable space.`,
+        volume: ({ value }) => `Volume ${value} L`,
+        corners: ({ valid }) => `${valid} / 8 corners within range`,
+        switchLanguage: "Switch language"
+      }
+    };
+
+    let language = "zh";
+    try {
+      language = localStorage.getItem("gl3dprt-lang") === "en" ? "en" : "zh";
+    } catch (error) {
+      language = "zh";
+    }
+
+    function t(key, values = {}) {
+      const value = translations[language][key];
+      return typeof value === "function" ? value(values) : value;
+    }
+
+    function setStlStatus(key, values = {}) {
+      stlStatusKey = key;
+      stlStatusValues = values;
+      stlName.textContent = t(key, values);
+    }
+
+    function applyDeviceActionLabels() {
+      toggleBoxButton.textContent = boxVisible ? t("hideCuboid") : t("showCuboid");
+      toggleModelButton.textContent = referenceModelLoading
+        ? t("modelLoading")
+        : referenceModelVisible ? t("hideDeviceModel") : t("showDeviceModel");
+      toggleStlIntersectionButton.textContent = stlIntersectionVisible ? t("hideIntersections") : t("showIntersections");
+    }
+
+    function applyDeviceLanguage() {
+      document.documentElement.lang = language === "en" ? "en" : "zh-CN";
+      document.querySelectorAll("[data-i18n]").forEach((element) => {
+        element.textContent = t(element.dataset.i18n);
+      });
+      document.querySelectorAll("[data-i18n-title]").forEach((element) => {
+        element.title = t(element.dataset.i18nTitle);
+      });
+      document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+        element.setAttribute("aria-label", t(element.dataset.i18nAriaLabel));
+      });
+      languageToggle.textContent = language === "en" ? "中文" : "EN";
+      languageToggle.setAttribute("aria-label", t("switchLanguage"));
+      document.title = t("documentTitle");
+      applyDeviceActionLabels();
+      setStlStatus(stlStatusKey, stlStatusValues);
+      updateStlRangeWarning(stlOutOfRangeFaceCount);
+      updateLabels(values());
+      if (statusOverrideKey) {
+        statusText.textContent = t(statusOverrideKey, statusOverrideValues);
+        status.classList.add("invalid");
+      }
+    }
+
+
+    const themePalettes = {
+      dark: {
+        scene: 0x000000,
+        gridCenter: 0x8f867b,
+        gridLine: 0x4b4540,
+        hemiGround: 0x000000,
+        workspace: 0x4da397,
+        workspaceEdge: 0x0f6b61,
+        forbidden: 0xff3b30,
+        box: 0xf0a84f,
+        boxBad: 0xd95043,
+        boxEdge: 0x7b3d00,
+        dimension: 0x1c2a27,
+        reference: 0xffffea,
+        intersection: 0xff3b30
+      },
+      light: {
+        scene: 0xf6f6f3,
+        gridCenter: 0xc8c8c1,
+        gridLine: 0xdadad3,
+        hemiGround: 0xffffff,
+        workspace: 0x2d9c88,
+        workspaceEdge: 0x147565,
+        forbidden: 0xe60023,
+        box: 0xe60023,
+        boxBad: 0x9e0a0a,
+        boxEdge: 0x8a0015,
+        dimension: 0x211922,
+        reference: 0x617bff,
+        intersection: 0xe60023
+      },
+      camada: {
+        scene: 0xffffff,
+        gridCenter: 0xb8dfae,
+        gridLine: 0xe3f3de,
+        hemiGround: 0xffffff,
+        workspace: 0xc4d8d4,
+        workspaceEdge: 0x8fb0aa,
+        forbidden: 0xff1616,
+        box: 0xff1616,
+        boxBad: 0x8a2f2f,
+        boxEdge: 0x383838,
+        dimension: 0x383838,
+        reference: 0x8f9898,
+        intersection: 0xff1616
+      }
+    };
+
+    function setMaterialColor(material, color) {
+      if (!material) return;
+      if (Array.isArray(material)) {
+        material.forEach((item) => setMaterialColor(item, color));
+        return;
+      }
+      if (material.color) material.color.setHex(color);
+      material.needsUpdate = true;
+    }
+
+    function applyTheme(theme) {
+      const safeTheme = ["dark", "light", "camada"].includes(theme) ? theme : "dark";
+      document.documentElement.dataset.theme = safeTheme;
+      const palette = themePalettes[safeTheme];
+      scene.background = new THREE.Color(palette.scene);
+      setMaterialColor(grid.material, palette.gridLine);
+      if (Array.isArray(grid.material)) {
+        grid.material.forEach((material) => {
+          material.vertexColors = false;
+          material.needsUpdate = true;
+        });
+        if (grid.material[0]) grid.material[0].color.setHex(palette.gridCenter);
+        if (grid.material[1]) grid.material[1].color.setHex(palette.gridLine);
+      } else if (grid.material) {
+        grid.material.vertexColors = false;
+        grid.material.color.setHex(palette.gridLine);
+        grid.material.needsUpdate = true;
+      }
+      hemi.groundColor.setHex(palette.hemiGround);
+      workspaceMaterial.color.setHex(palette.workspace);
+      edgeMaterial.color.setHex(palette.workspaceEdge);
+      forbiddenBoundaryMaterial.color.setHex(palette.forbidden);
+      boxMaterial.color.setHex(palette.box);
+      boxBadMaterial.color.setHex(palette.boxBad);
+      boxEdgeMaterial.color.setHex(palette.boxEdge);
+      dimensionMaterial.color.setHex(palette.dimension);
+      referenceModelMaterial.color.setHex(palette.reference);
+      stlIntersectionMaterial.color.setHex(palette.intersection);
+    }
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, logarithmicDepthBuffer: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+
+    const camera = new THREE.PerspectiveCamera(45, 1, 10, 100000);
+    camera.up.set(0, 0, 1);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.target.set(12000, 0, 1800);
+    controls.minDistance = 900;
+    controls.maxDistance = 90000;
+    setDefaultView();
+    controls.update();
+
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x000000, 2.05);
+    scene.add(hemi);
+    const sun = new THREE.DirectionalLight(0xfffbf2, 2.2);
+    sun.position.set(900, -700, 1300);
+    sun.castShadow = true;
+    scene.add(sun);
+
+      const grid = new THREE.GridHelper(48000, 24, 0x8f867b, 0x4b4540);
+    grid.rotation.x = Math.PI / 2;
+    grid.position.set(12000, 0, 0);
+    scene.add(grid);
+    scene.add(makeGridLabel("GL-3DPRT-TJA(track)", new THREE.Vector3(28000, 6000, 8)));
+
+    const axes = new THREE.Group();
+    const transverseAxisX = 12000;
+    axes.add(axisArrow(new THREE.Vector3(0, 0, 0), new THREE.Vector3(30000, 0, 0), 0xb84d3a, "X+"));
+    axes.add(axisArrow(
+      new THREE.Vector3(transverseAxisX, 0, 0),
+      new THREE.Vector3(transverseAxisX, 9500, 0),
+      0x1a7f70,
+      "Y+"
+    ));
+    axes.add(axisArrow(
+      new THREE.Vector3(transverseAxisX, 0, 0),
+      new THREE.Vector3(transverseAxisX, 0, 5200),
+      0x316cb3,
+      "Z+"
+    ));
+    axes.add(axisTicks(transverseAxisX));
+    scene.add(axes);
+
+    const workspaceMaterial = new THREE.MeshBasicMaterial({
+      color: 0x4da397,
+      transparent: true,
+      opacity: 0.2,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+    workspaceMaterial.forceSinglePass = true;
+    const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x0f6b61, transparent: true, opacity: 0.66 });
+    const forbiddenBoundaryMaterial = new THREE.LineBasicMaterial({ color: 0xff3b30, transparent: true, opacity: 0.9 });
+    const boxMaterial = new THREE.MeshStandardMaterial({ color: 0xf0a84f, transparent: true, opacity: 0.58, roughness: 0.45 });
+    const boxBadMaterial = new THREE.MeshStandardMaterial({ color: 0xd95043, transparent: true, opacity: 0.58, roughness: 0.45 });
+    const boxEdgeMaterial = new THREE.LineBasicMaterial({ color: 0x7b3d00 });
+    const dimensionMaterial = new THREE.LineBasicMaterial({ color: 0x1c2a27 });
+    const referenceModelMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffffea,
+      transparent: true,
+      opacity: 0.26,
+      roughness: 0.48,
+      metalness: 0.04,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+    const importedStlDefaults = {
+      positionX: 0,
+      positionY: 0,
+      positionZ: 0,
+      rotationX: 0,
+      rotationY: 0,
+      rotationZ: 0,
+      scale: 1,
+      opacity: 0.35
+    };
+    let importedStlMesh = null;
+    let stlIntersectionLines = null;
+    let stlIntersectionVisible = false;
+    let stlOutOfRangeFaceCount = 0;
+    const stlValidColor = new THREE.Color(0x8fc7ff);
+    const stlOutOfRangeColor = new THREE.Color(0xff3b30);
+    const stlIntersectionMaterial = new THREE.LineBasicMaterial({ color: 0xff3b30, transparent: true, opacity: 0.98, depthTest: false });
+    const referenceModelKey = "GL-3DPRT-TJA-track";
+    const referenceModelFallbackScriptUrl = new URL("assets/TJA-track-model.js?v=20260727-3", window.location.href).href;
+    const referenceModelGlbUrl = new URL("assets/GL-3DPRT-TJA-track.glb?v=20260727-3", window.location.href).href;
+    const tjaImport = { x: 21056, y: 6619.66, z: -480, rx: 90, ry: 180, rz: 0, scale: 1000 };
+    const tjaRailLimits = { min: 1000, max: 23000, radius: 8130.3, zMin: -85, zMax: 4415 };
+    const tjaForbiddenBand = { centerY: 0, halfWidth: 500, fitMargin: 10 };
+    const dracoDecoderPath = new URL("assets/draco/", window.location.href).href;
+    const useOfflineReferenceModel = window.location.protocol === "file:"
+      || new URLSearchParams(window.location.search).get("model") === "offline";
+    const modelLoadTimeoutMs = 120000;
+    let workspaceMesh = null;
+    let workspaceEdges = null;
+    let boxMesh = null;
+    let boxEdges = null;
+    let referenceModelMesh = null;
+    let referenceModelVisible = false;
+    let referenceModelLoading = false;
+    applyTheme(document.documentElement.dataset.theme);
+    let boxVisible = true;
+    let stlStatusKey = "stlEmpty";
+    let stlStatusValues = {};
+    let statusOverrideKey = null;
+    let statusOverrideValues = {};
+    let dimensionGroup = new THREE.Group();
+    let fitMode = "L";
+    scene.add(dimensionGroup);
+
+    const measuredRzProfile = [
+      { r: 7415, z: 0 },
+      { r: 7426.3, z: 100 },
+      { r: 7203, z: 2887 },
+      { r: 6491, z: 4682 },
+      { r: 6204, z: 5158 },
+      { r: 5974, z: 5502 },
+      { r: 5700, z: 5860 },
+      { r: 5600, z: 5980 },
+      { r: 5405, z: 6207 },
+      { r: 5200, z: 6408 },
+      { r: 5011, z: 6601 },
+      { r: 4809, z: 6786 },
+      { r: 4495, z: 7052 },
+      { r: 4299, z: 7207 },
+      { r: 4095, z: 7358 },
+      { r: 3992, z: 7427 },
+      { r: 3894, z: 7491 },
+      { r: 3807, z: 7546 },
+      { r: 3750, z: 7582 },
+      { r: 3664, z: 7634 },
+      { r: 3505, z: 7727 },
+      { r: 3400, z: 7803 },
+      { r: 3252, z: 7940 },
+      { r: 3200, z: 7992 },
+      { r: 3096, z: 8084 },
+      { r: 3005, z: 8163 },
+      { r: 2900, z: 8205 },
+      { r: 2832, z: 8303 },
+      { r: 2445, z: 5208 },
+      { r: 2042, z: 5002 },
+      { r: 1000, z: 4889.7 }
+    ];
+    const smoothingControls = [
+      ...measuredRzProfile.slice(0, 22),
+      { r: 3220, z: 7830 },
+      { r: 3020, z: 7730 },
+      { r: 2830, z: 7300 },
+      { r: 2445, z: 5208 },
+      { r: 2042, z: 5002 },
+      { r: 1000, z: 4889.7 }
+    ];
+
+    function chaikinOpenProfile(points, passes) {
+      let result = points.map((point) => ({ ...point }));
+      for (let pass = 0; pass < passes; pass += 1) {
+        const next = [result[0]];
+        for (let i = 0; i < result.length - 1; i += 1) {
+          const a = result[i];
+          const b = result[i + 1];
+          next.push(
+            { r: a.r * 0.75 + b.r * 0.25, z: a.z * 0.75 + b.z * 0.25 },
+            { r: a.r * 0.25 + b.r * 0.75, z: a.z * 0.25 + b.z * 0.75 }
+          );
+        }
+        next.push(result[result.length - 1]);
+        result = next;
+      }
+      return result;
+    }
+
+    const smoothRzProfile = [
+      ...chaikinOpenProfile(smoothingControls, 4),
+      { r: 1000, z: 0 },
+      { r: 7415, z: 0 }
+    ];
+    const measuredMinR = Math.min(...smoothRzProfile.map((p) => p.r));
+    const measuredMaxR = Math.max(...smoothRzProfile.map((p) => p.r));
+    const measuredMinZ = Math.min(...smoothRzProfile.map((p) => p.z));
+    const measuredMaxZ = Math.max(...smoothRzProfile.map((p) => p.z));
+
+    bindInputs();
+    update();
+    applyDeviceLanguage();
+    animate();
+
+    languageToggle.addEventListener("click", () => {
+      language = language === "en" ? "zh" : "en";
+      try {
+        localStorage.setItem("gl3dprt-lang", language);
+      } catch (error) {
+        // Keep the current page switchable when storage is unavailable.
+      }
+      applyDeviceLanguage();
+    });
+
+    document.querySelectorAll("[data-fit-mode]").forEach((button) => {
+      button.addEventListener("click", () => {
+        fitMode = button.dataset.fitMode;
+        document.querySelectorAll("[data-fit-mode]").forEach((el) => el.classList.toggle("active", el === button));
+        fitBox();
+        syncRanges();
+        update();
+      });
+    });
+
+    document.getElementById("resetSize").addEventListener("click", () => {
+      const v = values();
+      input.boxX.value = 12000;
+      input.boxY.value = 4000;
+      input.boxZ.value = -85;
+      input.boxL.value = 6000;
+      input.boxW.value = 6000;
+      input.boxH.value = 1200;
+      syncRanges();
+      update();
+    });
+
+    document.getElementById("reset").addEventListener("click", () => {
+      setDefaultView();
+      controls.target.set(12000, 0, 1800);
+      controls.update();
+    });
+
+    document.getElementById("toggleModel").addEventListener("click", async () => {
+      if (!referenceModelMesh && !referenceModelLoading) {
+        referenceModelVisible = true;
+        referenceModelLoading = true;
+        applyDeviceActionLabels();
+        const loaded = await loadReferenceModel();
+        referenceModelLoading = false;
+        referenceModelVisible = loaded;
+        applyDeviceActionLabels();
+        if (!loaded) {
+          statusOverrideKey = "modelLoadFailed";
+          statusOverrideValues = {};
+          status.classList.add("invalid");
+          statusText.textContent = t(statusOverrideKey, statusOverrideValues);
+        } else {
+          statusOverrideKey = null;
+          statusOverrideValues = {};
+        }
+        return;
+      }
+      if (referenceModelLoading) return;
+      referenceModelVisible = !referenceModelVisible;
+      statusOverrideKey = null;
+      statusOverrideValues = {};
+      applyDeviceActionLabels();
+      if (referenceModelMesh) referenceModelMesh.visible = referenceModelVisible;
+    });
+
+    document.getElementById("toggleBox").addEventListener("click", () => {
+      boxVisible = !boxVisible;
+      applyDeviceActionLabels();
+      applyBoxVisibility();
+    });
+
+    stlFileInput.addEventListener("change", async () => {
+      const file = stlFileInput.files?.[0];
+      if (file) await loadStlModel(file);
+      stlFileInput.value = "";
+    });
+
+    Object.values(stlInputs).forEach((el) => {
+      el.addEventListener("input", () => {
+        if (stlPositionRanges[el.dataset.stl]) syncStlPositionRanges();
+        applyStlTransform();
+      });
+    });
+
+    Object.entries(stlPositionRanges).forEach(([key, range]) => {
+      range.addEventListener("input", () => {
+        stlInputs[key].value = range.value;
+        applyStlTransform();
+      });
+    });
+
+    resetStlButton.addEventListener("click", () => {
+      resetStlInputs();
+      applyStlTransform();
+    });
+
+    clearStlButton.addEventListener("click", clearStlModel);
+
+    toggleStlIntersectionButton.addEventListener("click", () => {
+      stlIntersectionVisible = !stlIntersectionVisible;
+      applyDeviceActionLabels();
+      updateStlIntersection();
+    });
+
+    document.querySelectorAll("[data-view]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (button.dataset.view === "default") {
+          setDefaultView();
+        } else {
+          setNamedView(button.dataset.view);
+        }
+        controls.update();
+      });
+    });
+
+    window.addEventListener("resize", resize);
+
+    async function loadReferenceModel() {
+      if (referenceModelMesh) {
+        referenceModelMesh.visible = referenceModelVisible;
+        return true;
+      }
+      referenceModelLoading = true;
+      try {
+        const [{ GLTFLoader }] = await withTimeout(Promise.all([
+          import("three/addons/loaders/GLTFLoader.js")
+        ]), modelLoadTimeoutMs, "GLB 加载器载入超时");
+        const loader = new GLTFLoader();
+        if (useOfflineReferenceModel) {
+          const { MeshoptDecoder } = await withTimeout(
+            import("three/addons/libs/meshopt_decoder.module.js"),
+            modelLoadTimeoutMs,
+            "离线模型解码器载入超时"
+          );
+          loader.setMeshoptDecoder(MeshoptDecoder);
+        } else {
+          const { DRACOLoader } = await withTimeout(
+            import("three/addons/loaders/DRACOLoader.js"),
+            modelLoadTimeoutMs,
+            "设备模型解码器载入超时"
+          );
+          const dracoLoader = new DRACOLoader();
+          dracoLoader.setDecoderPath(dracoDecoderPath);
+          loader.setDRACOLoader(dracoLoader);
+        }
+        const modelBuffer = await loadReferenceModelBuffer();
+        const gltf = await withTimeout(new Promise((resolve, reject) => {
+          loader.parse(modelBuffer, "", resolve, reject);
+        }), modelLoadTimeoutMs, "GL-3DPRT-TJA-track.glb 解析超时");
+        referenceModelMesh = gltf.scene;
+        referenceModelMesh.name = "tja-track-reference-model";
+        referenceModelMesh.position.set(tjaImport.x, tjaImport.y, tjaImport.z);
+        referenceModelMesh.rotation.set(
+          THREE.MathUtils.degToRad(tjaImport.rx),
+          THREE.MathUtils.degToRad(tjaImport.ry),
+          THREE.MathUtils.degToRad(tjaImport.rz)
+        );
+        referenceModelMesh.scale.setScalar(tjaImport.scale);
+        referenceModelMesh.traverse((child) => {
+          if (!child.isMesh) return;
+          child.material = referenceModelMaterial;
+          child.frustumCulled = false;
+          child.renderOrder = 8;
+          child.castShadow = false;
+          child.receiveShadow = false;
+        });
+        referenceModelMesh.visible = referenceModelVisible;
+        scene.add(referenceModelMesh);
+        return true;
+      } catch (error) {
+        console.error("TJA 设备模型加载失败", error);
+        if (referenceModelMesh) {
+          scene.remove(referenceModelMesh);
+          referenceModelMesh = null;
+        }
+        return false;
+      } finally {
+        referenceModelLoading = false;
+      }
+    }
+
+    async function loadReferenceModelBuffer() {
+      if (useOfflineReferenceModel) {
+        await withTimeout(loadClassicScript(referenceModelFallbackScriptUrl), modelLoadTimeoutMs, "本地模型包载入超时");
+        const base64 = window.__GL3DPRT_MODELS__?.[referenceModelKey];
+        if (!base64) throw new Error(`本地模型包缺失: ${referenceModelKey}`);
+        return base64ToArrayBuffer(base64);
+      }
+      const response = await withTimeout(fetch(referenceModelGlbUrl), modelLoadTimeoutMs, "设备模型下载超时");
+      if (!response.ok) throw new Error(`设备模型请求失败：${response.status}`);
+      return withTimeout(response.arrayBuffer(), modelLoadTimeoutMs, "设备模型读取超时");
+    }
+
+    function loadClassicScript(url) {
+      if (window.__GL3DPRT_MODELS__?.[referenceModelKey]) return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = url;
+        script.onload = resolve;
+        script.onerror = () => reject(new Error("本地模型包加载失败"));
+        document.head.appendChild(script);
+      });
+    }
+
+    function base64ToArrayBuffer(base64) {
+      const binary = window.atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+      return bytes.buffer;
+    }
+
+    async function loadStlModel(file) {
+      if (!file.name.toLowerCase().endsWith(".stl")) {
+        setStlStatus("stlSelect");
+        return;
+      }
+      try {
+        const buffer = await file.arrayBuffer();
+        const geometry = new STLLoader().parse(buffer);
+        geometry.computeVertexNormals();
+        geometry.computeBoundingBox();
+        clearStlModel();
+        const material = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          vertexColors: true,
+          transparent: true,
+          opacity: importedStlDefaults.opacity,
+          roughness: 0.52,
+          metalness: 0.02,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        });
+        importedStlMesh = new THREE.Mesh(geometry, material);
+        importedStlMesh.name = "imported-stl-reference-model";
+        importedStlMesh.renderOrder = 9;
+        importedStlMesh.frustumCulled = false;
+        scene.add(importedStlMesh);
+        resetStlInputs();
+        applyStlTransform();
+        setStlControlsEnabled(true);
+        setStlStatus("stlImported", { name: file.name });
+      } catch (error) {
+        console.error("STL 模型导入失败", error);
+        setStlStatus("stlFailed");
+      }
+    }
+
+    function resetStlInputs() {
+      Object.entries(importedStlDefaults).forEach(([key, value]) => {
+        stlInputs[key].value = value;
+      });
+      syncStlPositionRanges();
+    }
+
+    function syncStlPositionRanges() {
+      Object.entries(stlPositionRanges).forEach(([key, range]) => {
+        const input = stlInputs[key];
+        if (!input) return;
+        const value = numberValue(input, 0);
+        range.value = THREE.MathUtils.clamp(value, Number(range.min), Number(range.max));
+      });
+    }
+
+    function applyStlTransform() {
+      if (!importedStlMesh) return;
+      importedStlMesh.position.set(
+        numberValue(stlInputs.positionX, importedStlDefaults.positionX),
+        numberValue(stlInputs.positionY, importedStlDefaults.positionY),
+        numberValue(stlInputs.positionZ, importedStlDefaults.positionZ)
+      );
+      importedStlMesh.rotation.set(
+        THREE.MathUtils.degToRad(numberValue(stlInputs.rotationX, importedStlDefaults.rotationX)),
+        THREE.MathUtils.degToRad(numberValue(stlInputs.rotationY, importedStlDefaults.rotationY)),
+        THREE.MathUtils.degToRad(numberValue(stlInputs.rotationZ, importedStlDefaults.rotationZ))
+      );
+      importedStlMesh.scale.setScalar(Math.max(0.001, numberValue(stlInputs.scale, importedStlDefaults.scale)));
+      importedStlMesh.material.opacity = THREE.MathUtils.clamp(numberValue(stlInputs.opacity, importedStlDefaults.opacity), 0.05, 1);
+      importedStlMesh.material.needsUpdate = true;
+      updateStlRangeVisualization();
+      if (stlIntersectionVisible) updateStlIntersection();
+    }
+
+    function clearStlModel() {
+      if (importedStlMesh) {
+        scene.remove(importedStlMesh);
+        importedStlMesh.geometry.dispose();
+        importedStlMesh.material.dispose();
+        importedStlMesh = null;
+      }
+      clearStlIntersection();
+      stlOutOfRangeFaceCount = 0;
+      updateStlRangeWarning(0);
+      stlIntersectionVisible = false;
+      applyDeviceActionLabels();
+      setStlControlsEnabled(false);
+      resetStlInputs();
+      setStlStatus("stlEmpty");
+    }
+
+    function setStlControlsEnabled(enabled) {
+      stlControls.hidden = !enabled;
+      resetStlButton.disabled = !enabled;
+      clearStlButton.disabled = !enabled;
+      toggleStlIntersectionButton.disabled = !enabled;
+    }
+
+    function numberValue(el, fallback) {
+      const value = Number(el.value);
+      return Number.isFinite(value) ? value : fallback;
+    }
+
+    function updateStlRangeWarning(count) {
+      const outOfRange = Boolean(importedStlMesh && count > 0);
+      stlRangeWarning.hidden = !outOfRange;
+      if (outOfRange) stlRangeWarningText.textContent = t("stlOutOfRange", { count });
+    }
+
+    function updateStlRangeVisualization() {
+      if (!importedStlMesh) {
+        stlOutOfRangeFaceCount = 0;
+        updateStlRangeWarning(0);
+        return;
+      }
+
+      importedStlMesh.updateMatrixWorld(true);
+      const source = importedStlMesh.geometry.getAttribute("position");
+      if (!source) return;
+      let colors = importedStlMesh.geometry.getAttribute("color");
+      if (!colors || colors.count !== source.count) {
+        colors = new THREE.BufferAttribute(new Float32Array(source.count * 3), 3);
+        importedStlMesh.geometry.setAttribute("color", colors);
+      }
+
+      const matrix = importedStlMesh.matrixWorld;
+      const v = values();
+      const a = new THREE.Vector3();
+      const b = new THREE.Vector3();
+      const c = new THREE.Vector3();
+      const centroid = new THREE.Vector3();
+      const triangleCount = Math.floor(source.count / 3);
+      let outOfRangeFaces = 0;
+      for (let i = 0; i < triangleCount; i += 1) {
+        a.fromBufferAttribute(source, i * 3).applyMatrix4(matrix);
+        b.fromBufferAttribute(source, i * 3 + 1).applyMatrix4(matrix);
+        c.fromBufferAttribute(source, i * 3 + 2).applyMatrix4(matrix);
+        centroid.copy(a).add(b).add(c).multiplyScalar(1 / 3);
+        const faceInside = pointCheck(a, v).inside
+          && pointCheck(b, v).inside
+          && pointCheck(c, v).inside
+          && pointCheck(centroid, v).inside;
+        const color = faceInside ? stlValidColor : stlOutOfRangeColor;
+        for (let vertex = 0; vertex < 3; vertex += 1) {
+          colors.setXYZ(i * 3 + vertex, color.r, color.g, color.b);
+        }
+        if (!faceInside) outOfRangeFaces += 1;
+      }
+      colors.needsUpdate = true;
+      stlOutOfRangeFaceCount = outOfRangeFaces;
+      updateStlRangeWarning(outOfRangeFaces);
+    }
+
+    function updateStlIntersection() {
+      clearStlIntersection();
+      if (!stlIntersectionVisible || !importedStlMesh) return;
+      const geometry = makeStlIntersectionGeometry();
+      const count = geometry.getAttribute("position").count;
+      if (count < 2) {
+        geometry.dispose();
+        setStlStatus("stlNoIntersection");
+        return;
+      }
+      stlIntersectionLines = new THREE.LineSegments(geometry, stlIntersectionMaterial);
+      stlIntersectionLines.renderOrder = 30;
+      scene.add(stlIntersectionLines);
+      setStlStatus("stlIntersection", { count: count / 2 });
+    }
+
+    function clearStlIntersection() {
+      if (!stlIntersectionLines) return;
+      scene.remove(stlIntersectionLines);
+      stlIntersectionLines.geometry.dispose();
+      stlIntersectionLines = null;
+    }
+
+    function makeStlIntersectionGeometry() {
+      const source = importedStlMesh.geometry.getAttribute("position");
+      importedStlMesh.updateMatrixWorld(true);
+      const matrix = importedStlMesh.matrixWorld;
+      const v = values();
+      const vertices = [];
+      const a = new THREE.Vector3();
+      const b = new THREE.Vector3();
+      const c = new THREE.Vector3();
+      const triangleCount = Math.floor(source.count / 3);
+      const step = Math.max(1, Math.ceil(triangleCount / 60000));
+      for (let i = 0; i < triangleCount; i += step) {
+        a.fromBufferAttribute(source, i * 3).applyMatrix4(matrix);
+        b.fromBufferAttribute(source, i * 3 + 1).applyMatrix4(matrix);
+        c.fromBufferAttribute(source, i * 3 + 2).applyMatrix4(matrix);
+        const crossings = [
+          edgeIntersectionPoint(a, b, v),
+          edgeIntersectionPoint(b, c, v),
+          edgeIntersectionPoint(c, a, v)
+        ].filter(Boolean);
+        if (crossings.length >= 2) {
+          vertices.push(crossings[0].x, crossings[0].y, crossings[0].z, crossings[1].x, crossings[1].y, crossings[1].z);
+        }
+      }
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
+      return geometry;
+    }
+
+    function edgeIntersectionPoint(a, b, v) {
+      const aInside = pointCheck(a, v).inside;
+      const bInside = pointCheck(b, v).inside;
+      if (aInside === bInside) return null;
+      let lo = a.clone();
+      let hi = b.clone();
+      let loInside = aInside;
+      for (let i = 0; i < 10; i += 1) {
+        const mid = lo.clone().lerp(hi, 0.5);
+        const midInside = pointCheck(mid, v).inside;
+        if (midInside === loInside) {
+          lo = mid;
+          loInside = midInside;
+        } else {
+          hi = mid;
+        }
+      }
+      return lo.clone().lerp(hi, 0.5);
+    }
+
+    function withTimeout(promise, timeoutMs, message) {
+      let timer = null;
+      const timeout = new Promise((_, reject) => {
+        timer = window.setTimeout(() => reject(new Error(message)), timeoutMs);
+      });
+      return Promise.race([promise, timeout]).finally(() => window.clearTimeout(timer));
+    }
+
+    function setDefaultView() {
+      const distance = 29000;
+      const target = new THREE.Vector3(12000, 0, 1800);
+      const angle = THREE.MathUtils.degToRad(25);
+      controls.target.copy(target);
+      camera.position.set(
+        target.x + Math.cos(angle) * distance,
+        target.y + 0.82 * distance,
+        target.z + Math.sin(angle) * distance
+      );
+      camera.up.set(0, 0, 1);
+      camera.lookAt(target);
+    }
+
+    function setNamedView(view) {
+      const distance = 38000;
+      const target = new THREE.Vector3(12000, 0, 1800);
+      controls.target.copy(target);
+      if (view === "front") {
+        camera.position.set(target.x, target.y - distance, target.z);
+      } else if (view === "top") {
+        camera.position.set(target.x, target.y, target.z + distance);
+        camera.up.set(0, 1, 0);
+        camera.lookAt(target);
+        return;
+      } else {
+        camera.position.set(target.x + distance, target.y, target.z);
+      }
+      camera.up.set(0, 0, 1);
+      camera.lookAt(target);
+    }
+
+    function bindInputs() {
+      document.querySelectorAll("input[type='number']").forEach((el) => {
+        el.addEventListener("input", () => {
+          const range = document.querySelector(`input[type='range'][data-for='${el.id}']`);
+          if (range) range.value = el.value;
+          update();
+        });
+      });
+
+      document.querySelectorAll("input[type='range'][data-for]").forEach((el) => {
+        el.addEventListener("input", () => {
+          const target = document.getElementById(el.dataset.for);
+          target.value = el.value;
+          update();
+        });
+      });
+
+    }
+
+    function values() {
+      const v = Object.fromEntries(ids.map((id) => [id, Number(input[id].value)]));
+      return v;
+    }
+
+    function update() {
+      const v = values();
+      drawWorkspace(v);
+      drawBox(v);
+      drawDimensions(v);
+      updateLabels(v);
+      resize();
+    }
+
+    function drawWorkspace(v) {
+      if (workspaceMesh) {
+        workspaceMesh.geometry.dispose();
+        scene.remove(workspaceMesh);
+      }
+      if (workspaceEdges) {
+        workspaceEdges.geometry.dispose();
+        scene.remove(workspaceEdges);
+      }
+
+      const geometry = makeDrawingWorkspaceGeometry(v);
+      workspaceMesh = new THREE.Mesh(geometry, workspaceMaterial);
+      scene.add(workspaceMesh);
+
+      workspaceEdges = makeForbiddenBandBoundary();
+      scene.add(workspaceEdges);
+    }
+
+    function makeDrawingWorkspaceGeometry(v) {
+      const boundary = tjaCapsuleBoundary(160);
+      const lobes = [
+        clipPolygonAtY(boundary, tjaForbiddenBand.halfWidth, true),
+        clipPolygonAtY(boundary, -tjaForbiddenBand.halfWidth, false)
+      ].filter((polygon) => polygon.length >= 3);
+      const vertices = [];
+      const indices = [];
+      for (const polygon of lobes) {
+        const offset = vertices.length / 3;
+        const count = polygon.length;
+        for (const point of polygon) vertices.push(point.x, point.y, tjaRailLimits.zMin);
+        for (const point of polygon) vertices.push(point.x, point.y, tjaRailLimits.zMax);
+        for (let i = 0; i < count; i += 1) {
+          const next = (i + 1) % count;
+          addSideQuad(indices, offset + i, offset + next, offset + count + next, offset + count + i);
+        }
+        const triangles = THREE.ShapeUtils.triangulateShape(
+          polygon.map((point) => new THREE.Vector2(point.x, point.y)),
+          []
+        );
+        for (const [a, b, c] of triangles) {
+          indices.push(offset + c, offset + b, offset + a);
+          indices.push(offset + count + a, offset + count + b, offset + count + c);
+        }
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
+      geometry.setIndex(indices);
+      geometry.computeVertexNormals();
+      return geometry;
+    }
+
+    function clipPolygonAtY(points, threshold, keepAbove) {
+      const inside = (point) => keepAbove ? point.y >= threshold : point.y <= threshold;
+      const clipped = [];
+      for (let i = 0; i < points.length; i += 1) {
+        const current = points[i];
+        const previous = points[(i + points.length - 1) % points.length];
+        const currentInside = inside(current);
+        const previousInside = inside(previous);
+        if (currentInside !== previousInside) {
+          const ratio = (threshold - previous.y) / (current.y - previous.y);
+          clipped.push({
+            x: THREE.MathUtils.lerp(previous.x, current.x, ratio),
+            y: threshold
+          });
+        }
+        if (currentInside) clipped.push({ ...current });
+      }
+      return clipped.filter((point, index) => {
+        const previous = clipped[(index + clipped.length - 1) % clipped.length];
+        return !previous || Math.hypot(point.x - previous.x, point.y - previous.y) > 0.001;
+      });
+    }
+
+    function makeForbiddenBandBoundary() {
+      const halfWidth = tjaForbiddenBand.halfWidth;
+      const endReach = Math.sqrt(tjaRailLimits.radius ** 2 - halfWidth ** 2);
+      const x0 = tjaRailLimits.min - endReach;
+      const x1 = tjaRailLimits.max + endReach;
+      const z0 = tjaRailLimits.zMin;
+      const z1 = tjaRailLimits.zMax;
+      const corners = [
+        [x0, -halfWidth, z0], [x1, -halfWidth, z0], [x1, halfWidth, z0], [x0, halfWidth, z0],
+        [x0, -halfWidth, z1], [x1, -halfWidth, z1], [x1, halfWidth, z1], [x0, halfWidth, z1]
+      ];
+      const edges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+      const positions = [];
+      for (const [a, b] of edges) positions.push(...corners[a], ...corners[b]);
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+      const lines = new THREE.LineSegments(geometry, forbiddenBoundaryMaterial);
+      lines.renderOrder = 4;
+      return lines;
+    }
+
+    function tjaCapsuleBoundary(arcSteps = 160) {
+      const points = [];
+      const pushArc = (cx, start, end) => {
+        for (let i = 0; i <= arcSteps; i += 1) {
+          const angle = THREE.MathUtils.lerp(start, end, i / arcSteps);
+          points.push({
+            x: cx + tjaRailLimits.radius * Math.cos(angle),
+            y: tjaRailLimits.radius * Math.sin(angle)
+          });
+        }
+      };
+      pushArc(tjaRailLimits.max, -Math.PI / 2, Math.PI / 2);
+      points.push({ x: tjaRailLimits.min, y: tjaRailLimits.radius });
+      pushArc(tjaRailLimits.min, Math.PI / 2, 3 * Math.PI / 2);
+      points.push({ x: tjaRailLimits.max, y: -tjaRailLimits.radius });
+      return points;
+    }
+
+    function addSideQuad(indices, a, b, c, d) {
+      indices.push(a, b, d, b, c, d);
+    }
+
+    function measuredRadialRangeAtYaw(yaw, v) {
+      const sin = Math.sin(yaw);
+      const cos = Math.cos(yaw);
+      const cy = v.innerCircleY;
+      const discriminant = v.innerRadius * v.innerRadius - cy * cy * cos * cos;
+      const forbiddenExit = discriminant < 0 ? measuredMinR : cy * sin + Math.sqrt(discriminant);
+      const minR = Math.max(measuredMinR, forbiddenExit);
+      const maxR = Math.min(v.outerRadius, measuredMaxR);
+      return {
+        min: Math.min(minR, maxR),
+        max: Math.max(minR, maxR)
+      };
+    }
+
+    function measuredRadialRangeAtYawAndZ(yaw, z, v) {
+      const xyRange = measuredRadialRangeAtYaw(yaw, v);
+      const rzRange = largestRzIntervalAtZ(z);
+      if (!rzRange) {
+        return { min: 0, max: 0 };
+      }
+      const min = Math.max(xyRange.min, rzRange.min);
+      const max = Math.min(xyRange.max, rzRange.max);
+      const mid = (min + max) / 2;
+      return min <= max ? { min, max } : { min: mid, max: mid };
+    }
+
+    function largestRzIntervalAtZ(z) {
+      const clampedZ = THREE.MathUtils.clamp(z, measuredMinZ + 0.001, measuredMaxZ - 0.001);
+      const crossings = [];
+      for (let i = 0; i < smoothRzProfile.length; i++) {
+        const a = smoothRzProfile[i];
+        const b = smoothRzProfile[(i + 1) % smoothRzProfile.length];
+        if ((a.z <= clampedZ && b.z > clampedZ) || (b.z <= clampedZ && a.z > clampedZ)) {
+          const t = (clampedZ - a.z) / (b.z - a.z);
+          crossings.push(THREE.MathUtils.lerp(a.r, b.r, t));
+        }
+      }
+      crossings.sort((a, b) => a - b);
+      const unique = [];
+      for (const r of crossings) {
+        if (!unique.length || Math.abs(r - unique[unique.length - 1]) > 0.5) unique.push(r);
+      }
+      let best = null;
+      for (let i = 0; i < unique.length - 1; i += 2) {
+        const min = unique[i];
+        const max = unique[i + 1];
+        if (!best || max - min > best.max - best.min) best = { min, max };
+      }
+      return best;
+    }
+
+    function drawBox(v) {
+      const geometry = new THREE.BoxGeometry(v.boxL, v.boxW, v.boxH);
+      if (!boxMesh) {
+        boxMesh = new THREE.Mesh(geometry, boxMaterial);
+        boxMesh.castShadow = true;
+        scene.add(boxMesh);
+        boxEdges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), boxEdgeMaterial);
+        scene.add(boxEdges);
+      } else {
+        boxMesh.geometry.dispose();
+        boxMesh.geometry = geometry;
+        boxEdges.geometry.dispose();
+        boxEdges.geometry = new THREE.EdgesGeometry(geometry);
+      }
+      const yBounds = boxYBounds(v);
+      boxMesh.position.set(v.boxX, (yBounds.min + yBounds.max) / 2, v.baseZ + v.boxH / 2);
+      boxEdges.position.copy(boxMesh.position);
+      boxMesh.material = isBoxInside(v).inside ? boxMaterial : boxBadMaterial;
+      applyBoxVisibility();
+    }
+
+    function drawDimensions(v) {
+      dimensionGroup.clear();
+      dimensionGroup.visible = boxVisible;
+      const isCamadaTheme = document.documentElement.dataset.theme === "camada";
+      const x0 = v.boxX - v.boxL / 2;
+      const x1 = v.boxX + v.boxL / 2;
+      const yBounds = boxYBounds(v);
+      const y0 = yBounds.min;
+      const y1 = yBounds.max;
+      const z0 = v.baseZ;
+      const z1 = v.baseZ + v.boxH;
+      const pad = isCamadaTheme ? Math.max(180, Math.min(v.boxL, v.boxW, v.boxH) * 0.16) : 44;
+      const lLabelOffset = isCamadaTheme ? new THREE.Vector3(0, -780, 0) : new THREE.Vector3(0, -360, 0);
+      const wLabelOffset = isCamadaTheme ? new THREE.Vector3(820, 0, 0) : new THREE.Vector3(360, 0, 0);
+      const hLabelOffset = isCamadaTheme ? new THREE.Vector3(980, 860, 0) : new THREE.Vector3(420, 420, 0);
+
+      addDimensionLine(
+        new THREE.Vector3(x0, y0 - pad, z0),
+        new THREE.Vector3(x1, y0 - pad, z0),
+        isCamadaTheme ? `${fmt(v.boxL)} mm` : `L ${fmt(v.boxL)} mm`,
+        lLabelOffset
+      );
+      addDimensionLine(
+        new THREE.Vector3(x1 + pad, y0, z0),
+        new THREE.Vector3(x1 + pad, y1, z0),
+        isCamadaTheme ? `${fmt(v.boxW)} mm` : `W ${fmt(v.boxW)} mm`,
+        wLabelOffset
+      );
+      addDimensionLine(
+        new THREE.Vector3(x1 + pad, y1 + pad, z0),
+        new THREE.Vector3(x1 + pad, y1 + pad, z1),
+        isCamadaTheme ? `${fmt(v.boxH)} mm` : `H ${fmt(v.boxH)} mm`,
+        hLabelOffset
+      );
+    }
+
+    function addDimensionLine(a, b, text, labelOffset = new THREE.Vector3()) {
+      const isCamadaTheme = document.documentElement.dataset.theme === "camada";
+      const color = isCamadaTheme ? 0x383838 : 0xf7f5f0;
+      const radius = isCamadaTheme ? 5 : 18;
+      const material = new THREE.MeshBasicMaterial({ color });
+      dimensionGroup.add(cylinderBetween(a, b, radius, material));
+      if (isCamadaTheme) {
+        const delta = b.clone().sub(a);
+        const tickDir = Math.abs(delta.z) > Math.max(Math.abs(delta.x), Math.abs(delta.y))
+          ? new THREE.Vector3(1, 0, 0)
+          : new THREE.Vector3(0, 0, 1);
+        const tick = 190;
+        [a, b].forEach((point) => {
+          const t0 = point.clone().addScaledVector(tickDir, -tick / 2);
+          const t1 = point.clone().addScaledVector(tickDir, tick / 2);
+          dimensionGroup.add(cylinderBetween(t0, t1, 4, material));
+        });
+      }
+
+      const mid = a.clone().add(b).multiplyScalar(0.5).add(labelOffset);
+      const label = makeLabel(text, {
+        scaleX: isCamadaTheme ? 1050 : 3136,
+        scaleY: isCamadaTheme ? 260 : 882,
+        fontSize: isCamadaTheme ? 200 : 120,
+        background: 0,
+        textColor: isCamadaTheme ? "#000000" : "#f7f5f0",
+        fontWeight: isCamadaTheme ? 500 : 850,
+        sizeAttenuation: true
+      });
+      label.position.copy(mid);
+      dimensionGroup.add(label);
+    }
+
+    function applyBoxVisibility() {
+      if (boxMesh) boxMesh.visible = boxVisible;
+      if (boxEdges) boxEdges.visible = boxVisible;
+      dimensionGroup.visible = boxVisible;
+      boxHudItems.forEach((item) => { item.hidden = !boxVisible; });
+    }
+
+    function makeLabel(text, options = {}) {
+      const fontSize = options.fontSize || 98;
+      const background = options.background ?? 0.72;
+      const c = document.createElement("canvas");
+      c.width = 1024;
+      c.height = 256;
+      const ctx = c.getContext("2d");
+      if (background > 0) {
+        ctx.fillStyle = `rgba(56,51,48,${background})`;
+        roundRect(ctx, 34, 38, 956, 180, 36);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(247,245,240,0.18)";
+        ctx.lineWidth = 5;
+        ctx.stroke();
+      }
+      ctx.fillStyle = options.textColor || "#f7f5f0";
+      ctx.font = `${options.fontWeight || 850} ${fontSize}px system-ui, sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, 512, 128);
+      const texture = new THREE.CanvasTexture(c);
+      texture.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
+      const material = new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true,
+        depthTest: false,
+        sizeAttenuation: options.sizeAttenuation === true
+      });
+      const sprite = new THREE.Sprite(material);
+      sprite.scale.set(options.scaleX || 0.132, options.scaleY || 0.036, 1);
+      return sprite;
+    }
+
+    function makeGridLabel(text, position) {
+      const c = document.createElement("canvas");
+      c.width = 1024;
+      c.height = 220;
+      const ctx = c.getContext("2d");
+      ctx.fillStyle = "rgba(56,51,48,0.72)";
+      roundRect(ctx, 24, 34, 976, 152, 28);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(247,245,240,0.18)";
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      ctx.fillStyle = "#f7f5f0";
+      ctx.font = "800 92px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, 512, 112);
+
+      const texture = new THREE.CanvasTexture(c);
+      const material = new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(5200, 1120), material);
+      mesh.position.copy(position);
+      mesh.rotation.z = Math.PI;
+      return mesh;
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function updateLabels(v) {
+      const result = isBoxInside(v);
+      status.classList.toggle("invalid", !result.inside);
+      status.classList.remove("warning");
+      if (result.inside) {
+        statusText.textContent = t("statusInside");
+      } else if (result.reason === "forbiddenBand") {
+        statusText.textContent = t("statusForbidden");
+      } else if (result.invalidSamples > 0) {
+        statusText.textContent = t("statusOutside");
+      } else {
+        statusText.textContent = t("statusCorners", { count: 8 - result.validCorners });
+      }
+      metrics.l.textContent = fmt(v.boxL);
+      metrics.w.textContent = fmt(v.boxW);
+      metrics.h.textContent = fmt(v.boxH);
+      volumeLabel.textContent = t("volume", { value: fmt((v.boxL * v.boxW * v.boxH) / 1000000) });
+      cornerLabel.textContent = t("corners", { valid: result.validCorners });
+    }
+
+    function isBoxInside(v) {
+      const corners = boxCorners(v);
+      let validCorners = 0;
+      let invalidSamples = 0;
+      let clearance = Infinity;
+      for (const p of corners) {
+        const check = pointCheck(p, v);
+        if (check.inside) validCorners += 1;
+        clearance = Math.min(clearance, check.clearance);
+      }
+      for (const p of boxSamplePoints(v)) {
+        const check = pointCheck(p, v);
+        if (!check.inside) invalidSamples += 1;
+        clearance = Math.min(clearance, check.clearance);
+      }
+      const forbiddenBand = forbiddenBandCheck(v);
+      clearance = Math.min(clearance, forbiddenBand.clearance);
+      return {
+        inside: validCorners === 8 && invalidSamples === 0 && !forbiddenBand.intersects,
+        validCorners,
+        invalidSamples,
+        clearance,
+        reason: forbiddenBand.intersects ? "forbiddenBand" : (invalidSamples > 0 ? "samples" : "corners")
+      };
+    }
+
+    function forbiddenBandCheck(v) {
+      const bounds = boxYBounds(v);
+      const low = tjaForbiddenBand.centerY - tjaForbiddenBand.halfWidth;
+      const high = tjaForbiddenBand.centerY + tjaForbiddenBand.halfWidth;
+      const intersects = bounds.min <= high + 0.001 && bounds.max >= low - 0.001;
+      const clearance = bounds.min > high
+        ? bounds.min - high
+        : (bounds.max < low ? low - bounds.max : -Math.min(bounds.max - low, high - bounds.min));
+      return { intersects, clearance };
+    }
+
+    function pointCheck(p, v) {
+      return drawingPointCheck(p, v);
+    }
+
+    function drawingPointCheck(p, v) {
+      const horizontalDistance = distanceToRailSegment(p.x, p.y);
+      const horizontalClearance = tjaRailLimits.radius - horizontalDistance;
+      const rzCheck = rzPointCheck(horizontalDistance, p.z);
+      const forbiddenClearance = Math.abs(p.y - tjaForbiddenBand.centerY) - tjaForbiddenBand.halfWidth;
+      return {
+        inside: horizontalDistance <= tjaRailLimits.radius + 0.001
+          && rzCheck.inside
+          && forbiddenClearance > 0.001,
+        clearance: Math.min(horizontalClearance, rzCheck.clearance, forbiddenClearance)
+      };
+    }
+
+    function rzPointCheck(r, z) {
+      const low = z - tjaRailLimits.zMin;
+      const high = tjaRailLimits.zMax - z;
+      const clearance = Math.min(low, high);
+      return { inside: z >= tjaRailLimits.zMin - 0.001 && z <= tjaRailLimits.zMax + 0.001, clearance };
+    }
+
+    function distanceToRailSegment(x, y) {
+      const nearestX = THREE.MathUtils.clamp(x, tjaRailLimits.min, tjaRailLimits.max);
+      return Math.hypot(x - nearestX, y);
+    }
+
+    function distancePointToSegment(px, py, ax, ay, bx, by) {
+      const dx = bx - ax;
+      const dy = by - ay;
+      const len2 = dx * dx + dy * dy;
+      const t = len2 <= 0 ? 0 : THREE.MathUtils.clamp(((px - ax) * dx + (py - ay) * dy) / len2, 0, 1);
+      return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+    }
+
+    function boxCorners(v) {
+      const xs = [v.boxX - v.boxL / 2, v.boxX + v.boxL / 2];
+      const yBounds = boxYBounds(v);
+      const ys = [yBounds.min, yBounds.max];
+      const zs = [v.baseZ, v.baseZ + v.boxH];
+      const corners = [];
+      for (const x of xs) for (const y of ys) for (const z of zs) corners.push(new THREE.Vector3(x, y, z));
+      return corners;
+    }
+
+    function boxSamplePoints(v) {
+      const xs = sampleRange(v.boxX - v.boxL / 2, v.boxX + v.boxL / 2, 9);
+      const yBounds = boxYBounds(v);
+      const ys = sampleRange(yBounds.min, yBounds.max, 9);
+      const zs = sampleRange(v.baseZ, v.baseZ + v.boxH, 9);
+      const points = [];
+      for (const x of xs) for (const y of ys) {
+        points.push(new THREE.Vector3(x, y, v.baseZ));
+        points.push(new THREE.Vector3(x, y, v.baseZ + v.boxH));
+      }
+      for (const z of zs) {
+        for (const x of xs) {
+          points.push(new THREE.Vector3(x, yBounds.min, z));
+          points.push(new THREE.Vector3(x, yBounds.max, z));
+        }
+        for (const y of ys) {
+          points.push(new THREE.Vector3(v.boxX - v.boxL / 2, y, z));
+          points.push(new THREE.Vector3(v.boxX + v.boxL / 2, y, z));
+        }
+      }
+      return points;
+    }
+
+    function boxYBounds(v) {
+      return { min: v.boxY - v.boxW / 2, max: v.boxY + v.boxW / 2 };
+    }
+
+    function sampleRange(min, max, count) {
+      if (count <= 1) return [(min + max) / 2];
+      return Array.from({ length: count }, (_, i) => THREE.MathUtils.lerp(min, max, i / (count - 1)));
+    }
+
+    function positiveInnerY(v) {
+      return Math.ceil(v.innerCircleY + v.innerRadius);
+    }
+
+    function negativeInnerY(v) {
+      return Math.floor(v.innerCircleY - v.innerRadius);
+    }
+
+    function fitBox() {
+      const v = values();
+      fitDrawingBox(v, fitMode);
+    }
+
+    function shrinkBoxUntilInside() {
+      let guard = 0;
+      while (!isBoxInside(values()).inside && guard < 40) {
+        input.boxL.value = Math.max(10, Math.floor(Number(input.boxL.value) * 0.94 / 10) * 10);
+        input.boxW.value = Math.max(10, Math.floor(Number(input.boxW.value) * 0.94 / 10) * 10);
+        input.boxH.value = Math.max(10, Math.floor(Number(input.boxH.value) * 0.94 / 10) * 10);
+        guard += 1;
+      }
+    }
+
+    function fitDrawingBox(v, mode) {
+      const railSpan = tjaRailLimits.max - tjaRailLimits.min;
+      const xCenter = (tjaRailLimits.min + tjaRailLimits.max) / 2;
+      const nearY = tjaForbiddenBand.centerY + tjaForbiddenBand.halfWidth + tjaForbiddenBand.fitMargin;
+      const maxL = Number(input.boxL.max);
+      const maxW = Number(input.boxW.max);
+      const maxH = tjaRailLimits.zMax - tjaRailLimits.zMin;
+      const floor10 = (value) => Math.max(10, Math.floor(value / 10) * 10);
+      const lengthForFarY = (farY) => {
+        if (farY >= tjaRailLimits.radius) return 0;
+        return Math.min(maxL, railSpan + 2 * Math.sqrt(tjaRailLimits.radius ** 2 - farY ** 2));
+      };
+      const outerYForLength = (length) => {
+        const endOverhang = Math.max(0, (length - railSpan) / 2);
+        if (endOverhang >= tjaRailLimits.radius) return 0;
+        return Math.sqrt(tjaRailLimits.radius ** 2 - endOverhang ** 2);
+      };
+
+      input.boxZ.value = tjaRailLimits.zMin;
+      input.boxX.value = xCenter;
+
+      if (mode === "L") {
+        const fixedL = Number(input.boxL.value);
+        const fittedW = floor10(Math.min(maxW, outerYForLength(fixedL) - nearY));
+        input.boxW.value = fittedW;
+        input.boxH.value = maxH;
+        input.boxY.value = nearY + fittedW / 2;
+      } else if (mode === "W") {
+        const fixedW = Number(input.boxW.value);
+        const fittedL = floor10(lengthForFarY(nearY + fixedW));
+        input.boxL.value = fittedL;
+        input.boxH.value = maxH;
+        input.boxY.value = nearY + fixedW / 2;
+      } else {
+        let best = null;
+        for (let width = 10; width <= maxW; width += 10) {
+          const length = floor10(lengthForFarY(nearY + width));
+          if (length < 10) break;
+          const area = length * width;
+          if (!best || area > best.area || (area === best.area && length > best.length)) {
+            best = { length, width, area };
+          }
+        }
+        const fitted = best || { length: 10, width: 10 };
+        input.boxL.value = fitted.length;
+        input.boxW.value = fitted.width;
+        input.boxY.value = nearY + fitted.width / 2;
+      }
+
+      if (!isBoxInside(values()).inside) shrinkBoxUntilInside();
+    }
+
+    function fitPrimaryThenSecondary(base, config, boundaryY) {
+      const fixed = { boxY: boundaryY, [config.a]: config.aMin, [config.b]: config.bMin };
+      if (!isCandidateInside(base, fixed)) {
+        input.boxY.value = boundaryY;
+        applyFitPairValues(base, config, config.aMin, config.bMin);
+        return;
+      }
+
+      const primary = maximizeCandidateValue(base, config.a, config.aMin, config.aMax, {
+        boxY: boundaryY,
+        [config.b]: config.bMin
+      });
+      const fixedPrimary = Math.max(config.aMin, Math.floor((primary || config.aMin) / 10) * 10);
+      const secondary = maximizeCandidateValue(base, config.b, config.bMin, config.bMax, {
+        boxY: boundaryY,
+        [config.a]: fixedPrimary
+      });
+      const fixedSecondary = Math.max(config.bMin, Math.floor((secondary || config.bMin) / 10) * 10);
+
+      input.boxY.value = boundaryY;
+      applyFitPairValues(base, config, fixedPrimary, fixedSecondary);
+    }
+
+    function fitHeightBySearchingY(base, config, boundaryY) {
+      const radialLimits = radialLimitsForHeight(base.baseZ, base.baseZ + base.boxH);
+      if (!radialLimits) {
+        input.boxY.value = boundaryY;
+        applyFitPairValues(base, config, config.aMin, config.bMin);
+        return;
+      }
+
+      const radialMin = Math.max(0, radialLimits.min);
+      const radialMax = Math.min(radialLimits.max, base.outerRadius);
+      const yMin = base.boxY < 0 ? boundaryY : Math.max(boundaryY, Math.floor(Math.max(radialMin, base.innerCircleY + base.innerRadius) / 10) * 10);
+      const yMax = base.boxY < 0 ? boundaryY : Math.min(base.outerRadius - 10, Math.ceil(radialMax / 10) * 10);
+
+      let best = searchFixedHeightFootprint(base, config, yMin, yMax, radialMin, radialMax, 160, 160);
+      if (best) {
+        best = searchFixedHeightFootprint(
+          base,
+          config,
+          Math.max(yMin, best.y - 220),
+          Math.min(yMax, best.y + 220),
+          radialMin,
+          radialMax,
+          20,
+          20,
+          Math.max(config.bMin, best.secondary - 360),
+          Math.min(config.bMax, best.secondary + 360)
+        ) || best;
+      }
+
+      if (!best) {
+        input.boxY.value = boundaryY;
+        applyFitPairValues(base, config, config.aMin, config.bMin);
+        return;
+      }
+
+      input.boxY.value = best.y;
+      applyFitPairValues(base, config, best.primary, best.secondary);
+    }
+
+    function searchFixedHeightFootprint(base, config, yMin, yMax, radialMin, radialMax, yStep, secondaryStep, secondaryMin = config.bMin, secondaryMax = config.bMax) {
+      let best = null;
+      const searchYMin = base.boxY < 0 ? yMin : Math.max(yMin, radialMin);
+      const searchYMax = base.boxY < 0 ? yMax : Math.min(yMax, radialMax - config.bMin);
+
+      for (const y of steppedValues(searchYMin, searchYMax, yStep)) {
+        const nearYAbs = Math.abs(y);
+        if (nearYAbs < radialMin - 0.001) continue;
+
+        const maxSecondaryAtY = y < 0
+          ? Math.min(secondaryMax, Math.abs(y) - radialMin, radialMax + y)
+          : Math.min(secondaryMax, radialMax - y);
+        if (maxSecondaryAtY < config.bMin) continue;
+
+        input.boxY.value = y;
+        for (const secondaryCandidate of steppedValues(secondaryMin, maxSecondaryAtY, secondaryStep)) {
+          const fixedSecondary = Math.max(config.bMin, Math.min(config.bMax, Math.floor(secondaryCandidate / 10) * 10));
+          const farY = y < 0 ? y - fixedSecondary : y + fixedSecondary;
+          const farYAbs = Math.abs(farY);
+          if (farYAbs > radialMax) continue;
+
+          const maxHalfLength = Math.sqrt(Math.max(0, radialMax * radialMax - farYAbs * farYAbs));
+          const primaryLimit = Math.max(config.aMin, Math.min(config.aMax, Math.floor((maxHalfLength * 2) / 10) * 10));
+          const fixedPrimary = largestValidPrimaryForSecondary(base, config, y, primaryLimit, fixedSecondary, Math.max(10, yStep));
+          if (!fixedPrimary) continue;
+
+          const area = fixedPrimary * fixedSecondary;
+          if (
+            !best
+            || area > best.area
+            || (area === best.area && fixedPrimary > best.primary)
+            || (area === best.area && fixedPrimary === best.primary && fixedSecondary > best.secondary)
+          ) {
+            best = { y, primary: fixedPrimary, secondary: fixedSecondary, area };
+          }
+        }
+      }
+      return best;
+    }
+
+    function largestValidPrimaryForSecondary(base, config, y, primaryLimit, fixedSecondary, step) {
+      const start = Math.floor(primaryLimit / 10) * 10;
+      for (let primary = start; primary >= config.aMin; primary -= step) {
+        const fixedPrimary = Math.max(config.aMin, Math.floor(primary / 10) * 10);
+        if (isCandidateInside(base, { boxY: y, [config.a]: fixedPrimary, [config.b]: fixedSecondary })) return fixedPrimary;
+      }
+      return isCandidateInside(base, { boxY: y, [config.a]: config.aMin, [config.b]: fixedSecondary }) ? config.aMin : null;
+    }
+
+    function isCandidateInside(base, overrides = {}) {
+      return isBoxInside({ ...base, ...overrides, boxZ: 0 }).inside;
+    }
+
+    function maximizeCandidateValue(base, targetId, minValue, maxValue, fixed = {}) {
+      let lo = minValue;
+      let hi = maxValue;
+      if (!isCandidateInside(base, { ...fixed, [targetId]: lo })) return null;
+      if (isCandidateInside(base, { ...fixed, [targetId]: hi })) return hi;
+      for (let i = 0; i < 24; i++) {
+        const mid = (lo + hi) / 2;
+        if (isCandidateInside(base, { ...fixed, [targetId]: mid })) lo = mid;
+        else hi = mid;
+      }
+      return lo;
+    }
+
+    function radialLimitsForHeight(zMin, zMax) {
+      const sampleCount = 36;
+      const zValues = Array.from({ length: sampleCount }, (_, i) => (
+        THREE.MathUtils.lerp(zMin, zMax, i / (sampleCount - 1))
+      ));
+      let min = -Infinity;
+      let max = Infinity;
+      for (const z of zValues) {
+        const interval = largestRzIntervalAtZ(z);
+        if (!interval) return null;
+        min = Math.max(min, interval.min);
+        max = Math.min(max, interval.max);
+      }
+      return min <= max ? { min, max } : null;
+    }
+
+    function steppedValues(min, max, step) {
+      const values = [];
+      const start = Math.ceil(min / 10) * 10;
+      const end = Math.floor(max / 10) * 10;
+      for (let value = start; value <= end; value += step) values.push(value);
+      if (!values.includes(end)) values.push(end);
+      return values;
+    }
+
+    function searchPrimarySecondaryY(base, config, yMin, yMax, yStep) {
+      let best = null;
+      for (let y = yMin; y <= yMax; y += yStep) {
+        input.boxY.value = y;
+        applyFitPairValues(base, config, config.aMin, config.bMin);
+        if (!isBoxInside(values()).inside) continue;
+
+        const primary = maximizeFitValue(base, config, config.a, config.aMin, config.aMax, config.b, config.bMin);
+        const fixedPrimary = Math.max(config.aMin, Math.floor(primary / 10) * 10);
+        const secondary = maximizeFitValue(base, config, config.b, config.bMin, config.bMax, config.a, fixedPrimary);
+        const fixedSecondary = Math.max(config.bMin, Math.floor(secondary / 10) * 10);
+        if (!best || fixedPrimary > best.primary || (fixedPrimary === best.primary && fixedSecondary > best.secondary)) {
+          best = { y, primary: fixedPrimary, secondary: fixedSecondary };
+        }
+      }
+      return best;
+    }
+
+    function maximizeFitValue(base, config, targetId, minValue, maxValue, otherId, otherValue) {
+      let lo = minValue;
+      let hi = maxValue;
+      applyTwoValueCandidate(base, targetId, hi, otherId, otherValue);
+      if (isBoxInside(values()).inside) return hi;
+      for (let i = 0; i < 24; i++) {
+        const mid = (lo + hi) / 2;
+        applyTwoValueCandidate(base, targetId, mid, otherId, otherValue);
+        if (isBoxInside(values()).inside) lo = mid;
+        else hi = mid;
+      }
+      return lo;
+    }
+
+    function applyTwoValueCandidate(base, targetId, targetValue, otherId, otherValue) {
+      input.boxL.value = base.boxL;
+      input.boxW.value = base.boxW;
+      input.boxH.value = base.boxH;
+      input[targetId].value = targetValue;
+      input[otherId].value = otherValue;
+    }
+
+    function applyFitPairValues(base, config, aValue, bValue) {
+      input.boxL.value = base.boxL;
+      input.boxW.value = base.boxW;
+      input.boxH.value = base.boxH;
+      input[config.a].value = aValue;
+      input[config.b].value = bValue;
+    }
+
+    function fitConfigForMode(mode) {
+      const fixed = mode === "W" ? "boxW" : mode === "H" ? "boxH" : "boxL";
+      const variables = ["boxL", "boxW", "boxH"].filter((id) => id !== fixed);
+      return {
+        fixed,
+        a: variables[0],
+        b: variables[1],
+        aMin: Number(input[variables[0]].min),
+        aMax: Number(input[variables[0]].max),
+        bMin: Number(input[variables[1]].min),
+        bMax: Number(input[variables[1]].max)
+      };
+    }
+
+    function fitFreeRatio(base, config) {
+      const maxFree = Math.max(1, base[config.a], base[config.b]);
+      return {
+        a: Math.max(0.001, base[config.a] / maxFree),
+        b: Math.max(0.001, base[config.b] / maxFree)
+      };
+    }
+
+    function searchFitPairScale(base, config, ratio, yMin, yMax, yStep, minScale, maxScale) {
+      let best = null;
+      for (let y = yMin; y <= yMax; y += yStep) {
+        input.boxY.value = y;
+        applyFitPairScale(base, config, ratio, minScale);
+        if (!isBoxInside(values()).inside) continue;
+
+        let lo = minScale;
+        let hi = maxScale;
+        applyFitPairScale(base, config, ratio, hi);
+        if (isBoxInside(values()).inside) lo = hi;
+
+        for (let i = 0; i < 20; i++) {
+          const mid = (lo + hi) / 2;
+          applyFitPairScale(base, config, ratio, mid);
+          if (isBoxInside(values()).inside) lo = mid;
+          else hi = mid;
+        }
+
+        const score = (lo * ratio.a) * (lo * ratio.b);
+        if (!best || score > best.score) {
+          best = { y, scale: lo, score };
+        }
+      }
+      return best;
+    }
+
+    function applyFitPairScale(base, config, ratio, scale) {
+      input.boxL.value = base.boxL;
+      input.boxW.value = base.boxW;
+      input.boxH.value = base.boxH;
+      input[config.a].value = scale * ratio.a;
+      input[config.b].value = scale * ratio.b;
+    }
+
+    function shrinkFitPairUntilInside(config) {
+      let guard = 0;
+      while (!isBoxInside(values()).inside && guard < 60) {
+        input[config.a].value = Math.max(Number(input[config.a].min), Math.floor(Number(input[config.a].value) * 0.98 / 10) * 10);
+        input[config.b].value = Math.max(Number(input[config.b].min), Math.floor(Number(input[config.b].value) * 0.98 / 10) * 10);
+        guard += 1;
+      }
+    }
+
+    function shrinkSecondaryUntilInside(config) {
+      let guard = 0;
+      while (!isBoxInside(values()).inside && guard < 60) {
+        input[config.b].value = Math.max(Number(input[config.b].min), Math.floor(Number(input[config.b].value) * 0.98 / 10) * 10);
+        guard += 1;
+      }
+    }
+
+    function measuredPeakHeight() {
+      return smoothRzProfile.reduce((max, p) => Math.max(max, p.z), 0);
+    }
+
+    function syncRanges() {
+      document.querySelectorAll("input[type='range'][data-for]").forEach((range) => {
+        range.value = document.getElementById(range.dataset.for).value;
+      });
+    }
+
+    function axisArrow(start, end, color, label) {
+      const group = new THREE.Group();
+      const dir = end.clone().sub(start);
+      const material = new THREE.MeshBasicMaterial({ color });
+      group.add(cylinderBetween(start, end, 34, material));
+      const cone = new THREE.ConeGeometry(145, 390, 28);
+      const coneMesh = new THREE.Mesh(cone, material);
+      coneMesh.position.copy(end);
+      coneMesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+      group.add(coneMesh);
+      const sprite = makeLabel(label, { scaleX: 0.14, scaleY: 0.04, fontSize: 126, background: 0 });
+      sprite.position.copy(start.clone().addScaledVector(dir, 1.06));
+      group.add(sprite);
+      return group;
+    }
+
+    function axisTicks(transverseAxisX = 0) {
+      const group = new THREE.Group();
+      const matX = new THREE.MeshBasicMaterial({ color: 0xb84d3a });
+      const matY = new THREE.MeshBasicMaterial({ color: 0x1a7f70 });
+      const matZ = new THREE.MeshBasicMaterial({ color: 0x316cb3 });
+      addCylinderLine(group, new THREE.Vector3(-8200, 0, 0), new THREE.Vector3(0, 0, 0), matX, 22);
+      addCylinderLine(
+        group,
+        new THREE.Vector3(transverseAxisX, -9500, 0),
+        new THREE.Vector3(transverseAxisX, 0, 0),
+        matY,
+        22
+      );
+      addCylinderLine(
+        group,
+        new THREE.Vector3(transverseAxisX, 0, -400),
+        new THREE.Vector3(transverseAxisX, 0, 0),
+        matZ,
+        22
+      );
+
+      for (let v = -8000; v <= 32000; v += 4000) {
+        if (v === 0) continue;
+        addCylinderLine(group, new THREE.Vector3(v, -160, 0), new THREE.Vector3(v, 160, 0), matX, 16);
+      }
+      for (let v = -8000; v <= 8000; v += 4000) {
+        if (v === 0) continue;
+        addCylinderLine(
+          group,
+          new THREE.Vector3(transverseAxisX - 160, v, 0),
+          new THREE.Vector3(transverseAxisX + 160, v, 0),
+          matY,
+          16
+        );
+      }
+
+      for (let z = 2000; z <= 6000; z += 2000) {
+        addCylinderLine(
+          group,
+          new THREE.Vector3(transverseAxisX - 170, 0, z),
+          new THREE.Vector3(transverseAxisX + 170, 0, z),
+          matZ,
+          16
+        );
+      }
+      return group;
+    }
+
+    function addCylinderLine(group, start, end, material, radius) {
+      group.add(cylinderBetween(start, end, radius, material));
+    }
+
+    function cylinderBetween(start, end, radius, material) {
+      const dir = end.clone().sub(start);
+      const geometry = new THREE.CylinderGeometry(radius, radius, dir.length(), 18);
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.copy(start).add(end).multiplyScalar(0.5);
+      mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+      return mesh;
+    }
+
+    function fmt(n) {
+      return Number(n).toLocaleString("zh-CN", { maximumFractionDigits: n < 20 ? 1 : 0 });
+    }
+
+    function resize() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      renderer.setSize(rect.width, rect.height, false);
+      camera.aspect = rect.width / rect.height;
+      camera.updateProjectionMatrix();
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+  </script>
+</body>
+</html>

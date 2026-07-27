@@ -1,8 +1,8 @@
 # GL-3DPRT 运动范围判定工具
 
-版本：v1.17
+版本：v1.18
 
-日期：2026-07-24
+日期：2026-07-27
 
 这是一个用于 GL-3DPRT 蜘蛛式建筑 3D 打印机的浏览器端运动范围判定项目。工具根据实测的 X-Y 平面范围和 R-Z 垂直截面，生成三维可达空间，并判断输入的长方体是否完整落在设备运动范围内。
 
@@ -10,6 +10,7 @@
 
 - `GL-3DPRT-SP-M`
 - `GL-3DPRT-SP-S`
+- `GL-3DPRT-TJA(track)`
 
 项目入口是：
 
@@ -20,6 +21,8 @@ outputs/index.html
 打开入口页后选择设备型号，进入对应的判定工具。
 
 两个设备页面都支持临时导入本地 STL 参考模型。STL 文件只在浏览器本地读取，不会上传；导入后可以通过滑动条或手动输入调整 X/Y/Z 位置，也可以调整 X/Y/Z 旋转、缩放和透明度。导入的 STL 只用于观察对照，不参与运动范围判定。
+
+TJA(track) 页面使用沿 X 轨道扫掠的胶囊形包络，工作区约 38 m 长；页面的网格、相机、坐标轴和模型默认视图均按长轨道尺度调整。
 
 设备页面还支持隐藏/显示中间的内接长方体和尺寸标注；隐藏后参数和判定结果仍会保留。
 
@@ -33,11 +36,16 @@ outputs/index.html
 outputs/index.html                    设备选择入口
 outputs/GL-3DPRT-SP-M.html            SP-M 运动范围判定工具
 outputs/GL-3DPRT-SP-S.html            SP-S 运动范围判定工具
+outputs/GL-3DPRT-TJA-track.html       TJA(track) 运动范围判定工具
 outputs/GL-3DPRT-SP-M说明.md          SP-M 使用说明
 outputs/GL-3DPRT-SP-S说明.md          SP-S 使用说明
+outputs/GL-3DPRT-TJA-track说明.md     TJA(track) 使用说明
 outputs/assets/GL-3DPRT-SP-M.glb      SP-M 设备模型，供 HTTP / GitHub Pages 使用
 outputs/assets/GL-3DPRT-SP-S.glb      SP-S 高精度设备模型，供 HTTP / GitHub Pages 使用
 outputs/assets/GL-3DPRT-SP-S-model.js  SP-S 高精度设备模型的 file:// 备用包
+outputs/assets/GL-3DPRT-TJA-track.glb  TJA(track) 压缩完整设备模型，供 HTTP / GitHub Pages 使用
+outputs/assets/TJA-track-model.js      TJA(track) file:// 离线备用模型包
+outputs/assets/raw/GL-3DPRT-TJA-track-raw.glb  TJA(track) 原始模型备份
 outputs/assets/*-model.js             本地 file:// 打开时使用的备用模型包
 outputs/glb-compressor.html           维护用 GLB 压缩工具
 outputs/preview.html                  维护用界面预览文件
@@ -79,6 +87,7 @@ http://localhost:4174/outputs/index.html
 - `outputs/index.html`
 - `outputs/GL-3DPRT-SP-M.html`
 - `outputs/GL-3DPRT-SP-S.html`
+- `outputs/GL-3DPRT-TJA-track.html`
 - `outputs/assets`
 
 如果只分享单个设备页面，也要同时提供该设备对应的 `.glb` 和 `*-model.js` 文件，否则设备模型按钮无法在所有访问方式下正常工作。
