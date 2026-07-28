@@ -1,8 +1,8 @@
 # GL-3DPRT 运动范围判定工具
 
-版本：v1.18
+版本：v1.25
 
-日期：2026-07-27
+日期：2026-07-28
 
 这是一个用于 GL-3DPRT 蜘蛛式建筑 3D 打印机的浏览器端运动范围判定项目。工具根据实测的 X-Y 平面范围和 R-Z 垂直截面，生成三维可达空间，并判断输入的长方体是否完整落在设备运动范围内。
 
@@ -11,6 +11,7 @@
 - `GL-3DPRT-SP-M`
 - `GL-3DPRT-SP-S`
 - `GL-3DPRT-TJA(track)`
+- `GL-3DPRT-TRL`
 
 项目入口是：
 
@@ -20,9 +21,25 @@ outputs/index.html
 
 打开入口页后选择设备型号，进入对应的判定工具。
 
-两个设备页面都支持临时导入本地 STL 参考模型。STL 文件只在浏览器本地读取，不会上传；导入后可以通过滑动条或手动输入调整 X/Y/Z 位置，也可以调整 X/Y/Z 旋转、缩放和透明度。导入的 STL 只用于观察对照，不参与运动范围判定。
+各设备页面都支持临时导入本地 STL 参考模型。STL 文件只在浏览器本地读取，不会上传；导入后可以通过滑动条或手动输入调整 X/Y/Z 位置，也可以调整 X/Y/Z 旋转、缩放和透明度。导入的 STL 只用于观察对照，不参与运动范围判定。
 
 TJA(track) 页面使用沿 X 轨道扫掠的胶囊形包络，工作区约 38 m 长；页面的网格、相机、坐标轴和模型默认视图均按长轨道尺度调整。
+
+TRL 页面使用 KUKA KR210 R2700-2 轨道项目的 50 mm 真实 IK 包络，支持 `Long` / `Standard` 两种 Nozzle。切换时同步更换光滑包络、末端 GLB 和判定模板。模型固定使用 E1=3050、A1=-6.99986°、A2=-62.22702°、A3=35.48715°、A4=0°、A5=-116.7401°、A6=-18.3870° 的截图姿态。
+
+TRL 的 Y 向内侧边初始值、重置值和导入 STL 后的恢复值为 `1100 mm`，但这不是硬下限。用户可在 `0…4000 mm` 内手动调整，长方体判定和最大贴合使用当前 Y 值并由 Nozzle 包络决定结果。
+
+TRL V1.2 将画面显示的最终闭合光滑网格作为长方体、STL 和最大贴合的直接判定边界，修复角点视觉上已经越界但仍被原始 50 mm 模板接受的问题；地面型号字已缩小并向 `+Y` 外侧移动，坐标轴多余刻度也已移除。
+
+TRL V1.3 增加 `file://` 离线资源包。直接双击 `outputs/index.html` 进入时，可正常显示包络、长方体和坐标场景；设备参考模型在点击显示按钮后按需加载离线轻量模型。HTTP/GitHub Pages 仍使用原始分件模型。
+
+TRL V1.4 将 `Y=1100 mm` 改为初始/重置/导入恢复值；用户可手动调整至更低位置，判定与最大贴合按当前 Y 值执行。
+
+TRL V1.4 同时取消 150 mm 地面闭合放宽，并将显示/判定包络同步下移约 40.4 mm 至 `Z=0`，底面仅在网格内侧约 2 mm 处取样，修复长方体底边视觉越界但仍显示范围内的问题。
+
+TRL V1.5 将离线光滑包络底部约 150 mm 的过渡带直接压平到 `Z=0`。显示网格与 BVH 判定网格共用这一平底几何，使整个有效底部接触地面，避免只有最低点落地而其余底边悬空。
+
+TRL V1.6 将 Nozzle 规格标题与切换框调整为同一行，并统一垂直居中。
 
 设备页面还支持隐藏/显示中间的内接长方体和尺寸标注；隐藏后参数和判定结果仍会保留。
 
@@ -37,14 +54,17 @@ outputs/index.html                    设备选择入口
 outputs/GL-3DPRT-SP-M.html            SP-M 运动范围判定工具
 outputs/GL-3DPRT-SP-S.html            SP-S 运动范围判定工具
 outputs/GL-3DPRT-TJA-track.html       TJA(track) 运动范围判定工具
+outputs/GL-3DPRT-TRL.html             TRL 运动范围判定工具
 outputs/GL-3DPRT-SP-M说明.md          SP-M 使用说明
 outputs/GL-3DPRT-SP-S说明.md          SP-S 使用说明
 outputs/GL-3DPRT-TJA-track说明.md     TJA(track) 使用说明
+outputs/GL-3DPRT-TRL说明.md           TRL 使用说明
 outputs/assets/GL-3DPRT-SP-M.glb      SP-M 设备模型，供 HTTP / GitHub Pages 使用
 outputs/assets/GL-3DPRT-SP-S.glb      SP-S 高精度设备模型，供 HTTP / GitHub Pages 使用
 outputs/assets/GL-3DPRT-SP-S-model.js  SP-S 高精度设备模型的 file:// 备用包
 outputs/assets/GL-3DPRT-TJA-track.glb  TJA(track) 压缩完整设备模型，供 HTTP / GitHub Pages 使用
 outputs/assets/TJA-track-model.js      TJA(track) file:// 离线备用模型包
+outputs/assets/trl/                    TRL 两套包络、分类模板与轻量设备模型资源
 outputs/assets/raw/GL-3DPRT-TJA-track-raw.glb  TJA(track) 原始模型备份
 outputs/assets/*-model.js             本地 file:// 打开时使用的备用模型包
 outputs/glb-compressor.html           维护用 GLB 压缩工具
@@ -67,7 +87,7 @@ python3 -m http.server 4174
 http://localhost:4174/outputs/index.html
 ```
 
-也可以直接双击 `outputs/index.html` 或设备 HTML 文件打开。直接以 `file://` 打开时，设备模型会使用 `outputs/assets/*-model.js` 备用模型包。
+SP-M、SP-S、TJA(track) 与 TRL 均可直接双击入口页打开，并使用各自的离线备用资源包。
 
 ## 判定方法
 

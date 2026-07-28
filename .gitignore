@@ -3,3 +3,4 @@ outputs/*.stl
 *.glb
 !outputs/assets/
 !outputs/assets/*.glb
+!outputs/assets/trl/*.glb
