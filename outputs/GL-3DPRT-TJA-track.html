@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="data:," />
-  <title>TJA(track)运动范围判定 V1.1 · 2026-07-27 · ©Ming Xia</title>
+  <title>TJA(track)运动范围判定 V1.2 · 2026-07-28 · ©Ming Xia</title>
   <script>document.documentElement.dataset.theme = "camada";</script>
   <style>
     :root {
@@ -1839,7 +1839,7 @@
     <aside>
       <header>
         <h1 data-i18n="deviceTitle">TJA(track)运动范围判定</h1>
-        <p class="subtitle" data-i18n="version">V1.1 · 2026-07-27 · ©Ming Xia</p>
+        <p class="subtitle" data-i18n="version">V1.2 · 2026-07-28 · ©Ming Xia</p>
         <button id="languageToggle" class="language-toggle" type="button" aria-label="切换语言">EN</button>
       </header>
 
@@ -2011,8 +2011,8 @@
     const translations = {
       zh: {
         deviceTitle: "TJA(track)运动范围判定",
-        version: "V1.1 · 2026-07-27 · ©Ming Xia",
-        documentTitle: "TJA(track)运动范围判定 V1.1 · 2026-07-27 · ©Ming Xia",
+        version: "V1.2 · 2026-07-28 · ©Ming Xia",
+        documentTitle: "TJA(track)运动范围判定 V1.2 · 2026-07-28 · ©Ming Xia",
         measuredRange: "实测范围",
         stlReference: "STL参考模型",
         importStl: "导入 STL 模型",
@@ -2082,8 +2082,8 @@
       },
       en: {
         deviceTitle: "TJA(track) Motion Range Checker",
-        version: "V1.1 · 2026-07-27 · ©Ming Xia",
-        documentTitle: "TJA(track) Motion Range Checker V1.1 · 2026-07-27 · ©Ming Xia",
+        version: "V1.2 · 2026-07-28 · ©Ming Xia",
+        documentTitle: "TJA(track) Motion Range Checker V1.2 · 2026-07-28 · ©Ming Xia",
         measuredRange: "Measured Range",
         stlReference: "STL Reference Model",
         importStl: "Import STL Model",
@@ -2212,7 +2212,6 @@
         hemiGround: 0x000000,
         workspace: 0x4da397,
         workspaceEdge: 0x0f6b61,
-        forbidden: 0xff3b30,
         box: 0xf0a84f,
         boxBad: 0xd95043,
         boxEdge: 0x7b3d00,
@@ -2227,7 +2226,6 @@
         hemiGround: 0xffffff,
         workspace: 0x2d9c88,
         workspaceEdge: 0x147565,
-        forbidden: 0xe60023,
         box: 0xe60023,
         boxBad: 0x9e0a0a,
         boxEdge: 0x8a0015,
@@ -2242,7 +2240,6 @@
         hemiGround: 0xffffff,
         workspace: 0xc4d8d4,
         workspaceEdge: 0x8fb0aa,
-        forbidden: 0xff1616,
         box: 0xff1616,
         boxBad: 0x8a2f2f,
         boxEdge: 0x383838,
@@ -2283,7 +2280,6 @@
       hemi.groundColor.setHex(palette.hemiGround);
       workspaceMaterial.color.setHex(palette.workspace);
       edgeMaterial.color.setHex(palette.workspaceEdge);
-      forbiddenBoundaryMaterial.color.setHex(palette.forbidden);
       boxMaterial.color.setHex(palette.box);
       boxBadMaterial.color.setHex(palette.boxBad);
       boxEdgeMaterial.color.setHex(palette.boxEdge);
@@ -2350,7 +2346,6 @@
     });
     workspaceMaterial.forceSinglePass = true;
     const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x0f6b61, transparent: true, opacity: 0.66 });
-    const forbiddenBoundaryMaterial = new THREE.LineBasicMaterial({ color: 0xff3b30, transparent: true, opacity: 0.9 });
     const boxMaterial = new THREE.MeshStandardMaterial({ color: 0xf0a84f, transparent: true, opacity: 0.58, roughness: 0.45 });
     const boxBadMaterial = new THREE.MeshStandardMaterial({ color: 0xd95043, transparent: true, opacity: 0.58, roughness: 0.45 });
     const boxEdgeMaterial = new THREE.LineBasicMaterial({ color: 0x7b3d00 });
@@ -2392,7 +2387,6 @@
       || new URLSearchParams(window.location.search).get("model") === "offline";
     const modelLoadTimeoutMs = 120000;
     let workspaceMesh = null;
-    let workspaceEdges = null;
     let boxMesh = null;
     let boxEdges = null;
     let referenceModelMesh = null;
@@ -2996,17 +2990,9 @@
         workspaceMesh.geometry.dispose();
         scene.remove(workspaceMesh);
       }
-      if (workspaceEdges) {
-        workspaceEdges.geometry.dispose();
-        scene.remove(workspaceEdges);
-      }
-
       const geometry = makeDrawingWorkspaceGeometry(v);
       workspaceMesh = new THREE.Mesh(geometry, workspaceMaterial);
       scene.add(workspaceMesh);
-
-      workspaceEdges = makeForbiddenBandBoundary();
-      scene.add(workspaceEdges);
     }
 
     function makeDrawingWorkspaceGeometry(v) {
@@ -3064,27 +3050,6 @@
         const previous = clipped[(index + clipped.length - 1) % clipped.length];
         return !previous || Math.hypot(point.x - previous.x, point.y - previous.y) > 0.001;
       });
-    }
-
-    function makeForbiddenBandBoundary() {
-      const halfWidth = tjaForbiddenBand.halfWidth;
-      const endReach = Math.sqrt(tjaRailLimits.radius ** 2 - halfWidth ** 2);
-      const x0 = tjaRailLimits.min - endReach;
-      const x1 = tjaRailLimits.max + endReach;
-      const z0 = tjaRailLimits.zMin;
-      const z1 = tjaRailLimits.zMax;
-      const corners = [
-        [x0, -halfWidth, z0], [x1, -halfWidth, z0], [x1, halfWidth, z0], [x0, halfWidth, z0],
-        [x0, -halfWidth, z1], [x1, -halfWidth, z1], [x1, halfWidth, z1], [x0, halfWidth, z1]
-      ];
-      const edges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
-      const positions = [];
-      for (const [a, b] of edges) positions.push(...corners[a], ...corners[b]);
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-      const lines = new THREE.LineSegments(geometry, forbiddenBoundaryMaterial);
-      lines.renderOrder = 4;
-      return lines;
     }
 
     function tjaCapsuleBoundary(arcSteps = 160) {
