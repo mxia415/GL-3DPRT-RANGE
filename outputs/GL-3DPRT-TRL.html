@@ -1896,11 +1896,11 @@
       </section>
 
       <section class="section nozzle-section">
-        <div class="section-title" data-i18n="nozzleTitle">Nozzle 规格</div>
+        <div class="section-title" data-i18n="nozzleTitle">打印头规格</div>
         <div class="field nozzle-field">
-          <select id="nozzleProfile" aria-label="Nozzle 规格">
-            <option value="long">Long</option>
-            <option value="standard">Standard</option>
+          <select id="nozzleProfile" data-i18n-aria-label="nozzleTitle" aria-label="打印头规格">
+            <option value="long" data-i18n="nozzleLong">加长款</option>
+            <option value="standard" data-i18n="nozzleStandard">标准款</option>
           </select>
         </div>
       </section>
@@ -2055,7 +2055,9 @@
         version: "V1.6 · 2026-07-28 · ©Ming Xia",
         documentTitle: "TRL运动范围判定 V1.6 · 2026-07-28 · ©Ming Xia",
         measuredRange: "实测范围",
-        nozzleTitle: "Nozzle 规格",
+        nozzleTitle: "打印头规格",
+        nozzleLong: "加长款",
+        nozzleStandard: "标准款",
         stlReference: "STL参考模型",
         importStl: "导入 STL 模型",
         resetParams: "重置参数",
@@ -2116,7 +2118,7 @@
         heightMm: "高度 mm",
         statusInside: "长方体在范围内。",
         statusForbidden: "长方体进入设备禁区 X=0…6300、Y=-650…650、Z≥0。",
-        statusOutside: "长方体超出当前 Nozzle 的 TRL 真实 IK 包络。",
+        statusOutside: "长方体超出当前打印头的 TRL 真实 IK 包络。",
         statusCorners: ({ count }) => `有 ${count} 个角点超出可达空间。`,
         volume: ({ value }) => `体积 ${value} L`,
         corners: ({ valid }) => `${valid} / 8 个角点在范围内`,
@@ -2128,6 +2130,8 @@
         documentTitle: "TRL Motion Range Checker V1.6 · 2026-07-28 · ©Ming Xia",
         measuredRange: "Measured Range",
         nozzleTitle: "Nozzle Profile",
+        nozzleLong: "Long",
+        nozzleStandard: "Standard",
         stlReference: "STL Reference Model",
         importStl: "Import STL Model",
         resetParams: "Reset Parameters",

@@ -1,6 +1,6 @@
 # GL-3DPRT 运动范围判定工具
 
-版本：v1.26
+版本：v1.27
 
 日期：2026-07-28
 
@@ -10,7 +10,7 @@
 
 - `GL-3DPRT-SP-M`
 - `GL-3DPRT-SP-S`
-- `GL-3DPRT-TJA(track)`
+- `GL-3DPRT-TJA`（轨道版 / 固定底座）
 - `GL-3DPRT-TRL`
 
 项目入口是：
@@ -23,7 +23,7 @@ outputs/index.html
 
 各设备页面都支持临时导入本地 STL 参考模型。STL 文件只在浏览器本地读取，不会上传；导入后可以通过滑动条或手动输入调整 X/Y/Z 位置，也可以调整 X/Y/Z 旋转、缩放和透明度。导入的 STL 只用于观察对照，不参与运动范围判定。
 
-TJA(track) 页面使用沿 X 轨道扫掠的胶囊形包络，工作区约 38 m 长；页面的网格、相机、坐标轴和模型默认视图均按长轨道尺度调整。
+TJA 页面可在“轨道版”和“固定底座”之间切换。轨道版使用沿 X 轨道扫掠的胶囊形包络并扣除无限长中心带；固定底座版使用半径 8130.3 mm、高 4500 mm 的圆柱包络并扣除中心固定平台菱形。切换时会同步更换包络、判定、最大贴合、默认视角和设备模型。
 
 TRL 页面使用 KUKA KR210 R2700-2 轨道项目的 50 mm 真实 IK 包络，支持 `Long` / `Standard` 两种 Nozzle。切换时同步更换光滑包络、末端 GLB 和判定模板。模型固定使用 E1=3050、A1=-6.99986°、A2=-62.22702°、A3=35.48715°、A4=0°、A5=-116.7401°、A6=-18.3870° 的截图姿态。
 
@@ -53,17 +53,19 @@ TRL V1.6 将 Nozzle 规格标题与切换框调整为同一行，并统一垂直
 outputs/index.html                    设备选择入口
 outputs/GL-3DPRT-SP-M.html            SP-M 运动范围判定工具
 outputs/GL-3DPRT-SP-S.html            SP-S 运动范围判定工具
-outputs/GL-3DPRT-TJA-track.html       TJA(track) 运动范围判定工具
+outputs/GL-3DPRT-TJA-track.html       TJA 轨道版 / 固定底座合并判定工具
 outputs/GL-3DPRT-TRL.html             TRL 运动范围判定工具
 outputs/GL-3DPRT-SP-M说明.md          SP-M 使用说明
 outputs/GL-3DPRT-SP-S说明.md          SP-S 使用说明
-outputs/GL-3DPRT-TJA-track说明.md     TJA(track) 使用说明
+outputs/GL-3DPRT-TJA-track说明.md     TJA 两种形式使用说明
 outputs/GL-3DPRT-TRL说明.md           TRL 使用说明
 outputs/assets/GL-3DPRT-SP-M.glb      SP-M 设备模型，供 HTTP / GitHub Pages 使用
 outputs/assets/GL-3DPRT-SP-S.glb      SP-S 高精度设备模型，供 HTTP / GitHub Pages 使用
 outputs/assets/GL-3DPRT-SP-S-model.js  SP-S 高精度设备模型的 file:// 备用包
 outputs/assets/GL-3DPRT-TJA-track.glb  TJA(track) 压缩完整设备模型，供 HTTP / GitHub Pages 使用
 outputs/assets/TJA-track-model.js      TJA(track) file:// 离线备用模型包
+outputs/assets/TJA_00_FIX_PLATFORM.glb TJA 固定平台压缩模型
+outputs/assets/TJA-fixed-model*.js     TJA 固定底座五分件 file:// 备用模型包
 outputs/assets/trl/                    TRL 两套包络、分类模板与轻量设备模型资源
 outputs/assets/raw/GL-3DPRT-TJA-track-raw.glb  TJA(track) 原始模型备份
 outputs/assets/*-model.js             本地 file:// 打开时使用的备用模型包
@@ -87,7 +89,7 @@ python3 -m http.server 4174
 http://localhost:4174/outputs/index.html
 ```
 
-SP-M、SP-S、TJA(track) 与 TRL 均可直接双击入口页打开，并使用各自的离线备用资源包。
+SP-M、SP-S、TJA 与 TRL 均可直接双击入口页打开，并使用各自的离线备用资源包。
 
 ## 判定方法
 

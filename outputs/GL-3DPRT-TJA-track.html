@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="data:," />
-  <title>TJA(track)运动范围判定 V1.2 · 2026-07-28 · ©Ming Xia</title>
+  <title>TJA运动范围判定 V1.3 · 2026-07-28 · ©Ming Xia</title>
   <script>document.documentElement.dataset.theme = "camada";</script>
   <style>
     :root {
@@ -1838,8 +1838,8 @@
   <div class="app">
     <aside>
       <header>
-        <h1 data-i18n="deviceTitle">TJA(track)运动范围判定</h1>
-        <p class="subtitle" data-i18n="version">V1.2 · 2026-07-28 · ©Ming Xia</p>
+        <h1 data-i18n="deviceTitle">TJA运动范围判定</h1>
+        <p class="subtitle" data-i18n="version">V1.3 · 2026-07-28 · ©Ming Xia</p>
         <button id="languageToggle" class="language-toggle" type="button" aria-label="切换语言">EN</button>
       </header>
 
@@ -1868,6 +1868,17 @@
         <div class="field">
           <label>地面 Z0 <span>当前按地面为 0</span></label>
           <input id="baseZ" type="number" value="-85" disabled>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title" data-i18n="configurationTitle">设备形式</div>
+        <div class="field">
+          <label><span class="label-main" data-i18n="configurationLabel">选择配置</span> <span data-i18n="configurationHelp">切换对应包络体和设备模型</span></label>
+          <select id="tjaConfiguration" data-i18n-aria-label="configurationLabel" aria-label="选择配置">
+            <option value="track" data-i18n="trackOption">轨道版</option>
+            <option value="fixed" data-i18n="fixedOption">固定底座</option>
+          </select>
         </div>
       </section>
 
@@ -2003,6 +2014,7 @@
     const clearStlButton = document.getElementById("clearStl");
     const toggleStlIntersectionButton = document.getElementById("toggleStlIntersection");
     const languageToggle = document.getElementById("languageToggle");
+    const configurationSelect = document.getElementById("tjaConfiguration");
     const toggleBoxButton = document.getElementById("toggleBox");
     const toggleModelButton = document.getElementById("toggleModel");
     const stlInputs = Object.fromEntries([...document.querySelectorAll("[data-stl]")].map((el) => [el.dataset.stl, el]));
@@ -2010,9 +2022,14 @@
 
     const translations = {
       zh: {
-        deviceTitle: "TJA(track)运动范围判定",
-        version: "V1.2 · 2026-07-28 · ©Ming Xia",
-        documentTitle: "TJA(track)运动范围判定 V1.2 · 2026-07-28 · ©Ming Xia",
+        deviceTitle: "TJA运动范围判定",
+        version: "V1.3 · 2026-07-28 · ©Ming Xia",
+        documentTitle: "TJA运动范围判定 V1.3 · 2026-07-28 · ©Ming Xia",
+        configurationTitle: "设备形式",
+        configurationLabel: "选择配置",
+        configurationHelp: "切换对应包络体和设备模型",
+        trackOption: "轨道版",
+        fixedOption: "固定底座",
         measuredRange: "实测范围",
         stlReference: "STL参考模型",
         importStl: "导入 STL 模型",
@@ -2042,7 +2059,7 @@
         yLocation: "Y 中心位置",
         yLocationHelp: "沿横向移动长方体中心",
         zLocation: "底面高度 Z",
-        zLocationHelp: "固定为包络下限 Z=-85，向上展开",
+        zLocationHelp: () => activeTjaMode === "fixed" ? "固定为包络下限 Z=0，向上展开" : "固定为包络下限 Z=-85，向上展开",
         length: "长度 L",
         lengthHelp: "X 方向尺寸",
         width: "宽度 W",
@@ -2067,23 +2084,34 @@
         topView: "上视图",
         rightView: "右视图",
         interactionHelp: "拖拽旋转，滚轮缩放",
-        envelopeHelp: "透明体为外部候选包络扣除 |Y|≤500 mm 无限长、无限高中心禁区后的可达体。",
+        envelopeHelp: () => activeTjaMode === "fixed"
+          ? "透明体为固定底座圆柱包络扣除中心固定平台菱形禁区后的可达体。"
+          : "透明体为外部候选包络扣除 |Y|≤500 mm 无限长、无限高中心禁区后的可达体。",
         size: "尺寸",
         lengthMm: "长度 mm",
         widthMm: "宽度 mm",
         heightMm: "高度 mm",
         statusInside: "长方体在范围内。",
-        statusForbidden: "长方体进入 |Y|≤500 mm 的无限长中心禁区。",
-        statusOutside: "长方体超出 TJA(track) 外部候选包络。",
+        statusForbidden: () => activeTjaMode === "fixed"
+          ? "长方体进入中心固定平台菱形禁区。"
+          : "长方体进入 |Y|≤500 mm 的无限长中心禁区。",
+        statusOutside: () => activeTjaMode === "fixed"
+          ? "长方体超出 TJA 固定底座圆柱包络。"
+          : "长方体超出 TJA(track) 外部候选包络。",
         statusCorners: ({ count }) => `有 ${count} 个角点超出可达空间。`,
         volume: ({ value }) => `体积 ${value} L`,
         corners: ({ valid }) => `${valid} / 8 个角点在范围内`,
         switchLanguage: "切换语言"
       },
       en: {
-        deviceTitle: "TJA(track) Motion Range Checker",
-        version: "V1.2 · 2026-07-28 · ©Ming Xia",
-        documentTitle: "TJA(track) Motion Range Checker V1.2 · 2026-07-28 · ©Ming Xia",
+        deviceTitle: "TJA Motion Range Checker",
+        version: "V1.3 · 2026-07-28 · ©Ming Xia",
+        documentTitle: "TJA Motion Range Checker V1.3 · 2026-07-28 · ©Ming Xia",
+        configurationTitle: "Device Configuration",
+        configurationLabel: "Configuration",
+        configurationHelp: "Switch the matching envelope and device model",
+        trackOption: "Track",
+        fixedOption: "Fixed Base",
         measuredRange: "Measured Range",
         stlReference: "STL Reference Model",
         importStl: "Import STL Model",
@@ -2113,7 +2141,7 @@
         yLocation: "Y Center Position",
         yLocationHelp: "Move the cuboid center across the rail",
         zLocation: "Base Height Z",
-        zLocationHelp: "Fixed at the workspace lower limit Z=-85, expands upward",
+        zLocationHelp: () => activeTjaMode === "fixed" ? "Fixed at Z=0, expands upward" : "Fixed at Z=-85, expands upward",
         length: "Length L",
         lengthHelp: "X direction size",
         width: "Width W",
@@ -2138,14 +2166,20 @@
         topView: "Top view",
         rightView: "Right view",
         interactionHelp: "Drag to rotate; scroll to zoom",
-        envelopeHelp: "The translucent volume is the outer candidate envelope with the infinite |Y|≤500 mm center strip removed.",
+        envelopeHelp: () => activeTjaMode === "fixed"
+          ? "The translucent volume is the fixed-base cylinder with the central platform diamond excluded."
+          : "The translucent volume is the outer candidate envelope with the infinite |Y|≤500 mm center strip removed.",
         size: "Size",
         lengthMm: "Length mm",
         widthMm: "Width mm",
         heightMm: "Height mm",
         statusInside: "Cuboid is within range.",
-        statusForbidden: "Cuboid enters the infinite |Y|≤500 mm center exclusion strip.",
-        statusOutside: "Cuboid exceeds the outer TJA(track) candidate envelope.",
+        statusForbidden: () => activeTjaMode === "fixed"
+          ? "Cuboid enters the central fixed-platform diamond exclusion."
+          : "Cuboid enters the infinite |Y|≤500 mm center exclusion strip.",
+        statusOutside: () => activeTjaMode === "fixed"
+          ? "Cuboid exceeds the TJA fixed-base cylindrical envelope."
+          : "Cuboid exceeds the outer TJA(track) candidate envelope.",
         statusCorners: ({ count }) => `${count} corner${count === 1 ? "" : "s"} exceed the reachable space.`,
         volume: ({ value }) => `Volume ${value} L`,
         corners: ({ valid }) => `${valid} / 8 corners within range`,
@@ -2303,7 +2337,8 @@
     controls.target.set(12000, 0, 1800);
     controls.minDistance = 900;
     controls.maxDistance = 90000;
-    setDefaultView();
+    camera.position.set(38282, 23780, 14055);
+    camera.lookAt(controls.target);
     controls.update();
 
     const hemi = new THREE.HemisphereLight(0xffffff, 0x000000, 2.05);
@@ -2313,29 +2348,12 @@
     sun.castShadow = true;
     scene.add(sun);
 
-      const grid = new THREE.GridHelper(48000, 24, 0x8f867b, 0x4b4540);
+    const grid = new THREE.GridHelper(48000, 24, 0x8f867b, 0x4b4540);
     grid.rotation.x = Math.PI / 2;
     grid.position.set(12000, 0, 0);
     scene.add(grid);
-    scene.add(makeGridLabel("GL-3DPRT-TJA(track)", new THREE.Vector3(28000, 6000, 8)));
-
-    const axes = new THREE.Group();
-    const transverseAxisX = 12000;
-    axes.add(axisArrow(new THREE.Vector3(0, 0, 0), new THREE.Vector3(30000, 0, 0), 0xb84d3a, "X+"));
-    axes.add(axisArrow(
-      new THREE.Vector3(transverseAxisX, 0, 0),
-      new THREE.Vector3(transverseAxisX, 9500, 0),
-      0x1a7f70,
-      "Y+"
-    ));
-    axes.add(axisArrow(
-      new THREE.Vector3(transverseAxisX, 0, 0),
-      new THREE.Vector3(transverseAxisX, 0, 5200),
-      0x316cb3,
-      "Z+"
-    ));
-    axes.add(axisTicks(transverseAxisX));
-    scene.add(axes);
+    let gridLabel = null;
+    let axes = null;
 
     const workspaceMaterial = new THREE.MeshBasicMaterial({
       color: 0x4da397,
@@ -2379,9 +2397,63 @@
     const referenceModelKey = "GL-3DPRT-TJA-track";
     const referenceModelFallbackScriptUrl = new URL("assets/TJA-track-model.js?v=20260727-3", window.location.href).href;
     const referenceModelGlbUrl = new URL("assets/GL-3DPRT-TJA-track.glb?v=20260727-3", window.location.href).href;
+    const fixedModelFallbackScripts = [
+      {
+        url: new URL("assets/TJA-fixed-model.js?v=20260728-2", window.location.href).href,
+        key: "TJA-fixed:TJA_00_FIX_PLATFORM.glb"
+      },
+      {
+        url: new URL("assets/TJA-fixed-model-2.js?v=20260728-2", window.location.href).href,
+        key: "TJA-fixed:TJA_07_J3_ARM3.glb"
+      }
+    ];
+    const fixedModelParts = [
+      { id: "fixedPlatform", fileName: "TJA_00_FIX_PLATFORM.glb" },
+      { id: "j1", fileName: "TJA_03_J1_COLUMN.glb" },
+      { id: "zArm1", fileName: "TJA_05_Z_ARM1.glb" },
+      { id: "arm2", fileName: "TJA_06_J2_ARM2.glb" },
+      { id: "arm3", fileName: "TJA_07_J3_ARM3.glb" }
+    ];
     const tjaImport = { x: 21056, y: 6619.66, z: -480, rx: 90, ry: 180, rz: 0, scale: 1000 };
     const tjaRailLimits = { min: 1000, max: 23000, radius: 8130.3, zMin: -85, zMax: 4415 };
     const tjaForbiddenBand = { centerY: 0, halfWidth: 500, fitMargin: 10 };
+    const tjaFixedLimits = {
+      centerX: 10512.635,
+      centerY: 0,
+      baseZ: 433,
+      radius: 8130.3,
+      zMin: 0,
+      zMax: 4500,
+      platformYaw: 45,
+      polygon: [
+        { x: 10512.635 + 2708.607881, y: -0.000424 },
+        { x: 10512.635 + 11.313638, y: -2697.294667 },
+        { x: 10512.635 - 2697.125527, y: 11.144498 },
+        { x: 10512.635 + 0.168716, y: 2708.438741 }
+      ]
+    };
+    const tjaFixedModel = {
+      fixedPlatform: {
+        root: { x: 10512.635, y: 0, z: 433, rz: 45 },
+        cad: { x: 2945.0606, y: 3785.8293, z: -1013.7255, rx: 90, ry: 180, rz: 0, scale: 1000 }
+      },
+      j1: {
+        root: { x: 10512.635, y: 0, z: 433, rz: 0 },
+        cad: { x: 7922.299829, y: 6619.66, z: -1005, rx: 90, ry: 180, rz: 0, scale: 1000 }
+      },
+      zArm1: {
+        root: { x: 10512.635, y: 0, z: 2733, rz: 0 },
+        cad: { x: 7922.299829, y: 6621, z: -2555, rx: 90, ry: 180, rz: 0, scale: 1000 }
+      },
+      arm2: {
+        root: { x: 10512.635, y: 3110, z: 2733, rz: 0 },
+        cad: { x: 7922.299829, y: 3511, z: -2555, rx: 90, ry: 180, rz: 0, scale: 1000 }
+      },
+      arm3: {
+        root: { x: 10512.635, y: 6110, z: 2733, rz: 0 },
+        cad: { x: 7922.299829, y: 511, z: -2555, rx: 90, ry: 180, rz: 0, scale: 1000 }
+      }
+    };
     const dracoDecoderPath = new URL("assets/draco/", window.location.href).href;
     const useOfflineReferenceModel = window.location.protocol === "file:"
       || new URLSearchParams(window.location.search).get("model") === "offline";
@@ -2392,6 +2464,7 @@
     let referenceModelMesh = null;
     let referenceModelVisible = false;
     let referenceModelLoading = false;
+    let activeTjaMode = configurationSelect.value;
     applyTheme(document.documentElement.dataset.theme);
     let boxVisible = true;
     let stlStatusKey = "stlEmpty";
@@ -2473,6 +2546,9 @@
     const measuredMinZ = Math.min(...smoothRzProfile.map((p) => p.z));
     const measuredMaxZ = Math.max(...smoothRzProfile.map((p) => p.z));
 
+    rebuildSceneGuides();
+    setDefaultView();
+    controls.update();
     bindInputs();
     update();
     applyDeviceLanguage();
@@ -2488,6 +2564,37 @@
       applyDeviceLanguage();
     });
 
+    configurationSelect.addEventListener("change", async () => {
+      configurationSelect.disabled = true;
+      activeTjaMode = configurationSelect.value;
+      statusOverrideKey = null;
+      statusOverrideValues = {};
+      if (referenceModelMesh) {
+        scene.remove(referenceModelMesh);
+        referenceModelMesh = null;
+      }
+      applyConfigurationDefaults();
+      rebuildSceneGuides();
+      setDefaultView();
+      controls.update();
+      applyDeviceLanguage();
+      update();
+      if (referenceModelVisible) {
+        referenceModelLoading = true;
+        applyDeviceActionLabels();
+        const loaded = await loadReferenceModel();
+        referenceModelLoading = false;
+        referenceModelVisible = loaded;
+        applyDeviceActionLabels();
+        if (!loaded) {
+          statusOverrideKey = "modelLoadFailed";
+          status.classList.add("invalid");
+          statusText.textContent = t(statusOverrideKey);
+        }
+      }
+      configurationSelect.disabled = false;
+    });
+
     document.querySelectorAll("[data-fit-mode]").forEach((button) => {
       button.addEventListener("click", () => {
         fitMode = button.dataset.fitMode;
@@ -2499,20 +2606,13 @@
     });
 
     document.getElementById("resetSize").addEventListener("click", () => {
-      const v = values();
-      input.boxX.value = 12000;
-      input.boxY.value = 4000;
-      input.boxZ.value = -85;
-      input.boxL.value = 6000;
-      input.boxW.value = 6000;
-      input.boxH.value = 1200;
+      applyConfigurationDefaults();
       syncRanges();
       update();
     });
 
     document.getElementById("reset").addEventListener("click", () => {
       setDefaultView();
-      controls.target.set(12000, 0, 1800);
       controls.update();
     });
 
@@ -2624,19 +2724,9 @@
           dracoLoader.setDecoderPath(dracoDecoderPath);
           loader.setDRACOLoader(dracoLoader);
         }
-        const modelBuffer = await loadReferenceModelBuffer();
-        const gltf = await withTimeout(new Promise((resolve, reject) => {
-          loader.parse(modelBuffer, "", resolve, reject);
-        }), modelLoadTimeoutMs, "GL-3DPRT-TJA-track.glb 解析超时");
-        referenceModelMesh = gltf.scene;
-        referenceModelMesh.name = "tja-track-reference-model";
-        referenceModelMesh.position.set(tjaImport.x, tjaImport.y, tjaImport.z);
-        referenceModelMesh.rotation.set(
-          THREE.MathUtils.degToRad(tjaImport.rx),
-          THREE.MathUtils.degToRad(tjaImport.ry),
-          THREE.MathUtils.degToRad(tjaImport.rz)
-        );
-        referenceModelMesh.scale.setScalar(tjaImport.scale);
+        referenceModelMesh = activeTjaMode === "fixed"
+          ? await loadFixedReferenceModel(loader)
+          : await loadTrackReferenceModel(loader);
         referenceModelMesh.traverse((child) => {
           if (!child.isMesh) return;
           child.material = referenceModelMaterial;
@@ -2660,20 +2750,81 @@
       }
     }
 
+    async function parseReferenceBuffer(loader, buffer, label) {
+      const gltf = await withTimeout(new Promise((resolve, reject) => {
+        loader.parse(buffer, "", resolve, reject);
+      }), modelLoadTimeoutMs, `${label} 解析超时`);
+      return gltf.scene;
+    }
+
+    async function loadTrackReferenceModel(loader) {
+      const modelBuffer = await loadReferenceModelBuffer();
+      const root = await parseReferenceBuffer(loader, modelBuffer, "GL-3DPRT-TJA-track.glb");
+      root.name = "tja-track-reference-model";
+      root.position.set(tjaImport.x, tjaImport.y, tjaImport.z);
+      root.rotation.set(
+        THREE.MathUtils.degToRad(tjaImport.rx),
+        THREE.MathUtils.degToRad(tjaImport.ry),
+        THREE.MathUtils.degToRad(tjaImport.rz)
+      );
+      root.scale.setScalar(tjaImport.scale);
+      return root;
+    }
+
+    async function loadFixedReferenceModel(loader) {
+      const root = new THREE.Group();
+      root.name = "tja-fixed-reference-model";
+      if (useOfflineReferenceModel) {
+        await withTimeout(
+          Promise.all(fixedModelFallbackScripts.map(({ url, key }) => loadClassicScript(url, key))),
+          modelLoadTimeoutMs,
+          "固定底座本地模型包载入超时"
+        );
+      }
+      const loadedParts = await Promise.all(fixedModelParts.map(async (part) => {
+        const buffer = useOfflineReferenceModel
+          ? base64ToArrayBuffer(window.__GL3DPRT_MODELS__?.[`TJA-fixed:${part.fileName}`] || "")
+          : await loadHttpModelBuffer(new URL(`assets/${part.fileName}?v=20260728-1`, window.location.href).href, part.fileName);
+        if (!buffer.byteLength) throw new Error(`固定底座本地模型包缺失: ${part.fileName}`);
+        const model = await parseReferenceBuffer(loader, buffer, part.fileName);
+        const transform = tjaFixedModel[part.id];
+        const partRoot = new THREE.Group();
+        const cad = new THREE.Group();
+        partRoot.position.set(transform.root.x, transform.root.y, transform.root.z);
+        partRoot.rotation.set(0, 0, THREE.MathUtils.degToRad(transform.root.rz));
+        cad.position.set(transform.cad.x, transform.cad.y, transform.cad.z);
+        cad.rotation.set(
+          THREE.MathUtils.degToRad(transform.cad.rx),
+          THREE.MathUtils.degToRad(transform.cad.ry),
+          THREE.MathUtils.degToRad(transform.cad.rz)
+        );
+        cad.scale.setScalar(transform.cad.scale);
+        cad.add(model);
+        partRoot.add(cad);
+        return partRoot;
+      }));
+      loadedParts.forEach((part) => root.add(part));
+      return root;
+    }
+
     async function loadReferenceModelBuffer() {
       if (useOfflineReferenceModel) {
-        await withTimeout(loadClassicScript(referenceModelFallbackScriptUrl), modelLoadTimeoutMs, "本地模型包载入超时");
+        await withTimeout(loadClassicScript(referenceModelFallbackScriptUrl, referenceModelKey), modelLoadTimeoutMs, "本地模型包载入超时");
         const base64 = window.__GL3DPRT_MODELS__?.[referenceModelKey];
         if (!base64) throw new Error(`本地模型包缺失: ${referenceModelKey}`);
         return base64ToArrayBuffer(base64);
       }
-      const response = await withTimeout(fetch(referenceModelGlbUrl), modelLoadTimeoutMs, "设备模型下载超时");
-      if (!response.ok) throw new Error(`设备模型请求失败：${response.status}`);
-      return withTimeout(response.arrayBuffer(), modelLoadTimeoutMs, "设备模型读取超时");
+      return loadHttpModelBuffer(referenceModelGlbUrl, "GL-3DPRT-TJA-track.glb");
     }
 
-    function loadClassicScript(url) {
-      if (window.__GL3DPRT_MODELS__?.[referenceModelKey]) return Promise.resolve();
+    async function loadHttpModelBuffer(url, label) {
+      const response = await withTimeout(fetch(url), modelLoadTimeoutMs, `${label} 下载超时`);
+      if (!response.ok) throw new Error(`设备模型请求失败：${response.status}`);
+      return withTimeout(response.arrayBuffer(), modelLoadTimeoutMs, `${label} 读取超时`);
+    }
+
+    function loadClassicScript(url, keyPrefix) {
+      if (Object.keys(window.__GL3DPRT_MODELS__ || {}).some((key) => key.startsWith(keyPrefix))) return Promise.resolve();
       return new Promise((resolve, reject) => {
         const script = document.createElement("script");
         script.src = url;
@@ -2921,8 +3072,10 @@
     }
 
     function setDefaultView() {
-      const distance = 29000;
-      const target = new THREE.Vector3(12000, 0, 1800);
+      const distance = activeTjaMode === "fixed" ? 20500 : 29000;
+      const target = activeTjaMode === "fixed"
+        ? new THREE.Vector3(tjaFixedLimits.centerX, 0, 1900)
+        : new THREE.Vector3(12000, 0, 1800);
       const angle = THREE.MathUtils.degToRad(25);
       controls.target.copy(target);
       camera.position.set(
@@ -2935,8 +3088,10 @@
     }
 
     function setNamedView(view) {
-      const distance = 38000;
-      const target = new THREE.Vector3(12000, 0, 1800);
+      const distance = activeTjaMode === "fixed" ? 24000 : 38000;
+      const target = activeTjaMode === "fixed"
+        ? new THREE.Vector3(tjaFixedLimits.centerX, 0, 1900)
+        : new THREE.Vector3(12000, 0, 1800);
       controls.target.copy(target);
       if (view === "front") {
         camera.position.set(target.x, target.y - distance, target.z);
@@ -2996,6 +3151,16 @@
     }
 
     function makeDrawingWorkspaceGeometry(v) {
+      if (activeTjaMode === "fixed") {
+        const outer = Array.from({ length: 192 }, (_, index) => {
+          const angle = index / 192 * Math.PI * 2;
+          return {
+            x: tjaFixedLimits.centerX + tjaFixedLimits.radius * Math.cos(angle),
+            y: tjaFixedLimits.centerY + tjaFixedLimits.radius * Math.sin(angle)
+          };
+        });
+        return makePrismGeometry(outer, [tjaFixedLimits.polygon], tjaFixedLimits.zMin, tjaFixedLimits.zMax);
+      }
       const boundary = tjaCapsuleBoundary(160);
       const lobes = [
         clipPolygonAtY(boundary, tjaForbiddenBand.halfWidth, true),
@@ -3004,24 +3169,52 @@
       const vertices = [];
       const indices = [];
       for (const polygon of lobes) {
+        const part = makePrismGeometry(polygon, [], tjaRailLimits.zMin, tjaRailLimits.zMax);
         const offset = vertices.length / 3;
-        const count = polygon.length;
-        for (const point of polygon) vertices.push(point.x, point.y, tjaRailLimits.zMin);
-        for (const point of polygon) vertices.push(point.x, point.y, tjaRailLimits.zMax);
-        for (let i = 0; i < count; i += 1) {
-          const next = (i + 1) % count;
-          addSideQuad(indices, offset + i, offset + next, offset + count + next, offset + count + i);
-        }
-        const triangles = THREE.ShapeUtils.triangulateShape(
-          polygon.map((point) => new THREE.Vector2(point.x, point.y)),
-          []
-        );
-        for (const [a, b, c] of triangles) {
-          indices.push(offset + c, offset + b, offset + a);
-          indices.push(offset + count + a, offset + count + b, offset + count + c);
-        }
+        vertices.push(...part.attributes.position.array);
+        for (const index of part.index.array) indices.push(offset + index);
+        part.dispose();
       }
 
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
+      geometry.setIndex(indices);
+      geometry.computeVertexNormals();
+      return geometry;
+    }
+
+    function makePrismGeometry(contour, holes, zMin, zMax) {
+      const rings = [contour, ...holes];
+      const flat = rings.flat();
+      const count = flat.length;
+      const vertices = [];
+      const indices = [];
+      for (const point of flat) vertices.push(point.x, point.y, zMin);
+      for (const point of flat) vertices.push(point.x, point.y, zMax);
+
+      let ringOffset = 0;
+      for (const ring of rings) {
+        for (let i = 0; i < ring.length; i += 1) {
+          const next = (i + 1) % ring.length;
+          addSideQuad(
+            indices,
+            ringOffset + i,
+            ringOffset + next,
+            count + ringOffset + next,
+            count + ringOffset + i
+          );
+        }
+        ringOffset += ring.length;
+      }
+
+      const triangles = THREE.ShapeUtils.triangulateShape(
+        contour.map((point) => new THREE.Vector2(point.x, point.y)),
+        holes.map((ring) => ring.map((point) => new THREE.Vector2(point.x, point.y)))
+      );
+      for (const [a, b, c] of triangles) {
+        indices.push(c, b, a);
+        indices.push(count + a, count + b, count + c);
+      }
       const geometry = new THREE.BufferGeometry();
       geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
       geometry.setIndex(indices);
@@ -3342,6 +3535,7 @@
     }
 
     function forbiddenBandCheck(v) {
+      if (activeTjaMode === "fixed") return fixedPlatformCheck(v);
       const bounds = boxYBounds(v);
       const low = tjaForbiddenBand.centerY - tjaForbiddenBand.halfWidth;
       const high = tjaForbiddenBand.centerY + tjaForbiddenBand.halfWidth;
@@ -3352,11 +3546,65 @@
       return { intersects, clearance };
     }
 
+    function fixedPlatformCheck(v) {
+      const xMin = v.boxX - v.boxL / 2;
+      const xMax = v.boxX + v.boxL / 2;
+      const yBounds = boxYBounds(v);
+      const rectangle = [
+        { x: xMin, y: yBounds.min },
+        { x: xMax, y: yBounds.min },
+        { x: xMax, y: yBounds.max },
+        { x: xMin, y: yBounds.max }
+      ];
+      const polygon = tjaFixedLimits.polygon;
+      let intersects = rectangle.some((point) => pointInPolygonInclusive(point.x, point.y, polygon))
+        || polygon.some((point) => (
+          point.x >= xMin - 0.001 && point.x <= xMax + 0.001
+          && point.y >= yBounds.min - 0.001 && point.y <= yBounds.max + 0.001
+        ));
+      for (let i = 0; !intersects && i < rectangle.length; i += 1) {
+        const a = rectangle[i];
+        const b = rectangle[(i + 1) % rectangle.length];
+        for (let j = 0; j < polygon.length; j += 1) {
+          const c = polygon[j];
+          const d = polygon[(j + 1) % polygon.length];
+          if (segmentsIntersect(a, b, c, d)) {
+            intersects = true;
+            break;
+          }
+        }
+      }
+      let clearance = Infinity;
+      for (const point of rectangle) clearance = Math.min(clearance, distanceToPolygon(point.x, point.y, polygon));
+      for (const point of polygon) {
+        for (let i = 0; i < rectangle.length; i += 1) {
+          const a = rectangle[i];
+          const b = rectangle[(i + 1) % rectangle.length];
+          clearance = Math.min(clearance, distancePointToSegment(point.x, point.y, a.x, a.y, b.x, b.y));
+        }
+      }
+      return { intersects, clearance: intersects ? -clearance : clearance };
+    }
+
     function pointCheck(p, v) {
       return drawingPointCheck(p, v);
     }
 
     function drawingPointCheck(p, v) {
+      if (activeTjaMode === "fixed") {
+        const horizontalDistance = Math.hypot(p.x - tjaFixedLimits.centerX, p.y - tjaFixedLimits.centerY);
+        const horizontalClearance = tjaFixedLimits.radius - horizontalDistance;
+        const zClearance = Math.min(p.z - tjaFixedLimits.zMin, tjaFixedLimits.zMax - p.z);
+        const polygonDistance = distanceToPolygon(p.x, p.y, tjaFixedLimits.polygon);
+        const insidePlatform = pointInPolygonInclusive(p.x, p.y, tjaFixedLimits.polygon);
+        return {
+          inside: horizontalDistance <= tjaFixedLimits.radius + 0.001
+            && p.z >= tjaFixedLimits.zMin - 0.001
+            && p.z <= tjaFixedLimits.zMax + 0.001
+            && !insidePlatform,
+          clearance: Math.min(horizontalClearance, zClearance, insidePlatform ? -polygonDistance : polygonDistance)
+        };
+      }
       const horizontalDistance = distanceToRailSegment(p.x, p.y);
       const horizontalClearance = tjaRailLimits.radius - horizontalDistance;
       const rzCheck = rzPointCheck(horizontalDistance, p.z);
@@ -3387,6 +3635,46 @@
       const len2 = dx * dx + dy * dy;
       const t = len2 <= 0 ? 0 : THREE.MathUtils.clamp(((px - ax) * dx + (py - ay) * dy) / len2, 0, 1);
       return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+    }
+
+    function distanceToPolygon(x, y, polygon) {
+      let distance = Infinity;
+      for (let i = 0; i < polygon.length; i += 1) {
+        const a = polygon[i];
+        const b = polygon[(i + 1) % polygon.length];
+        distance = Math.min(distance, distancePointToSegment(x, y, a.x, a.y, b.x, b.y));
+      }
+      return distance;
+    }
+
+    function pointInPolygonInclusive(x, y, polygon) {
+      if (distanceToPolygon(x, y, polygon) <= 0.001) return true;
+      let inside = false;
+      for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const a = polygon[i];
+        const b = polygon[j];
+        if (((a.y > y) !== (b.y > y)) && x < (b.x - a.x) * (y - a.y) / (b.y - a.y) + a.x) {
+          inside = !inside;
+        }
+      }
+      return inside;
+    }
+
+    function orientation(a, b, c) {
+      return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    }
+
+    function segmentsIntersect(a, b, c, d) {
+      const o1 = orientation(a, b, c);
+      const o2 = orientation(a, b, d);
+      const o3 = orientation(c, d, a);
+      const o4 = orientation(c, d, b);
+      if (((o1 > 0 && o2 < 0) || (o1 < 0 && o2 > 0))
+        && ((o3 > 0 && o4 < 0) || (o3 < 0 && o4 > 0))) return true;
+      return distancePointToSegment(c.x, c.y, a.x, a.y, b.x, b.y) <= 0.001
+        || distancePointToSegment(d.x, d.y, a.x, a.y, b.x, b.y) <= 0.001
+        || distancePointToSegment(a.x, a.y, c.x, c.y, d.x, d.y) <= 0.001
+        || distancePointToSegment(b.x, b.y, c.x, c.y, d.x, d.y) <= 0.001;
     }
 
     function boxCorners(v) {
@@ -3441,7 +3729,8 @@
 
     function fitBox() {
       const v = values();
-      fitDrawingBox(v, fitMode);
+      if (activeTjaMode === "fixed") fitFixedBox(v, fitMode);
+      else fitDrawingBox(v, fitMode);
     }
 
     function shrinkBoxUntilInside() {
@@ -3504,6 +3793,106 @@
       }
 
       if (!isBoxInside(values()).inside) shrinkBoxUntilInside();
+    }
+
+    function fitFixedBox(v, mode) {
+      const nearY = Math.max(...tjaFixedLimits.polygon.map((point) => point.y)) + 10;
+      const maxL = Number(input.boxL.max);
+      const maxW = Number(input.boxW.max);
+      const maxH = tjaFixedLimits.zMax - tjaFixedLimits.zMin;
+      const floor10 = (value) => Math.max(10, Math.floor(value / 10) * 10);
+      const farYForLength = (length) => {
+        const halfLength = length / 2;
+        if (halfLength >= tjaFixedLimits.radius) return 0;
+        return Math.sqrt(tjaFixedLimits.radius ** 2 - halfLength ** 2);
+      };
+      const lengthForFarY = (farY) => {
+        if (farY >= tjaFixedLimits.radius) return 0;
+        return Math.min(maxL, 2 * Math.sqrt(tjaFixedLimits.radius ** 2 - farY ** 2));
+      };
+
+      input.baseZ.value = tjaFixedLimits.zMin;
+      input.boxZ.value = tjaFixedLimits.zMin;
+      input.boxX.value = tjaFixedLimits.centerX;
+      if (mode === "L") {
+        const fixedL = Number(input.boxL.value);
+        const fittedW = floor10(Math.min(maxW, farYForLength(fixedL) - nearY));
+        input.boxW.value = fittedW;
+        input.boxH.value = maxH;
+        input.boxY.value = nearY + fittedW / 2;
+      } else if (mode === "W") {
+        const fixedW = Number(input.boxW.value);
+        input.boxL.value = floor10(lengthForFarY(nearY + fixedW));
+        input.boxH.value = maxH;
+        input.boxY.value = nearY + fixedW / 2;
+      } else {
+        let best = null;
+        for (let width = 10; width <= maxW; width += 10) {
+          const length = floor10(lengthForFarY(nearY + width));
+          if (length < 10) break;
+          const area = length * width;
+          if (!best || area > best.area) best = { length, width, area };
+        }
+        input.boxL.value = best?.length || 10;
+        input.boxW.value = best?.width || 10;
+        input.boxY.value = nearY + Number(input.boxW.value) / 2;
+      }
+      if (!isBoxInside(values()).inside) shrinkBoxUntilInside();
+    }
+
+    function applyConfigurationDefaults() {
+      const fixed = activeTjaMode === "fixed";
+      input.baseZ.value = fixed ? tjaFixedLimits.zMin : tjaRailLimits.zMin;
+      input.boxX.value = fixed ? tjaFixedLimits.centerX : 12000;
+      input.boxY.value = fixed ? 5000 : 4000;
+      input.boxZ.value = fixed ? tjaFixedLimits.zMin : tjaRailLimits.zMin;
+      input.boxL.value = fixed ? 4000 : 6000;
+      input.boxW.value = fixed ? 4000 : 6000;
+      input.boxH.value = 1200;
+      setInputBounds("boxX", fixed ? 2000 : -8000, fixed ? 19000 : 32000);
+      setInputBounds("boxY", -9000, 9000);
+      setInputBounds("boxL", 10, fixed ? 16000 : 38000);
+      setInputBounds("boxW", 10, 16000);
+      setInputBounds("boxH", 10, 4500);
+      syncRanges();
+    }
+
+    function setInputBounds(id, min, max) {
+      input[id].min = min;
+      input[id].max = max;
+      const range = document.querySelector(`input[type='range'][data-for='${id}']`);
+      if (range) {
+        range.min = min;
+        range.max = max;
+      }
+    }
+
+    function rebuildSceneGuides() {
+      if (axes) scene.remove(axes);
+      if (gridLabel) {
+        scene.remove(gridLabel);
+        gridLabel.geometry.dispose();
+        gridLabel.material.map?.dispose();
+        gridLabel.material.dispose();
+      }
+      axes = new THREE.Group();
+      if (activeTjaMode === "fixed") {
+        const x = tjaFixedLimits.centerX;
+        axes.add(axisArrow(new THREE.Vector3(x, 0, 0), new THREE.Vector3(x + 9500, 0, 0), 0xb84d3a, "X+"));
+        axes.add(axisArrow(new THREE.Vector3(x, 0, 0), new THREE.Vector3(x, 9500, 0), 0x1a7f70, "Y+"));
+        axes.add(axisArrow(new THREE.Vector3(x, 0, 0), new THREE.Vector3(x, 0, 5200), 0x316cb3, "Z+"));
+        grid.position.set(x, 0, 0);
+        gridLabel = makeGridLabel("GL-3DPRT-TJA(fixed)", new THREE.Vector3(x + 6000, 7000, 8));
+      } else {
+        const x = 12000;
+        axes.add(axisArrow(new THREE.Vector3(0, 0, 0), new THREE.Vector3(30000, 0, 0), 0xb84d3a, "X+"));
+        axes.add(axisArrow(new THREE.Vector3(x, 0, 0), new THREE.Vector3(x, 9500, 0), 0x1a7f70, "Y+"));
+        axes.add(axisArrow(new THREE.Vector3(x, 0, 0), new THREE.Vector3(x, 0, 5200), 0x316cb3, "Z+"));
+        axes.add(axisTicks(x));
+        grid.position.set(x, 0, 0);
+        gridLabel = makeGridLabel("GL-3DPRT-TJA(track)", new THREE.Vector3(28000, 6000, 8));
+      }
+      scene.add(axes, gridLabel);
     }
 
     function fitPrimaryThenSecondary(base, config, boundaryY) {
