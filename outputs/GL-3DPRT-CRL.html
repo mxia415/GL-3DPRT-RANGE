@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="data:," />
-  <title>CRL打印范围判定 V1.2 · 2026-07-29 · ©Ming Xia</title>
+  <title>CRL打印范围判定 V1.3 · 2026-07-29 · ©Ming Xia</title>
   <script>document.documentElement.dataset.theme = "camada";</script>
   <style>
     :root {
@@ -1863,7 +1863,7 @@
     <aside>
       <header>
         <h1 data-i18n="deviceTitle">CRL打印范围判定</h1>
-        <p class="subtitle" data-i18n="version">V1.2 · 2026-07-29 · ©Ming Xia</p>
+        <p class="subtitle" data-i18n="version">V1.3 · 2026-07-29 · ©Ming Xia</p>
         <button id="languageToggle" class="language-toggle" type="button" aria-label="切换语言">EN</button>
       </header>
 
@@ -2051,8 +2051,8 @@
     const translations = {
       zh: {
         deviceTitle: "CRL打印范围判定",
-        version: "V1.2 · 2026-07-29 · ©Ming Xia",
-        documentTitle: "CRL打印范围判定 V1.2 · 2026-07-29 · ©Ming Xia",
+        version: "V1.3 · 2026-07-29 · ©Ming Xia",
+        documentTitle: "CRL打印范围判定 V1.3 · 2026-07-29 · ©Ming Xia",
         measuredRange: "实测范围",
         stlReference: "STL参考模型",
         importStl: "导入 STL 模型",
@@ -2122,8 +2122,8 @@
       },
       en: {
         deviceTitle: "CRL Print Range Checker",
-        version: "V1.2 · 2026-07-29 · ©Ming Xia",
-        documentTitle: "CRL Print Range Checker V1.2 · 2026-07-29 · ©Ming Xia",
+        version: "V1.3 · 2026-07-29 · ©Ming Xia",
+        documentTitle: "CRL Print Range Checker V1.3 · 2026-07-29 · ©Ming Xia",
         measuredRange: "Measured Range",
         stlReference: "STL Reference Model",
         importStl: "Import STL Model",
@@ -2786,22 +2786,18 @@
         referenceModelMesh = new THREE.Group();
         referenceModelMesh.name = "crl-reference-model";
         referenceModelMaterial.opacity = 0.26;
-        if (crlOfflineMode) {
-          await Promise.all(crlModelFallbackScripts.map((url) => loadClassicScript(url)));
+        for (const url of crlModelFallbackScripts) {
+          await withTimeout(
+            loadClassicScript(url),
+            modelLoadTimeoutMs,
+            "CRL 模型包下载超时"
+          );
         }
         const loaded = [];
         for (const fileName of crlModelParts) {
-          let buffer;
-          if (crlOfflineMode) {
-            const base64 = window.__GL3DPRT_MODELS__?.[`CRL01:${fileName}`];
-            if (!base64) throw new Error(`CRL 离线模型缺失：${fileName}`);
-            buffer = decodeBase64Buffer(base64);
-          } else {
-            const url = new URL(`assets/CRL01-parts/${fileName}?v=20260729-1`, window.location.href).href;
-            const response = await withTimeout(fetch(url), modelLoadTimeoutMs, `${fileName} 下载超时`);
-            if (!response.ok) throw new Error(`${fileName} 请求失败：${response.status}`);
-            buffer = await withTimeout(response.arrayBuffer(), modelLoadTimeoutMs, `${fileName} 读取超时`);
-          }
+          const base64 = window.__GL3DPRT_MODELS__?.[`CRL01:${fileName}`];
+          if (!base64) throw new Error(`CRL 模型包缺失：${fileName}`);
+          const buffer = decodeBase64Buffer(base64);
           const gltf = await withTimeout(new Promise((resolve, reject) => {
             loader.parse(buffer, "", resolve, reject);
           }), modelLoadTimeoutMs, `${fileName} 解析超时`);
