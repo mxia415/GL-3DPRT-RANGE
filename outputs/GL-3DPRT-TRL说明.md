@@ -1,16 +1,16 @@
 # GL-3DPRT-TRL 运动范围判定说明
 
-- 版本：V1.6
-- 日期：2026-07-28
+- 版本：V1.8
+- 日期：2026-07-29
 - 页面：`GL-3DPRT-TRL.html`
 
 ## Nozzle 切换
 
 页面提供 `Long` 与 `Standard` 两种 Nozzle。切换时会同时更换：
 
-- 对应的 TCP 真实 IK 光滑包络；
+- 对应的 TCP V9 真实 IK + 物理干涉光滑包络；
 - 对应的末端 GLB；
-- 用于长方体和导入 STL 判定的 50 mm IK 分类模板。
+- 用于长方体和导入 STL 判定的 50 mm IK + 物理干涉分类模板。
 
 两种规格共用轨道、机械臂分件和同一组截图姿态，不会只更换标签或颜色。
 
@@ -18,14 +18,16 @@ Nozzle 规格标题与切换框在同一行水平排列并垂直居中，中英�
 
 ## 包络与判定口径
 
-包络来自 KUKA KR210 R2700-2 轨道项目的 V6 离线结果：
+包络来自 KUKA KR210 R2700-2 轨道项目的 V9 离线结果：
 
-- `Long Nozzle`：`envelope-v6-long-ypos-fullx-50mm-conservative-smooth`
-- `Standard Nozzle`：`envelope-v6-standard-ypos-fullx-50mm-conservative-smooth`
+- `Long Nozzle`：`envelope-v9-long-ypos-fullx-50mm-conservative-smooth`
+- `Standard Nozzle`：`envelope-v9-standard-ypos-fullx-50mm-conservative-smooth`
 
-显示网格由 50 mm 真实 IK 证据构造，并经过保守内缩和连续光滑处理。V1.2 起，长方体、导入 STL 与最大贴合直接以画面显示的最终闭合包络网格为判定边界；轨内 Y-Z、轨外 R-Z 分类模板只承担来源一致的快速预筛。这样可避免原始模板通过、但角点已经穿出光滑显示边界的不一致。
+V9 的“可达”要求权威约束 IK 成功且 Collision Model V2 无物理干涉。碰撞模型覆盖机械臂非相邻连杆自碰撞、机械臂与轨道/滑台/固定结构、Long/Standard 喷嘴与机械臂及固定结构，并使用 25 mm 保守净距；相邻设计连接按白名单豁免。喷嘴严格竖直向下时，仅 TCP 平端允许接触 `Z=0`，喷嘴杆和其他结构仍必须保持地面净距。
 
-最终网格使用 BVH 加速射线奇偶判定。离线光滑过程会在底部形成约 150 mm 的圆滑过渡，V1.5 在页面加载时将该过渡带的网格顶点投影到 `Z=0`，形成可见的连续平底，再以修改后的同一网格构建 BVH。底面采样点在网格内侧约 2 mm 处判定，因此平底不是隐藏的判定放宽：画面显示的地面边界与长方体、STL 和最大贴合使用的边界完全相同。
+显示网格由 50 mm IK + 碰撞证据构造，并经过保守内缩和连续光滑处理。长方体、导入 STL 与最大贴合直接以画面显示的最终闭合包络网格为判定边界；轨内 Y-Z、轨外 R-Z 分类模板只承担来源一致的快速预筛。
+
+最终轻量网格使用 BVH 加速射线奇偶判定。V9 源网格已经在离线生成阶段保留真实 TCP 触地面，Long 与 Standard 的最低 Z 均为 `0`；页面不再平移或压平包络。显示与判定使用同一份 V9 轻量网格，底面采样点只向网格内侧偏移约 2 mm，避免射线起点恰好落在三角面上。
 
 坐标与范围：
 
@@ -35,7 +37,9 @@ Nozzle 规格标题与切换框在同一行水平排列并垂直居中，中英�
 - Y 向内侧边可手动调整范围：`Y=0…4000 mm`；
 - 设备无限高禁区：`X=0…6300, Y=-650…650, Z≥0`；
 - 长方体 X 使用中心位置，Y 使用靠设备一侧的内侧边位置并向 `+Y` 展开；
-- `Y=1100 mm` 仅是网页初始值、重置值和导入 STL 后的恢复值，不是硬下限；手动输入或滑动可低于 `1100 mm`，最终由当前 Nozzle 包络决定是否可达；
+- 加长款的 Y 初始值、切换恢复值、重置值和导入 STL 后恢复值为 `1300 mm`；标准款为 `1700 mm`；
+- 上述默认值不是硬下限；用户仍可手动输入或滑动至更小的 Y，最终由当前 Nozzle 包络决定是否可达；
+- 若当前位置连保留固定尺寸的最小截面也无法容纳，“固定最大贴合”会从当前 Y 向设备外侧寻找首个可行位置后再执行贴合，避免留下无效的极小长方体；
 - 长方体底面固定为 `Z=0`，向 `+Z` 展开。
 
 长方体会检查 8 个角点和约 100 mm 间距的表面采样点。三个按钮分别支持固定 L、固定 W、固定 H 的最大贴合。
@@ -80,6 +84,7 @@ http://localhost:4174/outputs/GL-3DPRT-TRL.html
 
 ```text
 outputs/assets/trl/classification.json
+outputs/assets/trl/envelope-build-report.json
 outputs/assets/trl/envelope-long.glb
 outputs/assets/trl/envelope-standard.glb
 outputs/assets/trl/envelope-long-light.glb
@@ -91,6 +96,6 @@ outputs/assets/trl/trl-offline-data.js
 outputs/assets/trl/trl-offline-reference.js
 ```
 
-原始两套闭合光滑包络保留不变（Long 约 7.1 MB / 414,824 面，Standard 约 7.8 MB / 456,128 面）。页面加载的 `*-light.glb` 使用二次误差简化至各 60,000 个三角面，仍保持闭合，约 1.1 MB；显示和最终判定共用同一轻量网格，以降低浏览器启动和连续判定耗时。
+TRL 保存两套 V9 闭合光滑包络：Long 为 168,663 顶点 / 337,322 面，Standard 为 205,818 顶点 / 411,632 面。页面加载的 `*-light.glb` 使用二次误差简化至各 60,000 个三角面，仍保持闭合、绕序一致且最低 `Z=0`；显示和最终判定共用同一轻量网格，以降低浏览器启动和连续判定耗时。构建来源、SHA-256、边界与面数记录在 `envelope-build-report.json`。
 
 HTTP/Cloudflare Pages 与 `file://` 模式均使用预先应用截图姿态的合并基础模型与两套轻量 Nozzle；基础模型约 17 MB，两套 Nozzle 各约 0.7 MB，并只在用户点击显示设备模型时加载。原始分件 GLB 作为本地重建源保留，不进入静态部署。

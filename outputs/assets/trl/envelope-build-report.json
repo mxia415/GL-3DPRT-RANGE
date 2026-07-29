@@ -1,0 +1,93 @@
+{
+  "schema": "trl-envelope-build/v1",
+  "reachabilityVersion": 9,
+  "collisionModelVersion": 2,
+  "targetLightTriangles": 60000,
+  "classificationSha256": "41d4d17969707aae626e4b5e611120e6dcf5b208143710b4c2a81399594638b2",
+  "profiles": [
+    {
+      "profile": "long",
+      "sourceProject": "KUKA-KR210-Rail-Robot",
+      "source": "assets/reachability/envelope-v9-long-ypos-fullx-50mm-conservative-smooth.json",
+      "sourceSha256": "eed6eaa10c2980c44b2094a14d17b087796b660d0be7fe4de199fb2ab5d6d183",
+      "full": {
+        "vertices": 168663,
+        "triangles": 337322,
+        "bytes": 6072584,
+        "sha256": "8937c9999903a544a06c3badd6a3396de01a1b83e7fcf4b04a5c815c9df4340f",
+        "bounds": [
+          [
+            -3237.521,
+            0.0,
+            0.0
+          ],
+          [
+            9347.035,
+            3814.221,
+            2114.26
+          ]
+        ]
+      },
+      "light": {
+        "vertices": 30002,
+        "triangles": 60000,
+        "bytes": 1080800,
+        "sha256": "3f3ba2d8abcf7f9a4d6486e65e2ea1d17ac081ebca1582a2fa7582cbbfdc1eba",
+        "bounds": [
+          [
+            -3237.546,
+            0.0,
+            0.0
+          ],
+          [
+            9347.032,
+            3814.221,
+            2114.26
+          ]
+        ]
+      }
+    },
+    {
+      "profile": "standard",
+      "sourceProject": "KUKA-KR210-Rail-Robot",
+      "source": "assets/reachability/envelope-v9-standard-ypos-fullx-50mm-conservative-smooth.json",
+      "sourceSha256": "4aed21892c6c88cdc8451ede643e5af67fe38b5f2f595aa43edfdcf8be566bff",
+      "full": {
+        "vertices": 205818,
+        "triangles": 411632,
+        "bytes": 7410164,
+        "sha256": "f0471bea7ccea2a2d7bd89d8781e9e6cff384d44a0487d2bac0a01b896a0447f",
+        "bounds": [
+          [
+            -3237.521,
+            0.0,
+            0.0
+          ],
+          [
+            9347.035,
+            3814.221,
+            2764.277
+          ]
+        ]
+      },
+      "light": {
+        "vertices": 30002,
+        "triangles": 60000,
+        "bytes": 1080800,
+        "sha256": "705bdaa8606299da7e1b3bb840a25c129b4f2d8d359d599c4a7097e6efcf30a8",
+        "bounds": [
+          [
+            -3237.546,
+            0.0,
+            0.0
+          ],
+          [
+            9347.032,
+            3814.222,
+            2764.28
+          ]
+        ]
+      }
+    }
+  ]
+}

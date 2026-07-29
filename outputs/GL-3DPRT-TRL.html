@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="data:," />
-  <title>TRL运动范围判定 V1.6 · 2026-07-28 · ©Ming Xia</title>
+  <title>TRL运动范围判定 V1.8 · 2026-07-29 · ©Ming Xia</title>
   <script>document.documentElement.dataset.theme = "camada";</script>
   <style>
     :root {
@@ -1863,7 +1863,7 @@
     <aside>
       <header>
         <h1 data-i18n="deviceTitle">TRL运动范围判定</h1>
-        <p class="subtitle" data-i18n="version">V1.6 · 2026-07-28 · ©Ming Xia</p>
+        <p class="subtitle" data-i18n="version">V1.8 · 2026-07-29 · ©Ming Xia</p>
         <button id="languageToggle" class="language-toggle" type="button" aria-label="切换语言">EN</button>
       </header>
 
@@ -1936,8 +1936,8 @@
         </div>
         <div class="field">
           <label><span class="label-main" data-i18n="yLocation">Y 向内侧边位置</span> <span data-i18n="yLocationHelp">从设备外侧向 +Y 展开</span></label>
-          <input id="boxY" type="number" min="0" max="4000" step="10" value="1100">
-          <input data-for="boxY" type="range" min="0" max="4000" step="10" value="1100">
+          <input id="boxY" type="number" min="0" max="4000" step="10" value="1300">
+          <input data-for="boxY" type="range" min="0" max="4000" step="10" value="1300">
         </div>
         <div class="field">
           <label><span class="label-main" data-i18n="zLocation">底面高度 Z</span> <span data-i18n="zLocationHelp">固定为地面 Z=0，向上展开</span></label>
@@ -1983,7 +1983,7 @@
         </div>
       </div>
       <div class="hud">
-        <div class="chip"><strong data-i18n="interactionHelp">拖拽旋转，滚轮缩放</strong><span data-i18n="envelopeHelp">透明体为 50 mm 真实 IK 证据保守内缩后的光滑包络。</span></div>
+        <div class="chip"><strong data-i18n="interactionHelp">拖拽旋转，滚轮缩放</strong><span data-i18n="envelopeHelp">透明体为 50 mm 真实 IK + 物理干涉判定后的 V9 保守包络。</span></div>
         <div id="stlRangeWarning" class="stl-range-warning" hidden role="status" aria-live="polite">
           <strong data-i18n="stlOutOfRangeTitle">超出打印范围</strong>
           <span id="stlRangeWarningText">导入模型的部分区域超出打印范围，已用红色显示。</span>
@@ -2052,8 +2052,8 @@
     const translations = {
       zh: {
         deviceTitle: "TRL运动范围判定",
-        version: "V1.6 · 2026-07-28 · ©Ming Xia",
-        documentTitle: "TRL运动范围判定 V1.6 · 2026-07-28 · ©Ming Xia",
+        version: "V1.8 · 2026-07-29 · ©Ming Xia",
+        documentTitle: "TRL运动范围判定 V1.8 · 2026-07-29 · ©Ming Xia",
         measuredRange: "实测范围",
         nozzleTitle: "打印头规格",
         nozzleLong: "加长款",
@@ -2111,14 +2111,14 @@
         topView: "上视图",
         rightView: "右视图",
         interactionHelp: "拖拽旋转，滚轮缩放",
-        envelopeHelp: "透明体为 50 mm 真实 IK 证据保守内缩后的光滑包络。",
+        envelopeHelp: "透明体为 50 mm 真实 IK + 物理干涉判定后的 V9 保守包络。",
         size: "尺寸",
         lengthMm: "长度 mm",
         widthMm: "宽度 mm",
         heightMm: "高度 mm",
         statusInside: "长方体在范围内。",
         statusForbidden: "长方体进入设备禁区 X=0…6300、Y=-650…650、Z≥0。",
-        statusOutside: "长方体超出当前打印头的 TRL 真实 IK 包络。",
+        statusOutside: "长方体超出当前打印头的 TRL V9 IK + 物理干涉包络。",
         statusCorners: ({ count }) => `有 ${count} 个角点超出可达空间。`,
         volume: ({ value }) => `体积 ${value} L`,
         corners: ({ valid }) => `${valid} / 8 个角点在范围内`,
@@ -2126,8 +2126,8 @@
       },
       en: {
         deviceTitle: "TRL Motion Range Checker",
-        version: "V1.6 · 2026-07-28 · ©Ming Xia",
-        documentTitle: "TRL Motion Range Checker V1.6 · 2026-07-28 · ©Ming Xia",
+        version: "V1.8 · 2026-07-29 · ©Ming Xia",
+        documentTitle: "TRL Motion Range Checker V1.8 · 2026-07-29 · ©Ming Xia",
         measuredRange: "Measured Range",
         nozzleTitle: "Nozzle Profile",
         nozzleLong: "Long",
@@ -2185,14 +2185,14 @@
         topView: "Top view",
         rightView: "Right view",
         interactionHelp: "Drag to rotate; scroll to zoom",
-        envelopeHelp: "The translucent volume is a smooth conservative inset of 50 mm true-IK evidence.",
+        envelopeHelp: "The translucent volume is the V9 conservative envelope after 50 mm true-IK and physical-collision checks.",
         size: "Size",
         lengthMm: "Length mm",
         widthMm: "Width mm",
         heightMm: "Height mm",
         statusInside: "Cuboid is within range.",
         statusForbidden: "Cuboid enters the device exclusion X=0…6300, Y=-650…650, Z≥0.",
-        statusOutside: "Cuboid exceeds the current Nozzle TRL true-IK envelope.",
+        statusOutside: "Cuboid exceeds the current Nozzle TRL V9 IK + collision envelope.",
         statusCorners: ({ count }) => `${count} corner${count === 1 ? "" : "s"} exceed the reachable space.`,
         volume: ({ value }) => `Volume ${value} L`,
         corners: ({ valid }) => `${valid} / 8 corners within range`,
@@ -2428,8 +2428,7 @@
     const stlOutOfRangeColor = new THREE.Color(0xff3b30);
     const stlIntersectionMaterial = new THREE.LineBasicMaterial({ color: 0xff3b30, transparent: true, opacity: 0.98, depthTest: false });
     const trlRailLimits = { min: 575, max: 5535 };
-    const trlDefaultY = 1100;
-    const trlWorkspaceFloorSnapHeight = 150;
+    const trlDefaultYByProfile = Object.freeze({ long: 1300, standard: 1700 });
     const trlDomain = { xMin: -3500, xMax: 9600, yMin: 0, yMax: 4000, zMin: 0, zMax: 3000 };
     const trlDeviceExclusion = { xMin: 0, xMax: 6300, yMin: -650, yMax: 650, zMin: 0 };
     const trlPose = Object.freeze({ e1: 3050, a1: -6.99986, a2: -62.22702, a3: 35.48715, a4: 0, a5: -116.7401, a6: -18.387 });
@@ -2453,7 +2452,7 @@
     if (trlOfflineData) {
       trlClassification = trlOfflineData.classification;
     } else {
-      const classificationResponse = await fetch(new URL("assets/trl/classification.json?v=20260728-1", window.location.href));
+      const classificationResponse = await fetch(new URL("assets/trl/classification.json?v=20260729-1", window.location.href));
       if (!classificationResponse.ok) throw new Error(`TRL 分类模板请求失败：${classificationResponse.status}`);
       trlClassification = await classificationResponse.json();
     }
@@ -2486,7 +2485,7 @@
       if (window.__GL3DPRT_TRL_OFFLINE__) return window.__GL3DPRT_TRL_OFFLINE__;
       await new Promise((resolve, reject) => {
         const script = document.createElement("script");
-        script.src = new URL("assets/trl/trl-offline-data.js?v=20260728-1", window.location.href).href;
+        script.src = new URL("assets/trl/trl-offline-data.js?v=20260729-1", window.location.href).href;
         script.onload = resolve;
         script.onerror = () => reject(new Error("TRL 离线资源包加载失败"));
         document.head.append(script);
@@ -2607,6 +2606,8 @@
       nozzleProfileSelect.disabled = true;
       await loadWorkspaceEnvelope(activeNozzleProfile);
       syncReferenceToolProfile();
+      input.boxY.value = defaultYForActiveProfile();
+      syncRanges();
       nozzleProfileSelect.disabled = false;
       update();
     });
@@ -2622,9 +2623,8 @@
     });
 
     document.getElementById("resetSize").addEventListener("click", () => {
-      const v = values();
       input.boxX.value = 3050;
-      input.boxY.value = trlDefaultY;
+      input.boxY.value = defaultYForActiveProfile();
       input.boxZ.value = 0;
       input.boxL.value = 1200;
       input.boxW.value = 1200;
@@ -2834,7 +2834,7 @@
         importedStlMesh.frustumCulled = false;
         scene.add(importedStlMesh);
         resetStlInputs();
-        input.boxY.value = trlDefaultY;
+        input.boxY.value = defaultYForActiveProfile();
         syncRanges();
         update();
         applyStlTransform();
@@ -2851,6 +2851,10 @@
         stlInputs[key].value = value;
       });
       syncStlPositionRanges();
+    }
+
+    function defaultYForActiveProfile() {
+      return trlDefaultYByProfile[activeNozzleProfile] ?? trlDefaultYByProfile.long;
     }
 
     function syncStlPositionRanges() {
@@ -3119,26 +3123,6 @@
       if (workspaceMesh) workspaceMesh.visible = true;
     }
 
-    function flattenWorkspaceFloor(mesh) {
-      const position = mesh.geometry.getAttribute("position");
-      if (!position) return;
-      const worldPoint = new THREE.Vector3();
-      const localPoint = new THREE.Vector3();
-      const inverseWorld = mesh.matrixWorld.clone().invert();
-      for (let i = 0; i < position.count; i += 1) {
-        worldPoint
-          .set(position.getX(i), position.getY(i), position.getZ(i))
-          .applyMatrix4(mesh.matrixWorld);
-        if (worldPoint.z > trlWorkspaceFloorSnapHeight) continue;
-        worldPoint.z = 0;
-        localPoint.copy(worldPoint).applyMatrix4(inverseWorld);
-        position.setXYZ(i, localPoint.x, localPoint.y, localPoint.z);
-      }
-      position.needsUpdate = true;
-      mesh.geometry.computeBoundingBox();
-      mesh.geometry.computeBoundingSphere();
-    }
-
     async function loadWorkspaceEnvelope(profile) {
       if (workspaceMesh) {
         workspaceMesh.traverse((child) => {
@@ -3160,18 +3144,17 @@
         if (!base64) throw new Error(`TRL ${profile} 离线包络缺失`);
         buffer = decodeBase64Buffer(base64);
       } else {
-        const url = new URL(`assets/trl/envelope-${profile}-light.glb?v=20260728-1`, window.location.href).href;
+        const url = new URL(`assets/trl/envelope-${profile}-light.glb?v=20260729-1`, window.location.href).href;
         const response = await fetch(url);
         if (!response.ok) throw new Error(`TRL ${profile} 包络请求失败：${response.status}`);
         buffer = await response.arrayBuffer();
       }
       const gltf = await new Promise((resolve, reject) => loader.parse(buffer, "", resolve, reject));
       workspaceMesh = gltf.scene;
-      workspaceMesh.name = `TRL ${profile} true-IK envelope`;
+      workspaceMesh.name = `TRL ${profile} V9 IK + collision envelope`;
       workspaceMesh.updateMatrixWorld(true);
       workspaceMesh.traverse((child) => {
         if (!child.isMesh) return;
-        flattenWorkspaceFloor(child);
         child.geometry.computeBoundsTree({ maxLeafTris: 12 });
         child.material = workspaceMaterial;
         child.renderOrder = 3;
@@ -3722,17 +3705,25 @@
       fitDrawingBox(v, fitMode);
     }
 
-    function shrinkBoxUntilInside() {
-      let guard = 0;
-      while (!isBoxInside(values()).inside && guard < 40) {
-        input.boxL.value = Math.max(10, Math.floor(Number(input.boxL.value) * 0.94 / 10) * 10);
-        input.boxW.value = Math.max(10, Math.floor(Number(input.boxW.value) * 0.94 / 10) * 10);
-        input.boxH.value = Math.max(10, Math.floor(Number(input.boxH.value) * 0.94 / 10) * 10);
-        guard += 1;
+    function moveFitStartOutward(v, mode) {
+      const fixedId = mode === "W" ? "boxW" : mode === "H" ? "boxH" : "boxL";
+      const freeIds = ["boxL", "boxW", "boxH"].filter((id) => id !== fixedId);
+      const startY = Math.ceil(v.boxY / 10) * 10;
+      const maxY = Math.floor(Number(input.boxY.max) / 10) * 10;
+      const minimums = Object.fromEntries(freeIds.map((id) => [id, Number(input[id].min)]));
+
+      for (let y = startY; y <= maxY; y += 10) {
+        if (!isCandidateInside(v, { boxY: y, ...minimums })) continue;
+        input.boxY.value = y;
+        v.boxY = y;
+        return true;
       }
+      return false;
     }
 
     function fitDrawingBox(v, mode) {
+      if (!moveFitStartOutward(v, mode)) return;
+
       const maxL = Number(input.boxL.max);
       const maxW = Number(input.boxW.max);
       const maxH = Number(input.boxH.max);
@@ -3775,7 +3766,12 @@
         input.boxW.value = fitted.width;
       }
 
-      if (!isBoxInside(values()).inside) shrinkBoxUntilInside();
+      if (!isBoxInside(values()).inside) {
+        const fixedId = mode === "W" ? "boxW" : mode === "H" ? "boxH" : "boxL";
+        for (const id of ["boxL", "boxW", "boxH"]) {
+          if (id !== fixedId) input[id].value = Number(input[id].min);
+        }
+      }
     }
 
     function fitPrimaryThenSecondary(base, config, boundaryY) {
