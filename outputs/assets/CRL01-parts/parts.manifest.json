@@ -1,0 +1,108 @@
+{
+  "version": 1,
+  "authority": "CRL01 tracked-chassis OBB + shared CAD assembly coordinates",
+  "referencePose": {
+    "a1": 0,
+    "a2": -90,
+    "a3": 90,
+    "a4": 0,
+    "a5": 0,
+    "a6": 0
+  },
+  "globalAlignment": {
+    "sourceUnits": "m",
+    "worldUnits": "mm",
+    "matrixRowMajor": [
+      [0.330408063815, -0.332889924374, -999.999890007399, 256.600269184514],
+      [-999.971093845115, 7.596093316665, -0.332927212538, 2069.305133659494],
+      [7.596203309266, 999.971093857529, -0.330370491321, 1377.604586493214],
+      [0, 0, 0, 1]
+    ],
+    "installationPlaneZMm": 391,
+    "referencePlateSizeMm": [1600, 1000],
+    "nominalVehicleBodySizeMm": [1569, 996, 391],
+    "trackToothMinimumZMm": -4.227051
+  },
+  "jointDatums": {
+    "a1": {
+      "sourcePointM": [2.061848, -1.002392, -0.292385],
+      "worldPointMm": [550, 0, 391],
+      "worldAxis": [0, 0, 1]
+    },
+    "a2": {
+      "sourcePointM": [2.065489, -0.529853, -0.447541],
+      "worldPointMm": [705, 0, 863.6],
+      "worldAxis": [0, 1, 0]
+    },
+    "a3": {
+      "sourcePointM": [2.071946, 0.320088, -0.447812],
+      "worldPointMm": [705, 0, 1713.6],
+      "worldAxis": [0, 1, 0]
+    },
+    "a4": {
+      "sourcePointM": [2.104444, 0.479601, -1.277559],
+      "worldPointMm": [1534.7, -31, 1873.6],
+      "worldAxis": [1, 0, 0]
+    },
+    "a5": {
+      "sourcePointM": [2.104444, 0.479601, -1.277559],
+      "worldPointMm": [1534.7, -31, 1873.6],
+      "worldAxis": [0, 1, 0]
+    },
+    "a6": {
+      "sourcePointM": [2.106481, 0.47954, -1.417314],
+      "worldPointMm": [1674.5, -33, 1873.6],
+      "worldAxis": [1, 0, 0]
+    }
+  },
+  "parts": [
+    {
+      "slot": "chassis",
+      "file": "crl01_00_fx_chassis.glb",
+      "sha256": "d3be943a5f26968003755b8374421fefabcabe72b4b16a8324af8a294aaa6761",
+      "visible": true
+    },
+    {
+      "slot": "robotBase",
+      "file": "crl01_20_a1_robot_base.glb",
+      "sha256": "d318720edf80da8ad41bb23216d8588a74331570cd7f32033fb6dbe4723298e9",
+      "visible": true
+    },
+    {
+      "slot": "a2UpperArm",
+      "file": "crl01_40_a2_upper_arm.glb",
+      "sha256": "e06deeb49a9867866ee34d93df9b0eef2b4e563e44c7a8986a13440edc5fc25d",
+      "visible": true
+    },
+    {
+      "slot": "a3Forearm",
+      "file": "crl01_50_a3_forearm.glb",
+      "sha256": "6b9c4ac2d82b3dd424ee3d3cc42248f23c93497d33f709b44c661540e0dacf92",
+      "visible": true
+    },
+    {
+      "slot": "a4WristRoll",
+      "file": "crl01_60_a4_wrist_roll.glb",
+      "sha256": "755b6c2ee30ff658f930e483014ebdcb8dab3ecaeea4a12c89af1c5fb2466a05",
+      "visible": true
+    },
+    {
+      "slot": "a5WristBend",
+      "file": "crl01_70_a5_wrist_bend.glb",
+      "sha256": "0e173227150f7b39e7fdd506cb01808a29dca9aed2097360199d3e62cfba9b7e",
+      "visible": true
+    },
+    {
+      "slot": "a6Flange",
+      "file": "crl01_80_a6_flange.glb",
+      "sha256": "c8983f29a89e7e315f6b87efd6a61ad6dbadc78c3ef37fae9363f74c8d9db917",
+      "visible": true
+    },
+    {
+      "slot": "toolTcpAssembly",
+      "file": "crl01_90_tool_tcp_assembly.glb",
+      "sha256": "bed6576a826290e65bdf59c0f2c94bd4410778ed6e5a1e1dbc92921eb0c9aad6",
+      "visible": true
+    }
+  ]
+}

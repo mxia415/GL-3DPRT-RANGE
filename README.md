@@ -1,6 +1,6 @@
 # GL-3DPRT 运动范围判定工具
 
-版本：v1.29
+版本：v1.31
 
 日期：2026-07-29
 
@@ -12,6 +12,7 @@
 - `GL-3DPRT-SP-S`
 - `GL-3DPRT-TJA`（轨道版 / 固定底座）
 - `GL-3DPRT-TRL`
+- `GL-3DPRT-CRL`
 
 项目入口是：
 
@@ -45,6 +46,8 @@ TRL V1.7 接入 KUKA 项目的 V9 双包络。“可达”现在要求权威约�
 
 TRL V1.8 将加长款默认 Y 调整为 `1300 mm`，标准款调整为 `1700 mm`，并统一应用于首次打开、打印头切换、尺寸重置和 STL 导入恢复。
 
+CRL 页面以 TRL V1.8 为界面与交互基准，使用 CRL01 的 68,250 个碰撞过滤后 TCP 姿态生成连续打印包络，并接入同一统一装配矩阵下的八个设备 GLB 分件。CRL 没有 Nozzle 规格切换。
+
 设备页面还支持隐藏/显示中间的内接长方体和尺寸标注；隐藏后参数和判定结果仍会保留。
 
 导入 STL 后可以显示或隐藏 STL 与运动范围边界的近似交线。交线通过模型三角面边上的范围内外变化点生成，只作为视觉辅助。
@@ -59,10 +62,12 @@ outputs/GL-3DPRT-SP-M.html            SP-M 运动范围判定工具
 outputs/GL-3DPRT-SP-S.html            SP-S 运动范围判定工具
 outputs/GL-3DPRT-TJA-track.html       TJA 轨道版 / 固定底座合并判定工具
 outputs/GL-3DPRT-TRL.html             TRL 运动范围判定工具
+outputs/GL-3DPRT-CRL.html             CRL 打印范围判定工具
 outputs/GL-3DPRT-SP-M说明.md          SP-M 使用说明
 outputs/GL-3DPRT-SP-S说明.md          SP-S 使用说明
 outputs/GL-3DPRT-TJA-track说明.md     TJA 两种形式使用说明
 outputs/GL-3DPRT-TRL说明.md           TRL 使用说明
+outputs/GL-3DPRT-CRL说明.md           CRL 使用说明
 outputs/assets/GL-3DPRT-SP-M.glb      SP-M 设备模型，供 HTTP / GitHub Pages 使用
 outputs/assets/GL-3DPRT-SP-S.glb      SP-S 高精度设备模型，供 HTTP / GitHub Pages 使用
 outputs/assets/GL-3DPRT-SP-S-model.js  SP-S 高精度设备模型的 file:// 备用包
@@ -71,6 +76,7 @@ outputs/assets/TJA-track-model.js      TJA(track) file:// 离线备用模型包
 outputs/assets/TJA_00_FIX_PLATFORM.glb TJA 固定平台压缩模型
 outputs/assets/TJA-fixed-model*.js     TJA 固定底座五分件 file:// 备用模型包
 outputs/assets/trl/                    TRL 两套包络、分类模板与轻量设备模型资源
+outputs/assets/CRL01-*                 CRL 包络数据、离线包与八分件模型资源
 outputs/assets/raw/GL-3DPRT-TJA-track-raw.glb  TJA(track) 原始模型备份
 outputs/assets/*-model.js             本地 file:// 打开时使用的备用模型包
 outputs/glb-compressor.html           维护用 GLB 压缩工具
@@ -93,7 +99,7 @@ python3 -m http.server 4174
 http://localhost:4174/outputs/index.html
 ```
 
-SP-M、SP-S、TJA 与 TRL 均可直接双击入口页打开，并使用各自的离线备用资源包。
+SP-M、SP-S、TJA、TRL 与 CRL 均提供各自的离线备用资源包。
 
 ## 判定方法
 
@@ -114,6 +120,8 @@ SP-M、SP-S、TJA 与 TRL 均可直接双击入口页打开，并使用各自的
 - `outputs/GL-3DPRT-SP-M.html`
 - `outputs/GL-3DPRT-SP-S.html`
 - `outputs/GL-3DPRT-TJA-track.html`
+- `outputs/GL-3DPRT-TRL.html`
+- `outputs/GL-3DPRT-CRL.html`
 - `outputs/assets`
 
 如果只分享单个设备页面，也要同时提供该设备对应的 `.glb` 和 `*-model.js` 文件，否则设备模型按钮无法在所有访问方式下正常工作。
