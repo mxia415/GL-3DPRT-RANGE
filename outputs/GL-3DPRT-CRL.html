@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="data:," />
-  <title>CRL打印范围判定 V1.3 · 2026-07-29 · ©Ming Xia</title>
+  <title>CRL打印范围判定 V1.4 · 2026-07-29 · ©Ming Xia</title>
   <script>document.documentElement.dataset.theme = "camada";</script>
   <style>
     :root {
@@ -1863,7 +1863,7 @@
     <aside>
       <header>
         <h1 data-i18n="deviceTitle">CRL打印范围判定</h1>
-        <p class="subtitle" data-i18n="version">V1.3 · 2026-07-29 · ©Ming Xia</p>
+        <p class="subtitle" data-i18n="version">V1.4 · 2026-07-29 · ©Ming Xia</p>
         <button id="languageToggle" class="language-toggle" type="button" aria-label="切换语言">EN</button>
       </header>
 
@@ -2051,8 +2051,8 @@
     const translations = {
       zh: {
         deviceTitle: "CRL打印范围判定",
-        version: "V1.3 · 2026-07-29 · ©Ming Xia",
-        documentTitle: "CRL打印范围判定 V1.3 · 2026-07-29 · ©Ming Xia",
+        version: "V1.4 · 2026-07-29 · ©Ming Xia",
+        documentTitle: "CRL打印范围判定 V1.4 · 2026-07-29 · ©Ming Xia",
         measuredRange: "实测范围",
         stlReference: "STL参考模型",
         importStl: "导入 STL 模型",
@@ -2122,8 +2122,8 @@
       },
       en: {
         deviceTitle: "CRL Print Range Checker",
-        version: "V1.3 · 2026-07-29 · ©Ming Xia",
-        documentTitle: "CRL Print Range Checker V1.3 · 2026-07-29 · ©Ming Xia",
+        version: "V1.4 · 2026-07-29 · ©Ming Xia",
+        documentTitle: "CRL Print Range Checker V1.4 · 2026-07-29 · ©Ming Xia",
         measuredRange: "Measured Range",
         stlReference: "STL Reference Model",
         importStl: "Import STL Model",
@@ -2468,8 +2468,8 @@
       "crl01_80_a6_flange.glb",
       "crl01_90_tool_tcp_assembly.glb"
     ];
-    const crlModelFallbackScripts = [1, 2, 3, 4].map((part) => (
-      new URL(`assets/CRL01-model-${part}.js?v=20260729-1`, window.location.href).href
+    const crlModelFallbackScripts = Array.from({ length: 8 }, (_, index) => (
+      new URL(`assets/CRL01-model-${index + 1}.js?v=20260729-2`, window.location.href).href
     ));
     const crlCadSourceToWorld = new THREE.Matrix4().set(...CAD_SOURCE_TO_WORLD_ROWS.flat());
     const crlCadReferencePose = computePose(CAD_REFERENCE_PARAMS);

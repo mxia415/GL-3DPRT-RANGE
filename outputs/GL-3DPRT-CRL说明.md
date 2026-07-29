@@ -1,6 +1,6 @@
 # GL-3DPRT-CRL 打印范围判定说明
 
-版本：V1.3 · 2026-07-29 · ©Ming Xia
+版本：V1.4 · 2026-07-29 · ©Ming Xia
 
 ## 页面基准
 
@@ -71,7 +71,7 @@ CRL 页面以 `codex://threads/019fa625-2426-7922-84f6-3b109bb32fc6` 对应的 T
 - 包络数据：`outputs/assets/CRL01-workspace.json`
 - 离线包络：`outputs/assets/CRL01-workspace-data.js`
 - 设备分件：`outputs/assets/CRL01-parts/`
-- 离线模型包：`outputs/assets/CRL01-model-1.js` 至 `CRL01-model-4.js`
+- 模型包：`outputs/assets/CRL01-model-1.js` 至 `CRL01-model-8.js`
 
 推荐从项目根目录启动：
 
@@ -85,4 +85,4 @@ python3 -m http.server 4174
 http://localhost:4174/outputs/GL-3DPRT-CRL
 ```
 
-HTTP 页面按需读取 JSON 包络；设备模型在点击后按顺序载入四个 JavaScript/Base64 模型包，并解析为八个 GLB 分件。直接打开本地文件时使用同一套模型包。此方式避免 Cloudflare Pages 的大体积二进制响应在部分浏览器中出现正文读取超时。
+HTTP 页面按需读取 JSON 包络；设备模型在点击后按顺序载入八个 JavaScript/Base64 模型包，每个包对应一个 GLB 分件。直接打开本地文件时使用同一套模型包。拆分后可避免 Cloudflare Pages 的大体积二进制响应或单个超大脚本在部分浏览器中出现正文读取超时。
