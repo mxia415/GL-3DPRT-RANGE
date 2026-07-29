@@ -1,6 +1,6 @@
 # GL-3DPRT-CRL 打印范围判定说明
 
-版本：V1.1 · 2026-07-29 · ©Ming Xia
+版本：V1.2 · 2026-07-29 · ©Ming Xia
 
 ## 页面基准
 
@@ -86,3 +86,4 @@ http://localhost:4174/outputs/GL-3DPRT-CRL
 ```
 
 HTTP 页面按需读取 JSON 和八个 GLB；本地模式使用对应的 JavaScript 备用包。
+HTTP 模式按分件顺序下载并解析八个 GLB，避免首次加载时并发大文件造成网络拥塞。
