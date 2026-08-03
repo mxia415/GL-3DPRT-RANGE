@@ -1,6 +1,6 @@
 # GL-3DPRT 运动范围判定工具
 
-版本：v1.36
+版本：v1.37
 
 日期：2026-08-03
 
@@ -11,7 +11,7 @@
 - `GL-3DPRT-SP-M`
 - `GL-3DPRT-SP-S`
 - `GL-3DPRT-TJA`（轨道版 / 固定底座）
-- `GL-3DPRT-TRL01`（预留，待增加）
+- `GL-3DPRT-TRL01`
 - `GL-3DPRT-TRL02`
 - `GL-3DPRT-CRL01`
 - `GL-3DPRT-CRL02`（预留，待增加）
@@ -27,6 +27,8 @@ outputs/index.html
 各设备页面都支持临时导入本地 STL 参考模型。STL 文件只在浏览器本地读取，不会上传；导入后可以通过滑动条或手动输入调整 X/Y/Z 位置，也可以调整 X/Y/Z 旋转、缩放和透明度。导入的 STL 只用于观察对照，不参与运动范围判定。
 
 TJA 页面可在“轨道版”和“固定底座”之间切换。轨道版使用沿 X 轨道扫掠的胶囊形包络并扣除无限长中心带；固定底座版使用半径 8130.3 mm、高 4500 mm 的圆柱包络并扣除中心固定平台菱形。切换时会同步更换包络、判定、最大贴合、默认视角和设备模型。
+
+TRL01 页面使用权威工程逐点 IK 验证生成的 50 mm 保守平滑 TCP 包络，并接入同一锁定总装矩阵下的九件 GLB 模型。默认打印姿态为 E1=2900 mm、A1=0°、A2=-98.6°、A3=59.2°、A4=0°、A5=129.4°、A6=0°，工具方向保持世界 -Z。
 
 TRL02 页面使用 KUKA KR210 R2700-2 轨道项目的 V9 50 mm 真实 IK + 物理干涉包络，支持 `Long` / `Standard` 两种 Nozzle。切换时同步更换光滑包络、末端 GLB 和判定模板。模型固定使用 E1=3050、A1=-6.99986°、A2=-62.22702°、A3=35.48715°、A4=0°、A5=-116.7401°、A6=-18.3870° 的截图姿态。
 
@@ -63,11 +65,13 @@ outputs/index.html                    设备选择入口
 outputs/GL-3DPRT-SP-M.html            SP-M 运动范围判定工具
 outputs/GL-3DPRT-SP-S.html            SP-S 运动范围判定工具
 outputs/GL-3DPRT-TJA-track.html       TJA 轨道版 / 固定底座合并判定工具
+outputs/GL-3DPRT-TRL01.html           TRL01 打印范围判定工具
 outputs/GL-3DPRT-TRL02.html           TRL02 运动范围判定工具
 outputs/GL-3DPRT-CRL01.html           CRL01 打印范围判定工具
 outputs/GL-3DPRT-SP-M说明.md          SP-M 使用说明
 outputs/GL-3DPRT-SP-S说明.md          SP-S 使用说明
 outputs/GL-3DPRT-TJA-track说明.md     TJA 两种形式使用说明
+outputs/GL-3DPRT-TRL01说明.md         TRL01 使用说明
 outputs/GL-3DPRT-TRL02说明.md         TRL02 使用说明
 outputs/GL-3DPRT-CRL01说明.md         CRL01 使用说明
 outputs/assets/GL-3DPRT-SP-M.glb      SP-M 设备模型，供 HTTP / GitHub Pages 使用
@@ -77,6 +81,8 @@ outputs/assets/GL-3DPRT-TJA-track.glb  TJA(track) 压缩完整设备模型，供
 outputs/assets/TJA-track-model.js      TJA(track) file:// 离线备用模型包
 outputs/assets/TJA_00_FIX_PLATFORM.glb TJA 固定平台压缩模型
 outputs/assets/TJA-fixed-model*.js     TJA 固定底座五分件 file:// 备用模型包
+outputs/assets/trl01/                  TRL01 权威 50 mm 包络、模型清单与九件 GLB
+outputs/assets/vendor/                 TRL01 离线 Three.js、加载器与 BVH 依赖
 outputs/assets/trl/                    TRL02 两套包络、分类模板与轻量设备模型资源
 outputs/assets/CRL01-*                 CRL01 包络数据、离线包与八分件模型资源
 outputs/assets/raw/GL-3DPRT-TJA-track-raw.glb  TJA(track) 原始模型备份
@@ -101,7 +107,7 @@ python3 -m http.server 4174
 http://localhost:4174/outputs/index.html
 ```
 
-SP-M、SP-S、TJA、TRL02 与 CRL01 均提供各自的离线备用资源包。TRL01 与 CRL02 为后续设备预留位。
+SP-M、SP-S、TJA、TRL01、TRL02 与 CRL01 均提供各自的本地资源。CRL02 为后续设备预留位。
 
 ## 判定方法
 
@@ -122,6 +128,7 @@ SP-M、SP-S、TJA、TRL02 与 CRL01 均提供各自的离线备用资源包。TR
 - `outputs/GL-3DPRT-SP-M.html`
 - `outputs/GL-3DPRT-SP-S.html`
 - `outputs/GL-3DPRT-TJA-track.html`
+- `outputs/GL-3DPRT-TRL01.html`
 - `outputs/GL-3DPRT-TRL02.html`
 - `outputs/GL-3DPRT-CRL01.html`
 - `outputs/assets`

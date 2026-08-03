@@ -1,0 +1,120 @@
+{
+  "version": 1,
+  "authority": "TRL01 fixed-track ground / rail surface / centreline + shared CAD assembly coordinates",
+  "calibration": {
+    "locked": true
+  },
+  "referencePose": {
+    "e1": 2900,
+    "a1": 0,
+    "a2": -90,
+    "a3": 90,
+    "a4": 0,
+    "a5": 0,
+    "a6": 0
+  },
+  "globalAlignment": {
+    "sourceUnits": "m",
+    "worldUnits": "mm",
+    "matrixRowMajor": [
+      [1000, 0, 0, 651.761],
+      [0, 0, -1000, -74.122],
+      [0, 1000, 0, 1734.478],
+      [0, 0, 0, 1]
+    ],
+    "sourceGroundY": -1.734478,
+    "sourceRailSurfaceY": -1.459178,
+    "sourceRailCenterZ": -0.074122,
+    "sourceReferenceA1X": 2.248239,
+    "railSurfaceZMm": 275.3,
+    "referenceE1Mm": 2900
+  },
+  "jointDatums": {
+    "a1": {
+      "sourcePointM": [2.248239, -1.237178, -0.074122],
+      "worldPointMm": [2900, 0, 497.3],
+      "worldAxis": [0, 0, 1]
+    },
+    "a2": {
+      "sourcePointM": [2.248239, -0.764578, -0.229122],
+      "worldPointMm": [2900, 155, 969.9],
+      "worldAxis": [-1, 0, 0]
+    },
+    "a3": {
+      "sourcePointM": [2.248239, 0.085422, -0.229122],
+      "worldPointMm": [2900, 155, 1819.9],
+      "worldAxis": [-1, 0, 0]
+    },
+    "a4": {
+      "sourcePointM": [2.279239, 0.245422, -1.058622],
+      "worldPointMm": [2931, 984.5, 1979.9],
+      "worldAxis": [0, 1, 0]
+    },
+    "a5": {
+      "sourcePointM": [2.279239, 0.245422, -1.058622],
+      "worldPointMm": [2931, 984.5, 1979.9],
+      "worldAxis": [-1, 0, 0]
+    },
+    "a6": {
+      "sourcePointM": [2.281239, 0.245422, -1.198622],
+      "worldPointMm": [2933, 1124.5, 1979.9],
+      "worldAxis": [0, 1, 0]
+    }
+  },
+  "parts": [
+    {
+      "slot": "track",
+      "file": "er25_00_fx_track.glb",
+      "sha256": "039461b52ecdea8a05537915801ca44c9d2f6eaea2e16e021124e807772f24a0",
+      "visible": true
+    },
+    {
+      "slot": "e1CarriageBase",
+      "file": "er25_10_e1_carriage_base.glb",
+      "sha256": "22780cbe816747516b0586046372928196afe93c808a074bccd14562b9a37dbb",
+      "visible": true
+    },
+    {
+      "slot": "a1RotaryBase",
+      "file": "er25_30_a1_rotary_base.glb",
+      "sha256": "3d0bc3f9ccb703cb5e5099bcdea4cb51df14188d73c27ba84a86b100c3ff62d1",
+      "visible": true
+    },
+    {
+      "slot": "a2UpperArm",
+      "file": "er25_40_a2_upper_arm.glb",
+      "sha256": "0a191b152811c81b233110f31cdca08a0707885167bcdbfb6eaf1d20ceee9e1b",
+      "visible": true
+    },
+    {
+      "slot": "a3Forearm",
+      "file": "er25_50_a3_forearm.glb",
+      "sha256": "e126df56aabb4f5db97074b07463ab0882c8b7931c30ef85b599b32432a63490",
+      "visible": true
+    },
+    {
+      "slot": "a4WristRoll",
+      "file": "er25_60_a4_wrist_roll.glb",
+      "sha256": "2432323cd4464babfe14db591d13b9cf5d15999ff3214de724343a0550a79e3c",
+      "visible": true
+    },
+    {
+      "slot": "a5WristBend",
+      "file": "er25_70_a5_wrist_bend.glb",
+      "sha256": "c4863665fd32552cb31a4d84fa5ef39f275f593e02db3bca5fd30594a1dfc250",
+      "visible": true
+    },
+    {
+      "slot": "a6Flange",
+      "file": "er25_80_a6_flange.glb",
+      "sha256": "1db8e88f11202de603c8f5d7045a866b1d813e0420aa2e5f58c55eca1f4f88b2",
+      "visible": true
+    },
+    {
+      "slot": "printHead",
+      "file": "er25_90_print_head.glb",
+      "sha256": "3dae38bb1cc55e4c881b74d3a616e40912b5ee8682eb7144a64557716177cf2c",
+      "visible": true
+    }
+  ]
+}
