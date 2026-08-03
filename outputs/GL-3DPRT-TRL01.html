@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="data:," />
-  <title>TRL01运动范围判定 V1.0 · 2026-08-03 · ©Ming Xia</title>
+  <title>TRL01运动范围判定 V1.1 · 2026-08-03 · ©Ming Xia</title>
   <script>document.documentElement.dataset.theme = "camada";</script>
   <style>
     :root {
@@ -114,50 +114,6 @@
       align-items: center;
       gap: 7px;
       margin: 3px 0;
-    }
-
-    .nozzle-field select {
-      grid-column: 2;
-    }
-
-    .nozzle-section {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .nozzle-section .section-title,
-    .nozzle-section .nozzle-field {
-      margin: 0;
-    }
-
-    .nozzle-section .nozzle-field {
-      display: block;
-    }
-
-    .nozzle-section .nozzle-field select {
-      width: 148px;
-    }
-
-    .pose-section {
-      display: block;
-    }
-
-    .pose-section .field {
-      grid-template-columns: 88px minmax(0, 1fr);
-    }
-
-    .pose-section .value-pill,
-    html[data-theme="camada"] .pose-section .value-pill {
-      width: 100%;
-      height: auto;
-      min-height: 27px;
-      padding: 4px 6px;
-      white-space: normal;
-      text-align: right;
-      line-height: 1.15;
-      font-size: 10.5px;
     }
 
     label {
@@ -1883,7 +1839,7 @@
     <aside>
       <header>
         <h1 data-i18n="deviceTitle">TRL01运动范围判定</h1>
-        <p class="subtitle" data-i18n="version">V1.0 · 2026-08-03 · ©Ming Xia</p>
+        <p class="subtitle" data-i18n="version">V1.1 · 2026-08-03 · ©Ming Xia</p>
         <button id="languageToggle" class="language-toggle" type="button" aria-label="切换语言">EN</button>
       </header>
 
@@ -1915,12 +1871,7 @@
         </div>
       </section>
 
-      <section class="section nozzle-section pose-section">
-        <div class="section-title" data-i18n="poseTitle">默认打印姿态</div>
-        <div class="field"><label data-i18n="poseAxes">E1 / A1–A6</label><div class="value-pill">2900 / 0 / −98.6 / 59.2 / 0 / 129.4 / 0</div></div>
-        <div class="field"><label data-i18n="toolDirection">工具方向</label><div class="value-pill">WORLD −Z</div></div>
-        <select id="nozzleProfile" hidden aria-hidden="true"><option value="trl01">TRL01</option></select>
-      </section>
+      <select id="nozzleProfile" hidden aria-hidden="true"><option value="trl01">TRL01</option></select>
 
       <section class="section">
         <div class="section-title" data-i18n="stlReference">STL参考模型</div>
@@ -2069,12 +2020,9 @@
     const translations = {
       zh: {
         deviceTitle: "TRL01运动范围判定",
-        version: "V1.0 · 2026-08-03 · ©Ming Xia",
-        documentTitle: "TRL01运动范围判定 V1.0 · 2026-08-03 · ©Ming Xia",
+        version: "V1.1 · 2026-08-03 · ©Ming Xia",
+        documentTitle: "TRL01运动范围判定 V1.1 · 2026-08-03 · ©Ming Xia",
         measuredRange: "实测范围",
-        poseTitle: "默认打印姿态",
-        poseAxes: "E1 / A1–A6",
-        toolDirection: "工具方向",
         nozzleTitle: "打印头规格",
         nozzleLong: "加长款",
         nozzleStandard: "标准款",
@@ -2146,12 +2094,9 @@
       },
       en: {
         deviceTitle: "TRL01 Motion Range Checker",
-        version: "V1.0 · 2026-08-03 · ©Ming Xia",
-        documentTitle: "TRL01 Motion Range Checker V1.0 · 2026-08-03 · ©Ming Xia",
+        version: "V1.1 · 2026-08-03 · ©Ming Xia",
+        documentTitle: "TRL01 Motion Range Checker V1.1 · 2026-08-03 · ©Ming Xia",
         measuredRange: "Measured Range",
-        poseTitle: "Default Print Posture",
-        poseAxes: "E1 / A1–A6",
-        toolDirection: "Tool Direction",
         nozzleTitle: "Nozzle Profile",
         nozzleLong: "Long",
         nozzleStandard: "Standard",
