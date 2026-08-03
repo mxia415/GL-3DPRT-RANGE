@@ -24,7 +24,7 @@ assert.match(html, /trlToolDirection = Object\.freeze\(\{ x: 0, y: [^,]+, z: -1 
 assert.match(html, /assets\/trl01\/envelope-v1-ypos-fullx-50mm-conservative\.json/);
 assert.match(html, /assets\/vendor\/three\/build\/three\.module\.js/);
 assert.doesNotMatch(html, /cdn\.jsdelivr\.net|unpkg\.com/);
-assert.match(home, /data-index="04" href="GL-3DPRT-TRL01\.html"/);
+assert.match(home, /data-index="04" href="GL-3DPRT-TRL01"/);
 
 assert.equal(asset.schema, 'trl01-tcp-envelope/v1');
 assert.equal(asset.algorithmVersion, 'trl01-ik-evidence-20260803-v1');
