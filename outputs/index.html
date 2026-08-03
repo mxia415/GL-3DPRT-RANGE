@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="data:," />
-  <title>GL-3DPRT运动范围判定工具 V2.18 · 2026-07-29 · ©Ming Xia</title>
+  <title>GL-3DPRT运动范围判定工具 V2.19 · 2026-08-03 · ©Ming Xia</title>
   <style>
     :root {
       color-scheme: light;
@@ -90,12 +90,22 @@
 
     .device-actions {
       display: grid;
-      grid-template-columns: repeat(2, minmax(280px, 520px));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 30px;
       margin-top: 52px;
     }
 
-    a {
+    .device-entry[data-index="04"],
+    .device-entry[data-index="06"] {
+      grid-column: 1;
+    }
+
+    .device-entry[data-index="05"],
+    .device-entry[data-index="07"] {
+      grid-column: 2;
+    }
+
+    .device-entry {
       min-height: 82px;
       display: grid;
       grid-template-columns: 38px minmax(0, 1fr);
@@ -128,7 +138,7 @@
       line-height: 1.4;
     }
 
-    a::before {
+    .device-entry::before {
       grid-row: 1 / span 2;
       width: 26px;
       height: 26px;
@@ -138,28 +148,18 @@
       color: #383838;
       font-size: 11px;
       font-weight: 700;
-      content: "01";
+      content: attr(data-index);
       align-self: center;
     }
 
-    a:nth-child(2)::before {
-      content: "02";
-    }
-
-    a:nth-child(3)::before {
-      content: "03";
-    }
-
-    a:nth-child(4)::before {
-      content: "04";
-    }
-
-    a:nth-child(5)::before {
-      content: "05";
-    }
-
-    a:hover {
+    a.device-entry:hover {
       color: #000;
+    }
+
+    .device-entry.is-pending {
+      opacity: 0.42;
+      cursor: default;
+      user-select: none;
     }
 
     .meta {
@@ -194,8 +194,9 @@
         margin-top: 40px;
       }
 
-      a {
+      .device-entry[data-index] {
         width: 100%;
+        grid-column: auto;
       }
 
       footer {
@@ -215,30 +216,38 @@
       <p data-i18n="description">选择设备型号，进入对应的打印范围判定工具。</p>
 
       <nav class="device-actions" data-i18n-aria-label="deviceSelection" aria-label="设备选择">
-        <a href="GL-3DPRT-SP-M">
+        <a class="device-entry" data-index="01" href="GL-3DPRT-SP-M">
           <strong>SP-M</strong>
           <span>GL-3DPRT-SP-M</span>
         </a>
-        <a href="GL-3DPRT-SP-S">
+        <a class="device-entry" data-index="02" href="GL-3DPRT-SP-S">
           <strong>SP-S</strong>
           <span>GL-3DPRT-SP-S</span>
         </a>
-        <a href="GL-3DPRT-TJA-track">
+        <a class="device-entry" data-index="03" href="GL-3DPRT-TJA-track">
           <strong>TJA</strong>
           <span>GL-3DPRT-TJA</span>
         </a>
-        <a href="GL-3DPRT-TRL">
-          <strong>TRL</strong>
-          <span>GL-3DPRT-TRL</span>
+        <div class="device-entry is-pending" data-index="04" aria-disabled="true">
+          <strong>TRL01</strong>
+          <span>GL-3DPRT-TRL01</span>
+        </div>
+        <a class="device-entry" data-index="05" href="GL-3DPRT-TRL02">
+          <strong>TRL02</strong>
+          <span>GL-3DPRT-TRL02</span>
         </a>
-        <a href="GL-3DPRT-CRL">
-          <strong>CRL</strong>
-          <span>GL-3DPRT-CRL</span>
+        <a class="device-entry" data-index="06" href="GL-3DPRT-CRL01">
+          <strong>CRL01</strong>
+          <span>GL-3DPRT-CRL01</span>
         </a>
+        <div class="device-entry is-pending" data-index="07" aria-disabled="true">
+          <strong>CRL02</strong>
+          <span>GL-3DPRT-CRL02</span>
+        </div>
       </nav>
 
       <div class="meta">
-        <span data-i18n="version">V2.18 · 2026-07-29 · ©Ming Xia</span>
+        <span data-i18n="version">V2.19 · 2026-08-03 · ©Ming Xia</span>
       </div>
 
       <footer data-i18n="footer">©Ming Xia</footer>
@@ -251,20 +260,20 @@
         heading: "GL-3DPRT运动范围判定工具",
         description: "选择设备型号，进入对应的打印范围判定工具。",
         deviceSelection: "设备选择",
-        version: "V2.18 · 2026-07-29 · ©Ming Xia",
+        version: "V2.19 · 2026-08-03 · ©Ming Xia",
         footer: "©Ming Xia",
         toggleLabel: "切换语言",
-        title: "GL-3DPRT运动范围判定工具 V2.18 · 2026-07-29 · ©Ming Xia"
+        title: "GL-3DPRT运动范围判定工具 V2.19 · 2026-08-03 · ©Ming Xia"
       },
       en: {
         eyebrow: "Motion Range Workspace",
         heading: "GL-3DPRT Motion Range Checker",
         description: "Choose a device model to open its print range checker.",
         deviceSelection: "Device selection",
-        version: "V2.18 · 2026-07-29 · ©Ming Xia",
+        version: "V2.19 · 2026-08-03 · ©Ming Xia",
         footer: "©Ming Xia",
         toggleLabel: "Switch language",
-        title: "GL-3DPRT Motion Range Checker V2.18 · 2026-07-29 · ©Ming Xia"
+        title: "GL-3DPRT Motion Range Checker V2.19 · 2026-08-03 · ©Ming Xia"
       }
     };
 

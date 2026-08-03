@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="data:," />
-  <title>TRL运动范围判定 V1.8 · 2026-07-29 · ©Ming Xia</title>
+  <title>TRL02运动范围判定 V1.9 · 2026-08-03 · ©Ming Xia</title>
   <script>document.documentElement.dataset.theme = "camada";</script>
   <style>
     :root {
@@ -1862,8 +1862,8 @@
   <div class="app">
     <aside>
       <header>
-        <h1 data-i18n="deviceTitle">TRL运动范围判定</h1>
-        <p class="subtitle" data-i18n="version">V1.8 · 2026-07-29 · ©Ming Xia</p>
+        <h1 data-i18n="deviceTitle">TRL02运动范围判定</h1>
+        <p class="subtitle" data-i18n="version">V1.9 · 2026-08-03 · ©Ming Xia</p>
         <button id="languageToggle" class="language-toggle" type="button" aria-label="切换语言">EN</button>
       </header>
 
@@ -1983,7 +1983,7 @@
         </div>
       </div>
       <div class="hud">
-        <div class="chip"><strong data-i18n="interactionHelp">拖拽旋转，滚轮缩放</strong><span data-i18n="envelopeHelp">透明体为 50 mm 真实 IK + 物理干涉判定后的 V9 保守包络。</span></div>
+        <div class="chip"><strong data-i18n="interactionHelp">拖拽旋转，滚轮缩放</strong><span data-i18n="envelopeHelp">透明体为实际可达区域。</span></div>
         <div id="stlRangeWarning" class="stl-range-warning" hidden role="status" aria-live="polite">
           <strong data-i18n="stlOutOfRangeTitle">超出打印范围</strong>
           <span id="stlRangeWarningText">导入模型的部分区域超出打印范围，已用红色显示。</span>
@@ -2051,9 +2051,9 @@
 
     const translations = {
       zh: {
-        deviceTitle: "TRL运动范围判定",
-        version: "V1.8 · 2026-07-29 · ©Ming Xia",
-        documentTitle: "TRL运动范围判定 V1.8 · 2026-07-29 · ©Ming Xia",
+        deviceTitle: "TRL02运动范围判定",
+        version: "V1.9 · 2026-08-03 · ©Ming Xia",
+        documentTitle: "TRL02运动范围判定 V1.9 · 2026-08-03 · ©Ming Xia",
         measuredRange: "实测范围",
         nozzleTitle: "打印头规格",
         nozzleLong: "加长款",
@@ -2111,23 +2111,23 @@
         topView: "上视图",
         rightView: "右视图",
         interactionHelp: "拖拽旋转，滚轮缩放",
-        envelopeHelp: "透明体为 50 mm 真实 IK + 物理干涉判定后的 V9 保守包络。",
+        envelopeHelp: "透明体为实际可达区域。",
         size: "尺寸",
         lengthMm: "长度 mm",
         widthMm: "宽度 mm",
         heightMm: "高度 mm",
         statusInside: "长方体在范围内。",
         statusForbidden: "长方体进入设备禁区 X=0…6300、Y=-650…650、Z≥0。",
-        statusOutside: "长方体超出当前打印头的 TRL V9 IK + 物理干涉包络。",
+        statusOutside: "长方体超出当前打印头的 TRL02 V9 IK + 物理干涉包络。",
         statusCorners: ({ count }) => `有 ${count} 个角点超出可达空间。`,
         volume: ({ value }) => `体积 ${value} L`,
         corners: ({ valid }) => `${valid} / 8 个角点在范围内`,
         switchLanguage: "切换语言"
       },
       en: {
-        deviceTitle: "TRL Motion Range Checker",
-        version: "V1.8 · 2026-07-29 · ©Ming Xia",
-        documentTitle: "TRL Motion Range Checker V1.8 · 2026-07-29 · ©Ming Xia",
+        deviceTitle: "TRL02 Motion Range Checker",
+        version: "V1.9 · 2026-08-03 · ©Ming Xia",
+        documentTitle: "TRL02 Motion Range Checker V1.9 · 2026-08-03 · ©Ming Xia",
         measuredRange: "Measured Range",
         nozzleTitle: "Nozzle Profile",
         nozzleLong: "Long",
@@ -2185,14 +2185,14 @@
         topView: "Top view",
         rightView: "Right view",
         interactionHelp: "Drag to rotate; scroll to zoom",
-        envelopeHelp: "The translucent volume is the V9 conservative envelope after 50 mm true-IK and physical-collision checks.",
+        envelopeHelp: "The translucent volume is the actual reachable area.",
         size: "Size",
         lengthMm: "Length mm",
         widthMm: "Width mm",
         heightMm: "Height mm",
         statusInside: "Cuboid is within range.",
         statusForbidden: "Cuboid enters the device exclusion X=0…6300, Y=-650…650, Z≥0.",
-        statusOutside: "Cuboid exceeds the current Nozzle TRL V9 IK + collision envelope.",
+        statusOutside: "Cuboid exceeds the current Nozzle TRL02 V9 IK + collision envelope.",
         statusCorners: ({ count }) => `${count} corner${count === 1 ? "" : "s"} exceed the reachable space.`,
         volume: ({ value }) => `Volume ${value} L`,
         corners: ({ valid }) => `${valid} / 8 corners within range`,
@@ -2368,7 +2368,7 @@
     grid.rotation.x = Math.PI / 2;
     grid.position.set(3050, 0, 0);
     scene.add(grid);
-    scene.add(makeGridLabel("GL-3DPRT-TRL", new THREE.Vector3(8800, 4700, 8)));
+    scene.add(makeGridLabel("GL-3DPRT-TRL02", new THREE.Vector3(8800, 4700, 8)));
 
     const axes = new THREE.Group();
     const transverseAxisX = 3050;
@@ -2453,7 +2453,7 @@
       trlClassification = trlOfflineData.classification;
     } else {
       const classificationResponse = await fetch(new URL("assets/trl/classification.json?v=20260729-1", window.location.href));
-      if (!classificationResponse.ok) throw new Error(`TRL 分类模板请求失败：${classificationResponse.status}`);
+      if (!classificationResponse.ok) throw new Error(`TRL02 分类模板请求失败：${classificationResponse.status}`);
       trlClassification = await classificationResponse.json();
     }
     let activeNozzleProfile = nozzleProfileSelect.value;
@@ -2487,10 +2487,10 @@
         const script = document.createElement("script");
         script.src = new URL("assets/trl/trl-offline-data.js?v=20260729-1", window.location.href).href;
         script.onload = resolve;
-        script.onerror = () => reject(new Error("TRL 离线资源包加载失败"));
+        script.onerror = () => reject(new Error("TRL02 离线资源包加载失败"));
         document.head.append(script);
       });
-      if (!window.__GL3DPRT_TRL_OFFLINE__) throw new Error("TRL 离线资源包内容缺失");
+      if (!window.__GL3DPRT_TRL_OFFLINE__) throw new Error("TRL02 离线资源包内容缺失");
       return window.__GL3DPRT_TRL_OFFLINE__;
     }
 
@@ -2500,10 +2500,10 @@
         const script = document.createElement("script");
         script.src = new URL("assets/trl/trl-offline-reference.js?v=20260728-1", window.location.href).href;
         script.onload = resolve;
-        script.onerror = () => reject(new Error("TRL 离线设备模型包加载失败"));
+        script.onerror = () => reject(new Error("TRL02 离线设备模型包加载失败"));
         document.head.append(script);
       });
-      if (!window.__GL3DPRT_TRL_REFERENCE_OFFLINE__) throw new Error("TRL 离线设备模型包内容缺失");
+      if (!window.__GL3DPRT_TRL_REFERENCE_OFFLINE__) throw new Error("TRL02 离线设备模型包内容缺失");
       return window.__GL3DPRT_TRL_REFERENCE_OFFLINE__;
     }
 
@@ -2788,7 +2788,7 @@
         scene.add(referenceModelMesh);
         return true;
       } catch (error) {
-        console.error("TRL 设备模型加载失败", error);
+        console.error("TRL02 设备模型加载失败", error);
         if (referenceModelMesh) {
           scene.remove(referenceModelMesh);
           referenceModelMesh = null;
@@ -3141,17 +3141,17 @@
       let buffer;
       if (trlOfflineData) {
         const base64 = trlOfflineData.envelopes?.[profile];
-        if (!base64) throw new Error(`TRL ${profile} 离线包络缺失`);
+        if (!base64) throw new Error(`TRL02 ${profile} 离线包络缺失`);
         buffer = decodeBase64Buffer(base64);
       } else {
         const url = new URL(`assets/trl/envelope-${profile}-light.glb?v=20260729-1`, window.location.href).href;
         const response = await fetch(url);
-        if (!response.ok) throw new Error(`TRL ${profile} 包络请求失败：${response.status}`);
+        if (!response.ok) throw new Error(`TRL02 ${profile} 包络请求失败：${response.status}`);
         buffer = await response.arrayBuffer();
       }
       const gltf = await new Promise((resolve, reject) => loader.parse(buffer, "", resolve, reject));
       workspaceMesh = gltf.scene;
-      workspaceMesh.name = `TRL ${profile} V9 IK + collision envelope`;
+      workspaceMesh.name = `TRL02 ${profile} V9 IK + collision envelope`;
       workspaceMesh.updateMatrixWorld(true);
       workspaceMesh.traverse((child) => {
         if (!child.isMesh) return;

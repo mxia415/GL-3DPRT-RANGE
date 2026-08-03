@@ -1,8 +1,8 @@
-# GL-3DPRT-TRL 运动范围判定说明
+# GL-3DPRT-TRL02 运动范围判定说明
 
-- 版本：V1.8
-- 日期：2026-07-29
-- 页面：`GL-3DPRT-TRL.html`
+- 版本：V1.9
+- 日期：2026-08-03
+- 页面：`GL-3DPRT-TRL02.html`
 
 ## Nozzle 切换
 
@@ -64,7 +64,7 @@ V9 的“可达”要求权威约束 IK 成功且 Collision Model V2 无物理�
 
 ## 本地打开
 
-TRL 同时支持本地 HTTP 服务和直接双击入口页。
+TRL02 同时支持本地 HTTP 服务和直接双击入口页。
 
 从项目根目录启动本地 HTTP 服务：
 
@@ -75,10 +75,10 @@ python3 -m http.server 4174
 然后打开：
 
 ```text
-http://localhost:4174/outputs/GL-3DPRT-TRL.html
+http://localhost:4174/outputs/GL-3DPRT-TRL02.html
 ```
 
-直接双击 `outputs/index.html`、通过 `file://` 进入 TRL 时，页面会自动加载 `trl-offline-data.js`，其中包含分类模板与两套轻量包络。点击“显示设备模型”时才会按需加载 `trl-offline-reference.js`，避免在页面启动时解析大型设备模型包。
+直接双击 `outputs/index.html`、通过 `file://` 进入 TRL02 时，页面会自动加载 `trl-offline-data.js`，其中包含分类模板与两套轻量包络。点击“显示设备模型”时才会按需加载 `trl-offline-reference.js`，避免在页面启动时解析大型设备模型包。
 
 ## 资产
 
@@ -96,6 +96,6 @@ outputs/assets/trl/trl-offline-data.js
 outputs/assets/trl/trl-offline-reference.js
 ```
 
-TRL 保存两套 V9 闭合光滑包络：Long 为 168,663 顶点 / 337,322 面，Standard 为 205,818 顶点 / 411,632 面。页面加载的 `*-light.glb` 使用二次误差简化至各 60,000 个三角面，仍保持闭合、绕序一致且最低 `Z=0`；显示和最终判定共用同一轻量网格，以降低浏览器启动和连续判定耗时。构建来源、SHA-256、边界与面数记录在 `envelope-build-report.json`。
+TRL02 保存两套 V9 闭合光滑包络：Long 为 168,663 顶点 / 337,322 面，Standard 为 205,818 顶点 / 411,632 面。页面加载的 `*-light.glb` 使用二次误差简化至各 60,000 个三角面，仍保持闭合、绕序一致且最低 `Z=0`；显示和最终判定共用同一轻量网格，以降低浏览器启动和连续判定耗时。构建来源、SHA-256、边界与面数记录在 `envelope-build-report.json`。
 
 HTTP/Cloudflare Pages 与 `file://` 模式均使用预先应用截图姿态的合并基础模型与两套轻量 Nozzle；基础模型约 17 MB，两套 Nozzle 各约 0.7 MB，并只在用户点击显示设备模型时加载。原始分件 GLB 作为本地重建源保留，不进入静态部署。

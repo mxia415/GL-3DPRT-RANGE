@@ -12,7 +12,7 @@ import trimesh
 
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML = ROOT / "outputs" / "GL-3DPRT-TRL.html"
+HTML = ROOT / "outputs" / "GL-3DPRT-TRL02.html"
 ASSET_DIR = ROOT / "outputs" / "assets" / "trl"
 PART_DIR = ASSET_DIR / "parts"
 

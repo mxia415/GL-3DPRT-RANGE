@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="data:," />
-  <title>CRL打印范围判定 V1.5 · 2026-07-29 · ©Ming Xia</title>
+  <title>CRL01打印范围判定 V1.6 · 2026-08-03 · ©Ming Xia</title>
   <script>document.documentElement.dataset.theme = "camada";</script>
   <style>
     :root {
@@ -1862,8 +1862,8 @@
   <div class="app">
     <aside>
       <header>
-        <h1 data-i18n="deviceTitle">CRL打印范围判定</h1>
-        <p class="subtitle" data-i18n="version">V1.5 · 2026-07-29 · ©Ming Xia</p>
+        <h1 data-i18n="deviceTitle">CRL01打印范围判定</h1>
+        <p class="subtitle" data-i18n="version">V1.6 · 2026-08-03 · ©Ming Xia</p>
         <button id="languageToggle" class="language-toggle" type="button" aria-label="切换语言">EN</button>
       </header>
 
@@ -2050,9 +2050,9 @@
 
     const translations = {
       zh: {
-        deviceTitle: "CRL打印范围判定",
-        version: "V1.5 · 2026-07-29 · ©Ming Xia",
-        documentTitle: "CRL打印范围判定 V1.5 · 2026-07-29 · ©Ming Xia",
+        deviceTitle: "CRL01打印范围判定",
+        version: "V1.6 · 2026-08-03 · ©Ming Xia",
+        documentTitle: "CRL01打印范围判定 V1.6 · 2026-08-03 · ©Ming Xia",
         measuredRange: "实测范围",
         stlReference: "STL参考模型",
         importStl: "导入 STL 模型",
@@ -2113,17 +2113,17 @@
         widthMm: "宽度 mm",
         heightMm: "高度 mm",
         statusInside: "长方体在范围内。",
-        statusForbidden: "长方体进入 CRL 设备碰撞禁区。",
-        statusOutside: "长方体超出 CRL 碰撞后打印包络。",
+        statusForbidden: "长方体进入 CRL01 设备碰撞禁区。",
+        statusOutside: "长方体超出 CRL01 碰撞后打印包络。",
         statusCorners: ({ count }) => `有 ${count} 个角点超出可达空间。`,
         volume: ({ value }) => `体积 ${value} L`,
         corners: ({ valid }) => `${valid} / 8 个角点在范围内`,
         switchLanguage: "切换语言"
       },
       en: {
-        deviceTitle: "CRL Print Range Checker",
-        version: "V1.5 · 2026-07-29 · ©Ming Xia",
-        documentTitle: "CRL Print Range Checker V1.5 · 2026-07-29 · ©Ming Xia",
+        deviceTitle: "CRL01 Print Range Checker",
+        version: "V1.6 · 2026-08-03 · ©Ming Xia",
+        documentTitle: "CRL01 Print Range Checker V1.6 · 2026-08-03 · ©Ming Xia",
         measuredRange: "Measured Range",
         stlReference: "STL Reference Model",
         importStl: "Import STL Model",
@@ -2184,8 +2184,8 @@
         widthMm: "Width mm",
         heightMm: "Height mm",
         statusInside: "Cuboid is within range.",
-        statusForbidden: "Cuboid enters a CRL device collision exclusion.",
-        statusOutside: "Cuboid exceeds the collision-filtered CRL print envelope.",
+        statusForbidden: "Cuboid enters a CRL01 device collision exclusion.",
+        statusOutside: "Cuboid exceeds the collision-filtered CRL01 print envelope.",
         statusCorners: ({ count }) => `${count} corner${count === 1 ? "" : "s"} exceed the reachable space.`,
         volume: ({ value }) => `Volume ${value} L`,
         corners: ({ valid }) => `${valid} / 8 corners within range`,
@@ -2366,7 +2366,7 @@
     grid.rotation.x = Math.PI / 2;
     grid.position.set(400, 0, 0);
     scene.add(grid);
-    const deviceTypeLabel = makeGridLabel("GL-3DPRT-CRL", new THREE.Vector3(2500, -2200, 8));
+    const deviceTypeLabel = makeGridLabel("GL-3DPRT-CRL01", new THREE.Vector3(2500, -2200, 8));
     deviceTypeLabel.rotation.z = Math.PI / 2;
     scene.add(deviceTypeLabel);
 
@@ -2409,7 +2409,7 @@
       0x316cb3,
       "Z+"
     ));
-    // The CRL device, envelope, box and grid use the rotated print layout.
+    // The CRL01 device, envelope, box and grid use the rotated print layout.
     // Cancel the parent scene rotation for the reference axes so their direction stays fixed.
     axes.rotation.z = -Math.PI;
     scene.add(axes);
@@ -2526,11 +2526,11 @@
         if (!window.__CRL01_WORKSPACE_DATA__) {
           await loadClassicScript(crlWorkspaceFallbackUrl);
         }
-        if (!window.__CRL01_WORKSPACE_DATA__) throw new Error("CRL 离线包络数据缺失");
+        if (!window.__CRL01_WORKSPACE_DATA__) throw new Error("CRL01 离线包络数据缺失");
         return window.__CRL01_WORKSPACE_DATA__;
       }
       const response = await fetch(crlWorkspaceDataUrl);
-      if (!response.ok) throw new Error(`CRL 包络数据请求失败：${response.status}`);
+      if (!response.ok) throw new Error(`CRL01 包络数据请求失败：${response.status}`);
       return response.json();
     }
 
@@ -2764,7 +2764,7 @@
       const frame = slot.frame === "world"
         ? crlWorldFrame
         : pose.frames[slot.frame];
-      if (!anchor || !frame) throw new Error(`CRL 分件 ${slot.id} 缺少关节帧`);
+      if (!anchor || !frame) throw new Error(`CRL01 分件 ${slot.id} 缺少关节帧`);
       return new THREE.Matrix4()
         .makeBasis(crlVector3(frame.x), crlVector3(frame.y), crlVector3(frame.z))
         .setPosition(crlVector3(anchor));
@@ -2790,13 +2790,13 @@
           await withTimeout(
             loadClassicScript(url),
             modelLoadTimeoutMs,
-            "CRL 模型包下载超时"
+            "CRL01 模型包下载超时"
           );
         }
         const loaded = [];
         for (const fileName of crlModelParts) {
           const base64 = window.__GL3DPRT_MODELS__?.[`CRL01:${fileName}`];
-          if (!base64) throw new Error(`CRL 模型包缺失：${fileName}`);
+          if (!base64) throw new Error(`CRL01 模型包缺失：${fileName}`);
           const buffer = decodeBase64Buffer(base64);
           const gltf = await withTimeout(new Promise((resolve, reject) => {
             loader.parse(buffer, "", resolve, reject);
@@ -2812,7 +2812,7 @@
             child.receiveShadow = false;
           });
           const slot = PART_SLOTS.find((item) => item.fileName === fileName);
-          if (!slot) throw new Error(`CRL 分件槽位缺失：${fileName}`);
+          if (!slot) throw new Error(`CRL01 分件槽位缺失：${fileName}`);
           const wrapper = new THREE.Group();
           wrapper.name = `${fileName} · 打印姿态`;
           wrapper.matrixAutoUpdate = false;
@@ -2832,7 +2832,7 @@
         scene.add(referenceModelMesh);
         return true;
       } catch (error) {
-        console.error("CRL 设备模型加载失败", error);
+        console.error("CRL01 设备模型加载失败", error);
         if (referenceModelMesh) {
           scene.remove(referenceModelMesh);
           referenceModelMesh = null;
@@ -3164,7 +3164,7 @@
       workspaceBounds = null;
       workspacePointCache.clear();
       workspaceMesh = new THREE.Mesh(workspaceField.geometry, workspaceMaterial);
-      workspaceMesh.name = "CRL collision-filtered print envelope";
+      workspaceMesh.name = "CRL01 collision-filtered print envelope";
       workspaceMesh.renderOrder = 3;
       workspaceMesh.castShadow = false;
       workspaceMesh.receiveShadow = false;
