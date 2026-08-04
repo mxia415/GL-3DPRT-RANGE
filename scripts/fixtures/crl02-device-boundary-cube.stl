@@ -1,0 +1,86 @@
+solid crl02_device_boundary_cube
+ facet normal 0 0 -1
+  outer loop
+   vertex -300 1200 0
+   vertex 300 1800 0
+   vertex 300 1200 0
+  endloop
+ endfacet
+ facet normal 0 0 -1
+  outer loop
+   vertex -300 1200 0
+   vertex -300 1800 0
+   vertex 300 1800 0
+  endloop
+ endfacet
+ facet normal 0 0 1
+  outer loop
+   vertex -300 1200 600
+   vertex 300 1200 600
+   vertex 300 1800 600
+  endloop
+ endfacet
+ facet normal 0 0 1
+  outer loop
+   vertex -300 1200 600
+   vertex 300 1800 600
+   vertex -300 1800 600
+  endloop
+ endfacet
+ facet normal 0 -1 0
+  outer loop
+   vertex -300 1200 0
+   vertex 300 1200 0
+   vertex 300 1200 600
+  endloop
+ endfacet
+ facet normal 0 -1 0
+  outer loop
+   vertex -300 1200 0
+   vertex 300 1200 600
+   vertex -300 1200 600
+  endloop
+ endfacet
+ facet normal 0 1 0
+  outer loop
+   vertex -300 1800 0
+   vertex 300 1800 600
+   vertex 300 1800 0
+  endloop
+ endfacet
+ facet normal 0 1 0
+  outer loop
+   vertex -300 1800 0
+   vertex -300 1800 600
+   vertex 300 1800 600
+  endloop
+ endfacet
+ facet normal -1 0 0
+  outer loop
+   vertex -300 1200 0
+   vertex -300 1200 600
+   vertex -300 1800 600
+  endloop
+ endfacet
+ facet normal -1 0 0
+  outer loop
+   vertex -300 1200 0
+   vertex -300 1800 600
+   vertex -300 1800 0
+  endloop
+ endfacet
+ facet normal 1 0 0
+  outer loop
+   vertex 300 1200 0
+   vertex 300 1800 0
+   vertex 300 1800 600
+  endloop
+ endfacet
+ facet normal 1 0 0
+  outer loop
+   vertex 300 1200 0
+   vertex 300 1800 600
+   vertex 300 1200 600
+  endloop
+ endfacet
+endsolid crl02_device_boundary_cube

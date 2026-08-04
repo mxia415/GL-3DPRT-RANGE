@@ -4,3 +4,5 @@ outputs/*.stl
 !outputs/assets/
 !outputs/assets/*.glb
 !outputs/assets/trl/*.glb
+!outputs/assets/crl02/*.glb
+!outputs/assets/crl02/parts/*.glb

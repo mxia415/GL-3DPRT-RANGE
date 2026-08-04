@@ -1,8 +1,8 @@
 # GL-3DPRT 运动范围判定工具
 
-版本：v1.39
+版本：V3.0
 
-日期：2026-08-03
+日期：2026-08-04
 
 这是一个用于 GL-3DPRT 蜘蛛式建筑 3D 打印机的浏览器端运动范围判定项目。工具根据实测的 X-Y 平面范围和 R-Z 垂直截面，生成三维可达空间，并判断输入的长方体是否完整落在设备运动范围内。
 
@@ -14,7 +14,7 @@
 - `GL-3DPRT-TRL01`
 - `GL-3DPRT-TRL02`
 - `GL-3DPRT-CRL01`
-- `GL-3DPRT-CRL02`（预留，待增加）
+- `GL-3DPRT-CRL02`
 
 项目入口是：
 
@@ -52,6 +52,10 @@ TRL02 V1.8 将加长款默认 Y 调整为 `1300 mm`，标准款调整为 `1700 m
 
 CRL01 页面以 TRL02 V1.8 为界面与交互基准，使用 CRL01 的 68,250 个碰撞过滤后 TCP 姿态生成连续打印包络，并接入同一统一装配矩阵下的八个设备 GLB 分件。CRL01 没有 Nozzle 规格切换。
 
+CRL02 页面使用 EFORT ER230-3100 轨道机械臂当前 IK 的 50 mm 运动学证据和最终批准的闭合平滑包络，支持 `Standard` / `Long` 两种打印头。切换时同步更换包络、九分件设备姿态、打印头 GLB、默认长方体和判定边界。Standard 默认姿态为 E1=1500、A1=40.3681°、A2=-84.193°、A3=45.3517°、A4=0°、A5=-128.84°、A6=77.4513°；Long 默认姿态为 E1=1499.5、A1=45.927°、A2=-85°、A3=55.287°、A4=0°、A5=-119.718°、A6=93.6105°。对应精确 FK TCP 分别为 `(0.008, 2399.886, 3387.613) mm` 和 `(-0.541, 2211.868, 2191.605) mm`。
+
+CRL02 最终闭合光滑网格同时用于显示、长方体、最大贴合和 STL 判定；设备显示空区 `X=-2335…1895、Y=-1469.927…1469.926、Z≥0` 作为页面打印空间排除项。该空区来自控制模型的显示规则，不应解读为完整物理碰撞或安全净距模型。
+
 设备页面还支持隐藏/显示中间的内接长方体和尺寸标注；隐藏后参数和判定结果仍会保留。
 
 导入 STL 后可以显示或隐藏 STL 与运动范围边界的近似交线。交线通过模型三角面边上的范围内外变化点生成，只作为视觉辅助。
@@ -68,12 +72,14 @@ outputs/GL-3DPRT-TJA-track.html       TJA 轨道版 / 固定底座合并判定�
 outputs/GL-3DPRT-TRL01.html           TRL01 打印范围判定工具
 outputs/GL-3DPRT-TRL02.html           TRL02 运动范围判定工具
 outputs/GL-3DPRT-CRL01.html           CRL01 打印范围判定工具
+outputs/GL-3DPRT-CRL02.html           CRL02 打印范围判定工具
 outputs/GL-3DPRT-SP-M说明.md          SP-M 使用说明
 outputs/GL-3DPRT-SP-S说明.md          SP-S 使用说明
 outputs/GL-3DPRT-TJA-track说明.md     TJA 两种形式使用说明
 outputs/GL-3DPRT-TRL01说明.md         TRL01 使用说明
 outputs/GL-3DPRT-TRL02说明.md         TRL02 使用说明
 outputs/GL-3DPRT-CRL01说明.md         CRL01 使用说明
+outputs/GL-3DPRT-CRL02说明.md         CRL02 使用说明
 outputs/assets/GL-3DPRT-SP-M.glb      SP-M 设备模型，供 HTTP / GitHub Pages 使用
 outputs/assets/GL-3DPRT-SP-S.glb      SP-S 高精度设备模型，供 HTTP / GitHub Pages 使用
 outputs/assets/GL-3DPRT-SP-S-model.js  SP-S 高精度设备模型的 file:// 备用包
@@ -85,6 +91,7 @@ outputs/assets/trl01/                  TRL01 权威 50 mm 包络、模型清单�
 outputs/assets/vendor/                 TRL01 离线 Three.js、加载器与 BVH 依赖
 outputs/assets/trl/                    TRL02 两套包络、分类模板与轻量设备模型资源
 outputs/assets/CRL01-*                 CRL01 包络数据、离线包与八分件模型资源
+outputs/assets/crl02/                  CRL02 双包络、证据清单、九分件模型与离线拆包
 outputs/assets/raw/GL-3DPRT-TJA-track-raw.glb  TJA(track) 原始模型备份
 outputs/assets/*-model.js             本地 file:// 打开时使用的备用模型包
 outputs/glb-compressor.html           维护用 GLB 压缩工具
@@ -107,7 +114,7 @@ python3 -m http.server 4174
 http://localhost:4174/outputs/index.html
 ```
 
-SP-M、SP-S、TJA、TRL01、TRL02 与 CRL01 均提供各自的本地资源。CRL02 为后续设备预留位。
+SP-M、SP-S、TJA、TRL01、TRL02、CRL01 与 CRL02 均提供各自的本地资源。
 
 ## 判定方法
 
@@ -131,6 +138,7 @@ SP-M、SP-S、TJA、TRL01、TRL02 与 CRL01 均提供各自的本地资源。CRL
 - `outputs/GL-3DPRT-TRL01.html`
 - `outputs/GL-3DPRT-TRL02.html`
 - `outputs/GL-3DPRT-CRL01.html`
+- `outputs/GL-3DPRT-CRL02.html`
 - `outputs/assets`
 
 如果只分享单个设备页面，也要同时提供该设备对应的 `.glb` 和 `*-model.js` 文件，否则设备模型按钮无法在所有访问方式下正常工作。

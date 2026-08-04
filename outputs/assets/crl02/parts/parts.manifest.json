@@ -1,0 +1,105 @@
+{
+  "version": 4,
+  "authority": "GL-3DPRT-TRL02.3dm",
+  "referencePose": {
+    "railPosition": 1500,
+    "a1": 0,
+    "a2": -85,
+    "a3": 85,
+    "a4": 0,
+    "a5": 0,
+    "a6": 0
+  },
+  "globalCalibration": {
+    "positionMm": [0, 0, 0],
+    "rotationDeg": [90, 0, 0],
+    "scale": 1
+  },
+  "globalAutoPlacement": {
+    "centerXY": true,
+    "groundZ": true
+  },
+  "parts": [
+    {
+      "slot": "track",
+      "file": "er230_00_fx_track.glb",
+      "unitScale": 1000,
+      "positionMm": [0, 0, 0],
+      "rotationDeg": [0, 0, 0],
+      "scale": 1,
+      "visible": true
+    },
+    {
+      "slot": "carriageBase",
+      "file": "er230_10_e1_carriage_base.glb",
+      "unitScale": 1000,
+      "positionMm": [-98.492294, 0, 0],
+      "rotationDeg": [0, 0, 0],
+      "scale": 1,
+      "visible": true
+    },
+    {
+      "slot": "a1RotaryBase",
+      "file": "er230_30_a1_rotary_base.glb",
+      "unitScale": 1000,
+      "positionMm": [-98.492294, 0, 0],
+      "rotationDeg": [0, 0, 0],
+      "scale": 1,
+      "visible": true
+    },
+    {
+      "slot": "a2UpperArm",
+      "file": "er230_40_a2_upper_arm.glb",
+      "unitScale": 1000,
+      "positionMm": [-98.492294, 0, 0],
+      "rotationDeg": [0, 0, 0],
+      "scale": 1,
+      "visible": true
+    },
+    {
+      "slot": "a3Forearm",
+      "file": "er230_50_a3_forearm.glb",
+      "unitScale": 1000,
+      "positionMm": [-98.492294, 0, 0],
+      "rotationDeg": [0, 0, 0],
+      "scale": 1,
+      "visible": true
+    },
+    {
+      "slot": "a4WristRoll",
+      "file": "er230_60_a4_wrist_roll.glb",
+      "unitScale": 1000,
+      "positionMm": [-98.492294, 0, 0],
+      "rotationDeg": [0, 0, 0],
+      "scale": 1,
+      "visible": true
+    },
+    {
+      "slot": "a5WristBend",
+      "file": "er230_70_a5_wrist_bend.glb",
+      "unitScale": 1000,
+      "positionMm": [-98.492294, 0, 0],
+      "rotationDeg": [0, 0, 0],
+      "scale": 1,
+      "visible": true
+    },
+    {
+      "slot": "a6Flange",
+      "file": "er230_80_a6_flange.glb",
+      "unitScale": 1000,
+      "positionMm": [-98.492294, 0, 0],
+      "rotationDeg": [0, 0, 0],
+      "scale": 1,
+      "visible": true
+    },
+    {
+      "slot": "toolExtension",
+      "file": "er230_90_tool_extension.glb",
+      "unitScale": 1000,
+      "positionMm": [-98.492294, 0, 0],
+      "rotationDeg": [0, 0, 0],
+      "scale": 1,
+      "visible": true
+    }
+  ]
+}

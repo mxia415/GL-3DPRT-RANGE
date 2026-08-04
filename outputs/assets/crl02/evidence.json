@@ -1,0 +1,707 @@
+{
+  "schema": "gl-3dprt-crl02/evidence-v1",
+  "sourceRoot": "/Users/ming/Documents/GL-3DPRT-CRL",
+  "generatedAt": "2026-08-04T05:11:06.162Z",
+  "profiles": {
+    "standard": {
+      "sourceFile": "standard-surface-v3-ypos-left-cut-no-collision.json",
+      "sourceSha256": "a1bfe827d062e9b5b86ddb27ded0677de4350918bbb278574832ba9f93f145f1",
+      "glbSha256": "fdb525296edbe26256a2447243f5f5dbb5cf0fdbe75ac336849bd05beaf25efc",
+      "vertices": 283709,
+      "triangles": 567414,
+      "bounds": [
+        [
+          -5595.841266,
+          0,
+          0
+        ],
+        [
+          5810.991508,
+          4695.841266,
+          3445.842457
+        ]
+      ],
+      "schema": "er230-display-envelope/v3-kinematic-ypos-local-right-taper-cut",
+      "kinematicEvidence": {
+        "rawReachableEvidencePoints": 23049,
+        "acceptedEvidencePoints": 23049,
+        "bounds": [
+          [
+            -5575,
+            -40.697674,
+            0
+          ],
+          [
+            5788.235294,
+            4675,
+            3425
+          ]
+        ],
+        "railReachableNodes": 5870,
+        "outsideReachableNodes": 17179
+      },
+      "displaySurface": {
+        "method": "inclusive 50 mm signed-distance field, endpoint-angle minimum interpolation, display-only device void, and Freudenthal tetrahedra",
+        "authoritativeForClassification": false,
+        "reachableNodeSignsPreserved": true,
+        "gaussianSigmaCells": 0,
+        "conservativeInsetMm": 0,
+        "hardPlaneClamps": [
+          "Z>=0",
+          "Y>=0",
+          "X<=1895 OR (X<=2550 ? Y>=75 : 50*Y+75*X>=195000)"
+        ],
+        "smallHoleClosure": {
+          "closedLoops": 0,
+          "addedTriangles": 0,
+          "skippedBoundaryEdges": 0
+        },
+        "hardExclusionAudit": {
+          "verticesBelowGround": 0,
+          "verticesNegativeY": 0,
+          "verticesInsideDevice": 0,
+          "verticesInsideRemovedRightRegion": 0,
+          "triangleSamplesInsideRemovedRegion": 0,
+          "trianglesEnteringDevice": 0
+        },
+        "topologyAudit": {
+          "edges": 851121,
+          "openEdges": 0,
+          "nonManifoldEdges": 0,
+          "inconsistentWindingEdges": 0,
+          "maximumIncidence": 2,
+          "signedVolumeMm3": 113065761786.695
+        },
+        "composition": [
+          "current-IK-revalidated-50mm-witness-field",
+          "100mm-source-Gaussian-zero-inset-display-field",
+          "25mm-display-isosurface-outset",
+          "uniform-Freudenthal-topology",
+          "30-pass-global-contractive-laplacian-display-smoothing",
+          "user-regression-witness-containment-audit-without-hard-locks",
+          "Y>=0-cut",
+          "local-right-device-75mm-thin-layer-cut-with-50mm-bevel",
+          "deterministic-planar-caps"
+        ],
+        "transformVersion": "ypos-plus-local-right-75mm-bevel-cut-capped-trl02-uniform-smooth-v10",
+        "cut": {
+          "minimumYmm": 0,
+          "localStartXmm": 1895,
+          "localPlateauEndXmm": 2550,
+          "localEndXmm": 2600,
+          "localTopYmm": 75,
+          "localBevelRunXmm": 50,
+          "rule": "Y>=0 && (X<=1895 || (X<=2550 ? Y>=75 : 50*Y+75*X>=195000))",
+          "removedRegion": "Y<0 || (1895<X<=2550 && 0<=Y<75) || (2550<X<2600 && 0<=Y<1.5*(2600-X))",
+          "source": "user-marked TOP arrow; both refined profiles place the thin tongue within Y<=54.5 and X<=2563.5; 75 mm local cut with a 50 mm bevel restores the far +X low-Y envelope"
+        },
+        "sourceFullY": true,
+        "kinematicOnly": true,
+        "capAudit": {
+          "y0": 0,
+          "localRightPlateau": 0,
+          "localRightBevel": 1,
+          "compositeLocalCut": 0,
+          "numericalSeamRepairs": 0,
+          "triangles": 620
+        },
+        "refinement": {
+          "method": "current-runtime-50mm-inclusive-field-on-50mm-world-grid",
+          "sourceTemplateSpacingMm": 50,
+          "worldDisplaySpacingMm": 50,
+          "gaussianSigmaSourceCells": 2,
+          "conservativeInsetMm": 0,
+          "worldFieldSmoothing": {
+            "method": "TRL02-style-Gaussian-source-SDF-without-world-blur",
+            "gaussianSigmaCells": 0,
+            "gaussianSigmaMm": 0,
+            "conservativeInsetMm": 0,
+            "displayPositiveRawUnreachableNodes": 1380,
+            "smallDisplayExpansionAllowed": true,
+            "groundContactNodesPreserved": 13499,
+            "groundContactPaddingPlanes": 4,
+            "groundBlendHeightMm": 50
+          },
+          "groundReachableScalarFloorMm": 50,
+          "displayIsovalueMm": -24.999999,
+          "outwardIsosurfaceOffsetMm": 25,
+          "angleInterpolation": "adjacent sampled-angle minimum",
+          "surfaceExtraction": "Freudenthal-6-tetrahedra-continuous-isosurface",
+          "mixedCells": 79752,
+          "devicePolicy": "calibrated display exclusion only; no physical collision model"
+        },
+        "displaySmoothing": {
+          "method": "contractive-Laplacian",
+          "lambda": 0.2,
+          "iterations": 30,
+          "maximumDisplacementLimitMm": 75,
+          "maximumDisplacementMm": 54.517734,
+          "movedVertices": 288729,
+          "rejectedCandidateUpdates": {
+            "rawEvidenceClearance": 0,
+            "deviceDisplayExclusion": 17,
+            "deviceTriangleSAT": 6121,
+            "faceOrientation": 0
+          },
+          "hardBoundaryCoordinateLocks": [
+            "Z=0 locks Z only",
+            "outer closure guards lock their normal coordinate"
+          ],
+          "reachableRegressionLockedVertices": 0,
+          "shrinkBiased": true,
+          "authoritativeForClassification": false
+        },
+        "silhouetteSmoothing": {
+          "method": "disabled-uniform-TRL02-field",
+          "reason": "continuous field smoothing replaces local R-Z patching",
+          "authoritativeForClassification": false
+        },
+        "adaptiveSubdivision": {
+          "method": "disabled-uniform-TRL02-topology",
+          "reason": "uniform Freudenthal mesh avoids refinement transition seams",
+          "faceCounts": {
+            "before": 577454,
+            "after": 577454
+          },
+          "vertexCounts": {
+            "before": 288729,
+            "after": 288729
+          },
+          "authoritativeForClassification": false
+        },
+        "postAdaptiveFairing": {
+          "method": "disabled-single-pass-TRL02-smoothing",
+          "reason": "the uniform surface receives exactly one global fairing pass",
+          "authoritativeForClassification": false
+        },
+        "displaySmoothnessAudit": {
+          "sharedEdges": 851121,
+          "p50AdjacentFaceAngleDeg": 0.00485,
+          "p95AdjacentFaceAngleDeg": 1.026588,
+          "p99AdjacentFaceAngleDeg": 6.462395,
+          "maximumAdjacentFaceAngleDeg": 121.078838
+        },
+        "conservativeEvidenceAudit": {
+          "mapping": "50 mm evaluation of current-runtime 50 mm raw evidence field",
+          "auditedVerticesAndTriangleSamples": 2598545,
+          "minimumRawSignedDistanceMm": -132.105454,
+          "samplesOutsideRawReachableEvidence": 1482038,
+          "samplesBelowRequiredClearance": 0,
+          "requiredClearanceMm": -150
+        },
+        "sourceCellMarginAudit": {
+          "mapping": "50 mm evaluation of current-runtime 50 mm raw evidence field",
+          "auditedVerticesAndTriangleSamples": 2598545,
+          "minimumRawSignedDistanceMm": -132.105454,
+          "samplesOutsideRawReachableEvidence": 1482038,
+          "samplesBelowRequiredClearance": 0,
+          "requiredClearanceMm": -150
+        },
+        "reachableRegressionAudit": {
+          "method": "three-direction closed-mesh ray parity after final display cut",
+          "cutRule": "Y>=0 && (X<=1895 || (X<=2550 ? Y>=75 : 50*Y+75*X>=195000))",
+          "points": [
+            {
+              "name": "user-standard-rail-y4528",
+              "pointMm": [
+                -628.5,
+                4528.2,
+                1660.5
+              ],
+              "survivesDisplayCut": true,
+              "insideDisplayMesh": true,
+              "rayParityVotes": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "name": "user-standard-outside-high",
+              "pointMm": [
+                -3247.1,
+                2702.2,
+                3197.6
+              ],
+              "survivesDisplayCut": true,
+              "insideDisplayMesh": true,
+              "rayParityVotes": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "name": "user-standard-rail-y4521",
+              "pointMm": [
+                -314,
+                4521,
+                164
+              ],
+              "survivesDisplayCut": true,
+              "insideDisplayMesh": true,
+              "rayParityVotes": [
+                true,
+                true,
+                true
+              ]
+            }
+          ],
+          "failures": []
+        },
+        "hardExclusionMethod": "final rounded derived vertices plus exact triangle-AABB SAT; device AABB inset 1e-6 mm so boundary contact is allowed",
+        "geometryAudit": {
+          "rejectedDegenerateTriangles": 0,
+          "removedDuplicateTriangles": 0,
+          "forbiddenVertices": 0,
+          "sourceVertices": 289203,
+          "sourceTriangles": 578402,
+          "refinedFullYVertices": 288729,
+          "refinedFullYTriangles": 577454,
+          "displayVertices": 283709,
+          "displayTriangles": 567414
+        },
+        "finalBuildAudit": {
+          "source": {
+            "file": "standard-surface-v3-current-runtime.json",
+            "sha256": "8570f2f2993f732f394a1d19699c684168251bb1d7d09f6d7d589d817569c42c",
+            "vertexCount": 289203,
+            "triangleCount": 578402,
+            "bounds": [
+              [
+                -5575,
+                -40.697674,
+                0
+              ],
+              [
+                5788.235294,
+                4675,
+                3425
+              ]
+            ]
+          },
+          "refinedFullY": {
+            "file": "standard-full-y-50mm-inclusive-smooth.json",
+            "sha256": "a757df04008f8f7c2bee523d6c163e845cd684f07ca6459d944709537814783a",
+            "vertexCount": 288729,
+            "triangleCount": 577454,
+            "bounds": [
+              [
+                -5595.841,
+                0,
+                0
+              ],
+              [
+                5810.992,
+                4695.841,
+                3445.842
+              ]
+            ],
+            "generatorSha256": "8ffeb69b77887db018cced3003aca02cb93625e39449165263b9ee3e0f512935",
+            "evidenceFile": "standard-50mm-current-ik-witness-evidence.npz",
+            "evidenceSha256": "933f5549b0c246442fc14719a9681d0d1db532c036cbc903ab1fa4176ece717c"
+          },
+          "topology": {
+            "edges": 851121,
+            "degenerateTriangles": 0,
+            "duplicateTriangles": 0,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "inconsistentWindingEdges": 0,
+            "maximumEdgeIncidence": 2,
+            "signedVolumeMm3": 113065761786.695
+          },
+          "cutRule": "Y>=0 && (X<=1895 || (X<=2550 ? Y>=75 : 50*Y+75*X>=195000))",
+          "deviceDisplayExclusionOnly": true,
+          "physicalCollisionClassification": false
+        }
+      },
+      "deviceExclusion": {
+        "source": "calibrated er230_00_fx_track.glb world XY bounds",
+        "x": [
+          -2335,
+          1895
+        ],
+        "y": [
+          -1469.927,
+          1469.926
+        ],
+        "z": [
+          0,
+          3445.842457
+        ]
+      }
+    },
+    "long": {
+      "sourceFile": "long-surface-v3-ypos-left-cut-no-collision.json",
+      "sourceSha256": "8a7abd8061a81901a1bf2d94374b8b2bc6a1b4294b2520a5f736e1acf4fc98a1",
+      "glbSha256": "e329ab4ccac56bb8defb7a7867389b56a012aca279630c6ad326ac0beee56808",
+      "vertices": 237183,
+      "triangles": 474362,
+      "bounds": [
+        [
+          -5595.842457,
+          0,
+          0
+        ],
+        [
+          5810.992824,
+          4695.842457,
+          2445.842457
+        ]
+      ],
+      "schema": "er230-display-envelope/v3-kinematic-ypos-local-right-taper-cut",
+      "kinematicEvidence": {
+        "rawReachableEvidencePoints": 15890,
+        "acceptedEvidencePoints": 15890,
+        "bounds": [
+          [
+            -5575,
+            -37.878788,
+            0
+          ],
+          [
+            5788.235294,
+            4675,
+            2425
+          ]
+        ],
+        "railReachableNodes": 4019,
+        "outsideReachableNodes": 11871
+      },
+      "displaySurface": {
+        "method": "inclusive 50 mm signed-distance field, endpoint-angle minimum interpolation, display-only device void, and Freudenthal tetrahedra",
+        "authoritativeForClassification": false,
+        "reachableNodeSignsPreserved": true,
+        "gaussianSigmaCells": 0,
+        "conservativeInsetMm": 0,
+        "hardPlaneClamps": [
+          "Z>=0",
+          "Y>=0",
+          "X<=1895 OR (X<=2550 ? Y>=75 : 50*Y+75*X>=195000)"
+        ],
+        "smallHoleClosure": {
+          "closedLoops": 0,
+          "addedTriangles": 0,
+          "skippedBoundaryEdges": 0
+        },
+        "hardExclusionAudit": {
+          "verticesBelowGround": 0,
+          "verticesNegativeY": 0,
+          "verticesInsideDevice": 0,
+          "verticesInsideRemovedRightRegion": 0,
+          "triangleSamplesInsideRemovedRegion": 0,
+          "trianglesEnteringDevice": 0
+        },
+        "topologyAudit": {
+          "edges": 711543,
+          "openEdges": 0,
+          "nonManifoldEdges": 0,
+          "inconsistentWindingEdges": 0,
+          "maximumIncidence": 2,
+          "signedVolumeMm3": 76928066920.961
+        },
+        "composition": [
+          "current-IK-revalidated-50mm-witness-field",
+          "100mm-source-Gaussian-zero-inset-display-field",
+          "25mm-display-isosurface-outset",
+          "uniform-Freudenthal-topology",
+          "30-pass-global-contractive-laplacian-display-smoothing",
+          "user-regression-witness-containment-audit-without-hard-locks",
+          "Y>=0-cut",
+          "local-right-device-75mm-thin-layer-cut-with-50mm-bevel",
+          "deterministic-planar-caps"
+        ],
+        "transformVersion": "ypos-plus-local-right-75mm-bevel-cut-capped-trl02-uniform-smooth-v10",
+        "cut": {
+          "minimumYmm": 0,
+          "localStartXmm": 1895,
+          "localPlateauEndXmm": 2550,
+          "localEndXmm": 2600,
+          "localTopYmm": 75,
+          "localBevelRunXmm": 50,
+          "rule": "Y>=0 && (X<=1895 || (X<=2550 ? Y>=75 : 50*Y+75*X>=195000))",
+          "removedRegion": "Y<0 || (1895<X<=2550 && 0<=Y<75) || (2550<X<2600 && 0<=Y<1.5*(2600-X))",
+          "source": "user-marked TOP arrow; both refined profiles place the thin tongue within Y<=54.5 and X<=2563.5; 75 mm local cut with a 50 mm bevel restores the far +X low-Y envelope"
+        },
+        "sourceFullY": true,
+        "kinematicOnly": true,
+        "capAudit": {
+          "y0": 0,
+          "localRightPlateau": 0,
+          "localRightBevel": 1,
+          "compositeLocalCut": 0,
+          "numericalSeamRepairs": 0,
+          "triangles": 440
+        },
+        "refinement": {
+          "method": "current-runtime-50mm-inclusive-field-on-50mm-world-grid",
+          "sourceTemplateSpacingMm": 50,
+          "worldDisplaySpacingMm": 50,
+          "gaussianSigmaSourceCells": 2,
+          "conservativeInsetMm": 0,
+          "worldFieldSmoothing": {
+            "method": "TRL02-style-Gaussian-source-SDF-without-world-blur",
+            "gaussianSigmaCells": 0,
+            "gaussianSigmaMm": 0,
+            "conservativeInsetMm": 0,
+            "displayPositiveRawUnreachableNodes": 829,
+            "smallDisplayExpansionAllowed": true,
+            "groundContactNodesPreserved": 15165,
+            "groundContactPaddingPlanes": 4,
+            "groundBlendHeightMm": 50
+          },
+          "groundReachableScalarFloorMm": 50,
+          "displayIsovalueMm": -24.999999,
+          "outwardIsosurfaceOffsetMm": 25,
+          "angleInterpolation": "adjacent sampled-angle minimum",
+          "surfaceExtraction": "Freudenthal-6-tetrahedra-continuous-isosurface",
+          "mixedCells": 65024,
+          "devicePolicy": "calibrated display exclusion only; no physical collision model"
+        },
+        "displaySmoothing": {
+          "method": "contractive-Laplacian",
+          "lambda": 0.2,
+          "iterations": 30,
+          "maximumDisplacementLimitMm": 75,
+          "maximumDisplacementMm": 54.517734,
+          "movedVertices": 240379,
+          "rejectedCandidateUpdates": {
+            "rawEvidenceClearance": 0,
+            "deviceDisplayExclusion": 17,
+            "deviceTriangleSAT": 4201,
+            "faceOrientation": 0
+          },
+          "hardBoundaryCoordinateLocks": [
+            "Z=0 locks Z only",
+            "outer closure guards lock their normal coordinate"
+          ],
+          "reachableRegressionLockedVertices": 0,
+          "shrinkBiased": true,
+          "authoritativeForClassification": false
+        },
+        "silhouetteSmoothing": {
+          "method": "disabled-uniform-TRL02-field",
+          "reason": "continuous field smoothing replaces local R-Z patching",
+          "authoritativeForClassification": false
+        },
+        "adaptiveSubdivision": {
+          "method": "disabled-uniform-TRL02-topology",
+          "reason": "uniform Freudenthal mesh avoids refinement transition seams",
+          "faceCounts": {
+            "before": 480758,
+            "after": 480758
+          },
+          "vertexCounts": {
+            "before": 240381,
+            "after": 240381
+          },
+          "authoritativeForClassification": false
+        },
+        "postAdaptiveFairing": {
+          "method": "disabled-single-pass-TRL02-smoothing",
+          "reason": "the uniform surface receives exactly one global fairing pass",
+          "authoritativeForClassification": false
+        },
+        "displaySmoothnessAudit": {
+          "sharedEdges": 711543,
+          "p50AdjacentFaceAngleDeg": 0.000466,
+          "p95AdjacentFaceAngleDeg": 1.009704,
+          "p99AdjacentFaceAngleDeg": 7.135703,
+          "maximumAdjacentFaceAngleDeg": 121.078838
+        },
+        "conservativeEvidenceAudit": {
+          "mapping": "50 mm evaluation of current-runtime 50 mm raw evidence field",
+          "auditedVerticesAndTriangleSamples": 2163413,
+          "minimumRawSignedDistanceMm": -132.105454,
+          "samplesOutsideRawReachableEvidence": 1173943,
+          "samplesBelowRequiredClearance": 0,
+          "requiredClearanceMm": -150
+        },
+        "sourceCellMarginAudit": {
+          "mapping": "50 mm evaluation of current-runtime 50 mm raw evidence field",
+          "auditedVerticesAndTriangleSamples": 2163413,
+          "minimumRawSignedDistanceMm": -132.105454,
+          "samplesOutsideRawReachableEvidence": 1173943,
+          "samplesBelowRequiredClearance": 0,
+          "requiredClearanceMm": -150
+        },
+        "reachableRegressionAudit": {
+          "method": "three-direction closed-mesh ray parity after final display cut",
+          "cutRule": "Y>=0 && (X<=1895 || (X<=2550 ? Y>=75 : 50*Y+75*X>=195000))",
+          "points": [
+            {
+              "name": "user-long-rail-high",
+              "pointMm": [
+                -223.8,
+                3511.2,
+                2155.9
+              ],
+              "survivesDisplayCut": true,
+              "insideDisplayMesh": true,
+              "rayParityVotes": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "name": "user-long-outside-high",
+              "pointMm": [
+                -3895.2,
+                2130.7,
+                2204.6
+              ],
+              "survivesDisplayCut": true,
+              "insideDisplayMesh": true,
+              "rayParityVotes": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "name": "user-long-rail-y4687",
+              "pointMm": [
+                -418,
+                4687,
+                145
+              ],
+              "survivesDisplayCut": true,
+              "insideDisplayMesh": true,
+              "rayParityVotes": [
+                true,
+                true,
+                true
+              ]
+            }
+          ],
+          "failures": []
+        },
+        "hardExclusionMethod": "final rounded derived vertices plus exact triangle-AABB SAT; device AABB inset 1e-6 mm so boundary contact is allowed",
+        "geometryAudit": {
+          "rejectedDegenerateTriangles": 0,
+          "removedDuplicateTriangles": 0,
+          "forbiddenVertices": 0,
+          "sourceVertices": 240495,
+          "sourceTriangles": 480986,
+          "refinedFullYVertices": 240381,
+          "refinedFullYTriangles": 480758,
+          "displayVertices": 237183,
+          "displayTriangles": 474362
+        },
+        "finalBuildAudit": {
+          "source": {
+            "file": "long-surface-v3-current-runtime.json",
+            "sha256": "45d2efeef338a4483192b9cd074c4e61161d3d29634f69ab7c741e9b6bffc6e6",
+            "vertexCount": 240495,
+            "triangleCount": 480986,
+            "bounds": [
+              [
+                -5575,
+                -37.878788,
+                0
+              ],
+              [
+                5788.235294,
+                4675,
+                2425
+              ]
+            ]
+          },
+          "refinedFullY": {
+            "file": "long-full-y-50mm-inclusive-smooth.json",
+            "sha256": "d1fbeae0a599a65d1f085454ff4ae640d261c6727322c52a42ed32ca718b4d60",
+            "vertexCount": 240381,
+            "triangleCount": 480758,
+            "bounds": [
+              [
+                -5595.842,
+                0,
+                0
+              ],
+              [
+                5810.993,
+                4695.842,
+                2445.842
+              ]
+            ],
+            "generatorSha256": "8ffeb69b77887db018cced3003aca02cb93625e39449165263b9ee3e0f512935",
+            "evidenceFile": "long-50mm-current-ik-witness-evidence.npz",
+            "evidenceSha256": "b3d3862eae893dd3cb7df6ac4c73ee0d722e39254154fae812e2b4a9c76ff8ec"
+          },
+          "topology": {
+            "edges": 711543,
+            "degenerateTriangles": 0,
+            "duplicateTriangles": 0,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "inconsistentWindingEdges": 0,
+            "maximumEdgeIncidence": 2,
+            "signedVolumeMm3": 76928066920.961
+          },
+          "cutRule": "Y>=0 && (X<=1895 || (X<=2550 ? Y>=75 : 50*Y+75*X>=195000))",
+          "deviceDisplayExclusionOnly": true,
+          "physicalCollisionClassification": false
+        }
+      },
+      "deviceExclusion": {
+        "source": "calibrated er230_00_fx_track.glb world XY bounds",
+        "x": [
+          -2335,
+          1895
+        ],
+        "y": [
+          -1469.927,
+          1469.926
+        ],
+        "z": [
+          0,
+          2445.842457
+        ]
+      }
+    }
+  },
+  "parts": {
+    "er230_00_fx_track.glb": {
+      "bytes": 35337076,
+      "sha256": "84f908fed9309560fcca37e285f24ac5b429fa72d63277f0d051abe02d5610e0"
+    },
+    "er230_10_e1_carriage_base.glb": {
+      "bytes": 5572012,
+      "sha256": "79e660e9c0a5ced49a1bd065ebd8c914d10d3ead035129e5e42a4fe07cd8b5f5"
+    },
+    "er230_30_a1_rotary_base.glb": {
+      "bytes": 3238044,
+      "sha256": "17b122b649699600ca4e95099a3eb4906826cf1bbc624a39df4991723d953230"
+    },
+    "er230_40_a2_upper_arm.glb": {
+      "bytes": 1241916,
+      "sha256": "bedd5afa70cd33d459e2d37ef23ff51cf2335547ca96306e54cbcb6bda464b41"
+    },
+    "er230_50_a3_forearm.glb": {
+      "bytes": 13331812,
+      "sha256": "a8f0ce135681c41456a73836b71d51da32e4b1c2f59b68be3bcd07c2a2842e52"
+    },
+    "er230_60_a4_wrist_roll.glb": {
+      "bytes": 5930984,
+      "sha256": "6a88a16c5cbc295f85c7d208743e0a74511ff35752b6fb2c2bb328bd6bb8807a"
+    },
+    "er230_70_a5_wrist_bend.glb": {
+      "bytes": 521064,
+      "sha256": "b33bfffc5573ec26e027b86cd562bb76add5cd3032202ab21c13b9b9a1b7a1b1"
+    },
+    "er230_80_a6_flange.glb": {
+      "bytes": 254760,
+      "sha256": "25352a2e95c90492037b8b62d09a17ae442325f59e4f3d77913b4d9c56d0292a"
+    },
+    "er230_90_tool_extension.glb": {
+      "bytes": 5461452,
+      "sha256": "795ae0d23596fdb587a19b8c8879e595db0300bff832ec07166b63f5fc33f891"
+    },
+    "er230_90_tool_extension_standard.glb": {
+      "bytes": 4304828,
+      "sha256": "cf63e57c36ad712715d9aa8fcc3356a403555df298ae178c21670b364e61489b"
+    }
+  }
+}
