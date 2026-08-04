@@ -1,6 +1,9 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, writeFile, copyFile } from "node:fs/promises";
+import { execFile } from "node:child_process";
+import { mkdir, mkdtemp, readFile, rm, writeFile, copyFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
+import { promisify } from "node:util";
 
 const sourceRoot = process.env.CRL02_SOURCE_ROOT || "/Users/ming/Documents/GL-3DPRT-CRL";
 const outputRoot = new URL("../outputs/assets/crl02/", import.meta.url);
@@ -14,6 +17,54 @@ const partNames = [
 
 const pad4 = (n) => (n + 3) & ~3;
 const sha256 = (buffer) => createHash("sha256").update(buffer).digest("hex");
+const execFileAsync = promisify(execFile);
+const gltfTransformVersion = "4.4.0";
+const quantizeSettings = {
+  positionBits: 16,
+  normalBits: 12,
+  texcoordBits: 14,
+  genericBits: 16,
+  simplify: false
+};
+
+async function quantizePart(sourcePath, outputPath) {
+  await execFileAsync("npx", [
+    "--yes",
+    `@gltf-transform/cli@${gltfTransformVersion}`,
+    "quantize",
+    sourcePath,
+    outputPath,
+    "--quantize-position", String(quantizeSettings.positionBits),
+    "--quantize-normal", String(quantizeSettings.normalBits),
+    "--quantize-texcoord", String(quantizeSettings.texcoordBits),
+    "--quantize-generic", String(quantizeSettings.genericBits)
+  ], { maxBuffer: 16 * 1024 * 1024 });
+}
+
+function glbGeometryStats(bytes) {
+  const jsonLength = bytes.readUInt32LE(12);
+  const json = JSON.parse(bytes.subarray(20, 20 + jsonLength).toString("utf8").trim());
+  let primitives = 0;
+  let vertices = 0;
+  let triangles = 0;
+  for (const mesh of json.meshes || []) {
+    for (const primitive of mesh.primitives || []) {
+      primitives += 1;
+      const positionAccessor = json.accessors?.[primitive.attributes?.POSITION];
+      const indexAccessor = json.accessors?.[primitive.indices];
+      vertices += positionAccessor?.count || 0;
+      triangles += Math.floor((indexAccessor?.count || positionAccessor?.count || 0) / 3);
+    }
+  }
+  return {
+    meshes: json.meshes?.length || 0,
+    nodes: json.nodes?.length || 0,
+    primitives,
+    vertices,
+    triangles,
+    extensionsUsed: json.extensionsUsed || []
+  };
+}
 
 function envelopeGlb(source) {
   const positions = new Float32Array(source.vertices.length * 3);
@@ -76,12 +127,36 @@ for (const profile of ["standard", "long"]) {
   };
 }
 
-for (const name of partNames) {
-  const sourcePath = join(sourceRoot, "assets/parts", name);
-  const bytes = await readFile(sourcePath);
-  await copyFile(sourcePath, new URL(`parts/${name}`, outputRoot));
-  await writeOfflineScript(new URL(`offline/part-${name}.js`, outputRoot), `window.__GL3DPRT_CRL02_OFFLINE__.parts[${JSON.stringify(name)}]`, bytes);
-  evidence.parts[name] = { bytes: bytes.length, sha256: sha256(bytes) };
+const tempRoot = await mkdtemp(join(tmpdir(), "gl3dprt-crl02-"));
+try {
+  for (const name of partNames) {
+    const sourcePath = join(sourceRoot, "assets/parts", name);
+    const sourceBytes = await readFile(sourcePath);
+    const quantizedPath = join(tempRoot, name);
+    await quantizePart(sourcePath, quantizedPath);
+    const deployBytes = await readFile(quantizedPath);
+    await writeFile(new URL(`parts/${name}`, outputRoot), deployBytes);
+    await writeOfflineScript(
+      new URL(`offline/part-${name}.js`, outputRoot),
+      `window.__GL3DPRT_CRL02_OFFLINE__.parts[${JSON.stringify(name)}]`,
+      deployBytes
+    );
+    evidence.parts[name] = {
+      sourceBytes: sourceBytes.length,
+      deployBytes: deployBytes.length,
+      sourceSha256: sha256(sourceBytes),
+      deploySha256: sha256(deployBytes),
+      sourceGeometry: glbGeometryStats(sourceBytes),
+      deployGeometry: glbGeometryStats(deployBytes),
+      compression: {
+        method: "KHR_mesh_quantization",
+        gltfTransformVersion,
+        ...quantizeSettings
+      }
+    };
+  }
+} finally {
+  await rm(tempRoot, { recursive: true, force: true });
 }
 await copyFile(join(sourceRoot, "assets/parts/parts.manifest.json"), new URL("parts/parts.manifest.json", outputRoot));
 await writeFile(new URL("evidence.json", outputRoot), `${JSON.stringify(evidence, null, 2)}\n`);

@@ -2505,7 +2505,7 @@
       await new Promise((resolve, reject) => {
         const script = document.createElement("script");
         const file = kind === "envelopes" ? `envelope-${name}.js` : `part-${name}.js`;
-        script.src = new URL(`assets/crl02/offline/${file}?v=20260804-1`, window.location.href).href;
+        script.src = new URL(`assets/crl02/offline/${file}?v=20260804-2`, window.location.href).href;
         script.onload = resolve;
         script.onerror = () => reject(new Error(`CRL02 离线资源 ${file} 加载失败`));
         document.head.append(script);
@@ -2681,7 +2681,7 @@
           if (trlOfflineMode) {
             buffer = decodeBase64Buffer(await loadOfflineAsset("parts", source));
           } else {
-            const url = new URL(`assets/crl02/parts/${source}?v=20260804-1`, window.location.href).href;
+            const url = new URL(`assets/crl02/parts/${source}?v=20260804-2`, window.location.href).href;
             const response = await withTimeout(fetch(url), modelLoadTimeoutMs, `${source} 下载超时`);
             if (!response.ok) throw new Error(`${source} 请求失败：${response.status}`);
             buffer = await withTimeout(response.arrayBuffer(), modelLoadTimeoutMs, `${source} 读取超时`);
@@ -3081,7 +3081,7 @@
         const base64 = await loadOfflineAsset("envelopes", profile);
         buffer = decodeBase64Buffer(base64);
       } else {
-        const url = new URL(`assets/crl02/envelope-${profile}.glb?v=20260804-1`, window.location.href).href;
+        const url = new URL(`assets/crl02/envelope-${profile}.glb?v=20260804-2`, window.location.href).href;
         const response = await withTimeout(fetch(url), modelLoadTimeoutMs, `${profile} 包络下载超时`);
         if (!response.ok) throw new Error(`CRL02 ${profile} 包络请求失败：${response.status}`);
         buffer = await withTimeout(response.arrayBuffer(), modelLoadTimeoutMs, `${profile} 包络读取超时`);

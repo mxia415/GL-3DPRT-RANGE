@@ -18,7 +18,7 @@ const manifest = JSON.parse(readFileSync(
 
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
-assert.match(html, /TRL01运动范围判定 V1\.1/);
+assert.match(html, /TRL01运动范围判定 V3\.0/);
 assert.doesNotMatch(html, /默认打印姿态|Default Print Posture|WORLD −Z/);
 assert.match(html, /e1: 2900, a1: 0, a2: -98\.6, a3: 59\.2, a4: 0, a5: 129\.4, a6: 0/);
 assert.match(html, /trlToolDirection = Object\.freeze\(\{ x: 0, y: [^,]+, z: -1 \}\)/);

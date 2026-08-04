@@ -67,13 +67,24 @@ test("derived envelopes preserve approved source hashes, topology counts, and bo
 });
 
 test("ten split device assets and file-mode fallbacks are complete and hashed", async () => {
+  const cloudflareSingleFileLimit = 25 * 1024 * 1024;
   assert.equal(Object.keys(evidence.parts).length, 10);
   for (const [name, record] of Object.entries(evidence.parts)) {
     const bytes = await readFile(new URL(`parts/${name}`, assetRoot));
-    assert.equal(bytes.length, record.bytes);
-    assert.equal(sha256(bytes), record.sha256);
+    assert.equal(bytes.length, record.deployBytes);
+    assert.equal(sha256(bytes), record.deploySha256);
+    assert.ok(record.deployBytes < record.sourceBytes);
+    assert.equal(record.compression.method, "KHR_mesh_quantization");
+    assert.equal(record.compression.positionBits, 16);
+    assert.equal(record.compression.normalBits, 12);
+    assert.equal(record.compression.simplify, false);
+    assert.equal(record.deployGeometry.vertices, record.sourceGeometry.vertices);
+    assert.equal(record.deployGeometry.triangles, record.sourceGeometry.triangles);
+    assert.ok(record.deployGeometry.extensionsUsed.includes("KHR_mesh_quantization"));
+    assert.ok(bytes.length < cloudflareSingleFileLimit);
     const offline = await stat(new URL(`offline/part-${name}.js`, assetRoot));
-    assert.ok(offline.size > record.bytes);
+    assert.ok(offline.size > record.deployBytes);
+    assert.ok(offline.size < cloudflareSingleFileLimit);
   }
   for (const profile of ["standard", "long"]) {
     assert.ok((await stat(new URL(`offline/envelope-${profile}.js`, assetRoot))).size > 1_000_000);

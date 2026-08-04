@@ -1,7 +1,7 @@
 {
   "schema": "gl-3dprt-crl02/evidence-v1",
   "sourceRoot": "/Users/ming/Documents/GL-3DPRT-CRL",
-  "generatedAt": "2026-08-04T05:11:06.162Z",
+  "generatedAt": "2026-08-04T07:24:35.593Z",
   "profiles": {
     "standard": {
       "sourceFile": "standard-surface-v3-ypos-left-cut-no-collision.json",
@@ -664,44 +664,464 @@
   },
   "parts": {
     "er230_00_fx_track.glb": {
-      "bytes": 35337076,
-      "sha256": "84f908fed9309560fcca37e285f24ac5b429fa72d63277f0d051abe02d5610e0"
+      "sourceBytes": 35337076,
+      "deployBytes": 15306972,
+      "sourceSha256": "84f908fed9309560fcca37e285f24ac5b429fa72d63277f0d051abe02d5610e0",
+      "deploySha256": "513dddcf3abe90d70c9946df035a9b68e785342f2f1d37cd9fdfa044b9d09ca5",
+      "sourceGeometry": {
+        "meshes": 677,
+        "nodes": 677,
+        "primitives": 677,
+        "vertices": 725804,
+        "triangles": 1453963,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_emissive_strength",
+          "KHR_texture_transform"
+        ]
+      },
+      "deployGeometry": {
+        "meshes": 677,
+        "nodes": 677,
+        "primitives": 677,
+        "vertices": 725804,
+        "triangles": 1453963,
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission",
+          "KHR_mesh_quantization",
+          "KHR_texture_transform"
+        ]
+      },
+      "compression": {
+        "method": "KHR_mesh_quantization",
+        "gltfTransformVersion": "4.4.0",
+        "positionBits": 16,
+        "normalBits": 12,
+        "texcoordBits": 14,
+        "genericBits": 16,
+        "simplify": false
+      }
     },
     "er230_10_e1_carriage_base.glb": {
-      "bytes": 5572012,
-      "sha256": "79e660e9c0a5ced49a1bd065ebd8c914d10d3ead035129e5e42a4fe07cd8b5f5"
+      "sourceBytes": 5572012,
+      "deployBytes": 2793496,
+      "sourceSha256": "79e660e9c0a5ced49a1bd065ebd8c914d10d3ead035129e5e42a4fe07cd8b5f5",
+      "deploySha256": "58e147e7984202ff3bad7de1ecfe9c426a8c64450e54772bf73037fa8ebd7084",
+      "sourceGeometry": {
+        "meshes": 113,
+        "nodes": 113,
+        "primitives": 113,
+        "vertices": 114360,
+        "triangles": 229120,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_emissive_strength",
+          "KHR_texture_transform"
+        ]
+      },
+      "deployGeometry": {
+        "meshes": 113,
+        "nodes": 113,
+        "primitives": 113,
+        "vertices": 114360,
+        "triangles": 229120,
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission",
+          "KHR_mesh_quantization",
+          "KHR_texture_transform"
+        ]
+      },
+      "compression": {
+        "method": "KHR_mesh_quantization",
+        "gltfTransformVersion": "4.4.0",
+        "positionBits": 16,
+        "normalBits": 12,
+        "texcoordBits": 14,
+        "genericBits": 16,
+        "simplify": false
+      }
     },
     "er230_30_a1_rotary_base.glb": {
-      "bytes": 3238044,
-      "sha256": "17b122b649699600ca4e95099a3eb4906826cf1bbc624a39df4991723d953230"
+      "sourceBytes": 3238044,
+      "deployBytes": 1889848,
+      "sourceSha256": "17b122b649699600ca4e95099a3eb4906826cf1bbc624a39df4991723d953230",
+      "deploySha256": "01c289ee3de823643cbc374973972f5f3c6ff180a09a3253b3a3bb77aa81d2b6",
+      "sourceGeometry": {
+        "meshes": 2,
+        "nodes": 2,
+        "primitives": 2,
+        "vertices": 67411,
+        "triangles": 134841,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_emissive_strength",
+          "KHR_texture_transform"
+        ]
+      },
+      "deployGeometry": {
+        "meshes": 2,
+        "nodes": 2,
+        "primitives": 2,
+        "vertices": 67411,
+        "triangles": 134841,
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission",
+          "KHR_mesh_quantization",
+          "KHR_texture_transform"
+        ]
+      },
+      "compression": {
+        "method": "KHR_mesh_quantization",
+        "gltfTransformVersion": "4.4.0",
+        "positionBits": 16,
+        "normalBits": 12,
+        "texcoordBits": 14,
+        "genericBits": 16,
+        "simplify": false
+      }
     },
     "er230_40_a2_upper_arm.glb": {
-      "bytes": 1241916,
-      "sha256": "bedd5afa70cd33d459e2d37ef23ff51cf2335547ca96306e54cbcb6bda464b41"
+      "sourceBytes": 1241916,
+      "deployBytes": 725148,
+      "sourceSha256": "bedd5afa70cd33d459e2d37ef23ff51cf2335547ca96306e54cbcb6bda464b41",
+      "deploySha256": "4d233e92f99ff63ad546c1f0107227e42e00bbd5952265fe6d10338152ff70bc",
+      "sourceGeometry": {
+        "meshes": 1,
+        "nodes": 1,
+        "primitives": 1,
+        "vertices": 25837,
+        "triangles": 51702,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_emissive_strength",
+          "KHR_texture_transform"
+        ]
+      },
+      "deployGeometry": {
+        "meshes": 1,
+        "nodes": 1,
+        "primitives": 1,
+        "vertices": 25837,
+        "triangles": 51702,
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission",
+          "KHR_mesh_quantization",
+          "KHR_texture_transform"
+        ]
+      },
+      "compression": {
+        "method": "KHR_mesh_quantization",
+        "gltfTransformVersion": "4.4.0",
+        "positionBits": 16,
+        "normalBits": 12,
+        "texcoordBits": 14,
+        "genericBits": 16,
+        "simplify": false
+      }
     },
     "er230_50_a3_forearm.glb": {
-      "bytes": 13331812,
-      "sha256": "a8f0ce135681c41456a73836b71d51da32e4b1c2f59b68be3bcd07c2a2842e52"
+      "sourceBytes": 13331812,
+      "deployBytes": 10995216,
+      "sourceSha256": "a8f0ce135681c41456a73836b71d51da32e4b1c2f59b68be3bcd07c2a2842e52",
+      "deploySha256": "13e3c12d298410d8f7aad48fba5d11925686e2a00c6887a23968b5de52892447",
+      "sourceGeometry": {
+        "meshes": 3,
+        "nodes": 3,
+        "primitives": 3,
+        "vertices": 277705,
+        "triangles": 555343,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_emissive_strength",
+          "KHR_texture_transform"
+        ]
+      },
+      "deployGeometry": {
+        "meshes": 3,
+        "nodes": 3,
+        "primitives": 3,
+        "vertices": 277705,
+        "triangles": 555343,
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission",
+          "KHR_mesh_quantization",
+          "KHR_texture_transform"
+        ]
+      },
+      "compression": {
+        "method": "KHR_mesh_quantization",
+        "gltfTransformVersion": "4.4.0",
+        "positionBits": 16,
+        "normalBits": 12,
+        "texcoordBits": 14,
+        "genericBits": 16,
+        "simplify": false
+      }
     },
     "er230_60_a4_wrist_roll.glb": {
-      "bytes": 5930984,
-      "sha256": "6a88a16c5cbc295f85c7d208743e0a74511ff35752b6fb2c2bb328bd6bb8807a"
+      "sourceBytes": 5930984,
+      "deployBytes": 4942872,
+      "sourceSha256": "6a88a16c5cbc295f85c7d208743e0a74511ff35752b6fb2c2bb328bd6bb8807a",
+      "deploySha256": "0189f40ef396f36a0b05594cd00dae0f1e8a2e371cecc39c76a546ec8d19fb5f",
+      "sourceGeometry": {
+        "meshes": 1,
+        "nodes": 1,
+        "primitives": 1,
+        "vertices": 123533,
+        "triangles": 247066,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_emissive_strength",
+          "KHR_texture_transform"
+        ]
+      },
+      "deployGeometry": {
+        "meshes": 1,
+        "nodes": 1,
+        "primitives": 1,
+        "vertices": 123533,
+        "triangles": 247066,
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission",
+          "KHR_mesh_quantization",
+          "KHR_texture_transform"
+        ]
+      },
+      "compression": {
+        "method": "KHR_mesh_quantization",
+        "gltfTransformVersion": "4.4.0",
+        "positionBits": 16,
+        "normalBits": 12,
+        "texcoordBits": 14,
+        "genericBits": 16,
+        "simplify": false
+      }
     },
     "er230_70_a5_wrist_bend.glb": {
-      "bytes": 521064,
-      "sha256": "b33bfffc5573ec26e027b86cd562bb76add5cd3032202ab21c13b9b9a1b7a1b1"
+      "sourceBytes": 521064,
+      "deployBytes": 304748,
+      "sourceSha256": "b33bfffc5573ec26e027b86cd562bb76add5cd3032202ab21c13b9b9a1b7a1b1",
+      "deploySha256": "856ffc99d69043ab42195a627e68b76ef13e9d266a0ebd4763f8303c78571583",
+      "sourceGeometry": {
+        "meshes": 1,
+        "nodes": 1,
+        "primitives": 1,
+        "vertices": 10842,
+        "triangles": 21621,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_emissive_strength",
+          "KHR_texture_transform"
+        ]
+      },
+      "deployGeometry": {
+        "meshes": 1,
+        "nodes": 1,
+        "primitives": 1,
+        "vertices": 10842,
+        "triangles": 21621,
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission",
+          "KHR_mesh_quantization",
+          "KHR_texture_transform"
+        ]
+      },
+      "compression": {
+        "method": "KHR_mesh_quantization",
+        "gltfTransformVersion": "4.4.0",
+        "positionBits": 16,
+        "normalBits": 12,
+        "texcoordBits": 14,
+        "genericBits": 16,
+        "simplify": false
+      }
     },
     "er230_80_a6_flange.glb": {
-      "bytes": 254760,
-      "sha256": "25352a2e95c90492037b8b62d09a17ae442325f59e4f3d77913b4d9c56d0292a"
+      "sourceBytes": 254760,
+      "deployBytes": 149328,
+      "sourceSha256": "25352a2e95c90492037b8b62d09a17ae442325f59e4f3d77913b4d9c56d0292a",
+      "deploySha256": "f8f25affecb15d50446ed9dc17d86bd7613f7dd60ab08ae8c0c24349a1d0b23a",
+      "sourceGeometry": {
+        "meshes": 1,
+        "nodes": 1,
+        "primitives": 1,
+        "vertices": 5279,
+        "triangles": 10554,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_emissive_strength",
+          "KHR_texture_transform"
+        ]
+      },
+      "deployGeometry": {
+        "meshes": 1,
+        "nodes": 1,
+        "primitives": 1,
+        "vertices": 5279,
+        "triangles": 10554,
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission",
+          "KHR_mesh_quantization",
+          "KHR_texture_transform"
+        ]
+      },
+      "compression": {
+        "method": "KHR_mesh_quantization",
+        "gltfTransformVersion": "4.4.0",
+        "positionBits": 16,
+        "normalBits": 12,
+        "texcoordBits": 14,
+        "genericBits": 16,
+        "simplify": false
+      }
     },
     "er230_90_tool_extension.glb": {
-      "bytes": 5461452,
-      "sha256": "795ae0d23596fdb587a19b8c8879e595db0300bff832ec07166b63f5fc33f891"
+      "sourceBytes": 5461452,
+      "deployBytes": 2894548,
+      "sourceSha256": "795ae0d23596fdb587a19b8c8879e595db0300bff832ec07166b63f5fc33f891",
+      "deploySha256": "1c8ab841965deface9235f189e6e5f9cade859b1d394cfb5cb1948c0fb054490",
+      "sourceGeometry": {
+        "meshes": 68,
+        "nodes": 68,
+        "primitives": 68,
+        "vertices": 112687,
+        "triangles": 225798,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_emissive_strength",
+          "KHR_texture_transform"
+        ]
+      },
+      "deployGeometry": {
+        "meshes": 68,
+        "nodes": 68,
+        "primitives": 68,
+        "vertices": 112687,
+        "triangles": 225798,
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission",
+          "KHR_mesh_quantization",
+          "KHR_texture_transform"
+        ]
+      },
+      "compression": {
+        "method": "KHR_mesh_quantization",
+        "gltfTransformVersion": "4.4.0",
+        "positionBits": 16,
+        "normalBits": 12,
+        "texcoordBits": 14,
+        "genericBits": 16,
+        "simplify": false
+      }
     },
     "er230_90_tool_extension_standard.glb": {
-      "bytes": 4304828,
-      "sha256": "cf63e57c36ad712715d9aa8fcc3356a403555df298ae178c21670b364e61489b"
+      "sourceBytes": 4304828,
+      "deployBytes": 2218572,
+      "sourceSha256": "cf63e57c36ad712715d9aa8fcc3356a403555df298ae178c21670b364e61489b",
+      "deploySha256": "b8c4c151169337dbc21de01502b6f2eba4fb4ca9c5b913afd3707c11c199619b",
+      "sourceGeometry": {
+        "meshes": 63,
+        "nodes": 63,
+        "primitives": 63,
+        "vertices": 88662,
+        "triangles": 177760,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_emissive_strength",
+          "KHR_texture_transform"
+        ]
+      },
+      "deployGeometry": {
+        "meshes": 63,
+        "nodes": 63,
+        "primitives": 63,
+        "vertices": 88662,
+        "triangles": 177760,
+        "extensionsUsed": [
+          "KHR_materials_clearcoat",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission",
+          "KHR_mesh_quantization",
+          "KHR_texture_transform"
+        ]
+      },
+      "compression": {
+        "method": "KHR_mesh_quantization",
+        "gltfTransformVersion": "4.4.0",
+        "positionBits": 16,
+        "normalBits": 12,
+        "texcoordBits": 14,
+        "genericBits": 16,
+        "simplify": false
+      }
     }
   }
 }
